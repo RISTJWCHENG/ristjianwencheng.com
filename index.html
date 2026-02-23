@@ -46,7 +46,7 @@
             margin: 0 auto;
             padding: 1.5rem 2rem;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
         }
 
@@ -1748,9 +1748,6 @@
 <body>
     <nav>
         <div class="nav-content">
-            <div class="logo" onclick="scrollToSection('home')">
-                <img src="https://ristjianwencheng-career.oss-cn-shanghai.aliyuncs.com/Website_LOGO.png" alt="RIST JIANWEN CHENG" class="logo-image" id="navLogo">
-            </div>
             <ul class="nav-links">
                 <li><a onclick="scrollToSection('home')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2618,7 +2615,7 @@
         }
 
         // Load videos from videos.json
-        function createVideoCard(video, isFull) {
+        function createVideoCard(video) {
             const card = document.createElement('div');
             card.className = 'video-card-featured';
             card.dataset.category = 'Work';
@@ -2646,25 +2643,90 @@
             return card;
         }
 
-        function loadVideos() {
-            fetch('videos.json')
-                .then(res => res.json())
-                .then(videos => {
-                    const featuredGrid = document.getElementById('videoGridFeatured');
-                    const fullGrid = document.getElementById('videoGridFull');
+        // Video data embedded directly as fallback
+        const VIDEOS_DATA = [
+          {
+            "title": "Search And BlendShape For Curves_Tool",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Search%20And%20BlendShape%20For%20Curves_Tool_RISTJIANWENCHENG.mov",
+            "description": "A"
+          },
+          {
+            "title": "Reset Curves_Tool",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Reset%20Curves_Tool_RISTJIANWENCHENG.mov",
+            "description": "B"
+          },
+          {
+            "title": "N HAIR SETUP_Tool",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/N%20HAIR%20SETUP_Tool_RISTJIANWENCHENG.mov",
+            "description": "C"
+          },
+          {
+            "title": "CFX SETUP FOR FEATURE FILM",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/CFX%20SETUP%20FOR%20FEATURE%20FILM_RISTJIANWENCHENG.mov",
+            "description": "This showcases part of the CFX setups I contributed to on several feature films. The simulations were based on the default setup."
+          },
+          {
+            "title": "2022_CFX SHOWREEL_Stromae - Multitude, le film - The concert",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2022_CFX%20SHOWREEL_Stromae%20-%20Multitude%2C%20le%20film%20-%20The%20concert_RISTJIANWENCHENG.mov",
+            "description": "E"
+          },
+          {
+            "title": "2015_Updated_Rigging Demo Reel",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2015_Updated_Rigging%20Demo%20Reel_RISTJIANWENCHENG.mov",
+            "description": "F"
+          },
+          {
+            "title": "2015_Updated_CFX SHOWREEL",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2015_Updated_CFX%20SHOWREEL_RISTJIANWENCHENG.mov",
+            "description": "G"
+          },
+          {
+            "title": "2014_Updated_Character Rigging Setup Demo Reel",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2014_Updated_Character%20Rigging%20Setup%20Demo%20Reel_RISTJIANWENCHENG.mov",
+            "description": "H"
+          },
+          {
+            "title": "N DYNAMIC CURVES RIGGING SETUP Tool",
+            "updated_time": "2013",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2013_N%20DYNAMIC%20CURVES%20RIGGING%20SETUP_%20Tool_RISTJIANWENCHENG.mov",
+            "description": "J"
+          },
+          {
+            "title": "Animation Showreel | Student Animation Work",
+            "updated_time": "2010",
+            "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2010_Animation%20Showreel_Student%20Animation%20Work_RISTJIANWENCHENG.mov",
+            "description": "This is my 2010 student animation showreel, featuring exercises completed during my studies."
+          }
+        ];
 
-                    videos.forEach((video, index) => {
-                        // Featured section: show first 3 videos
-                        if (index < 3 && featuredGrid) {
-                            featuredGrid.appendChild(createVideoCard(video, false));
-                        }
-                        // Full page: show all videos
-                        if (fullGrid) {
-                            fullGrid.appendChild(createVideoCard(video, true));
-                        }
-                    });
-                })
-                .catch(err => console.warn('Could not load videos.json:', err));
+        function renderVideos(videos) {
+            const featuredGrid = document.getElementById('videoGridFeatured');
+            const fullGrid = document.getElementById('videoGridFull');
+            if (featuredGrid) featuredGrid.innerHTML = '';
+            if (fullGrid) fullGrid.innerHTML = '';
+            videos.forEach((video, index) => {
+                if (index < 3 && featuredGrid) {
+                    featuredGrid.appendChild(createVideoCard(video));
+                }
+                if (fullGrid) {
+                    fullGrid.appendChild(createVideoCard(video));
+                }
+            });
+        }
+
+        function loadVideos() {
+            // Always render embedded data immediately (no async fetch needed)
+            renderVideos(VIDEOS_DATA);
+            // Also try to fetch videos.json to override with latest data
+            try {
+                fetch('videos.json')
+                    .then(res => {
+                        if (!res.ok) throw new Error('fetch failed');
+                        return res.json();
+                    })
+                    .then(videos => renderVideos(videos))
+                    .catch(() => { /* keep embedded data */ });
+            } catch(e) { /* keep embedded data */ }
         }
 
         // Add click handlers for category tags
