@@ -1611,6 +1611,138 @@
             }
         }
     </style>
+    <script>
+        // Critical navigation functions - defined early to avoid ReferenceError
+        function openArticlePage() {
+            const articlePage = document.getElementById('article-full-page');
+            if (articlePage) {
+                articlePage.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeArticlePage() {
+            const articlePage = document.getElementById('article-full-page');
+            if (articlePage) {
+                articlePage.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+        function openVideoPage() {
+            const videoPage = document.getElementById('video-full-page');
+            if (videoPage) {
+                videoPage.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeVideoPage() {
+            const videoPage = document.getElementById('video-full-page');
+            if (videoPage) {
+                videoPage.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        function openFullGallery() {
+            const fullGalleryPage = document.getElementById('fullGalleryPage');
+            if (fullGalleryPage) {
+                fullGalleryPage.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeFullGallery() {
+            const fullGalleryPage = document.getElementById('fullGalleryPage');
+            if (fullGalleryPage) {
+                fullGalleryPage.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+        function filterVideoCategory(category) {
+            document.querySelectorAll('#video-full-page .category-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            const cards = document.querySelectorAll('#videoGridFull .video-card-featured');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        function filterCategoryFull(category) {
+            document.querySelectorAll('#article-full-page .category-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            const cards = document.querySelectorAll('#articleGridFull .article-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        function backToGallerySection() {
+            const fullGalleryPage = document.getElementById('fullGalleryPage');
+            if (fullGalleryPage) fullGalleryPage.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            setTimeout(() => { scrollToSection('gallery'); }, 300);
+        }
+        function playVideo(overlay) {
+            const wrapper = overlay.parentElement;
+            const video = wrapper.querySelector('.video-thumbnail-bg');
+            overlay.style.display = 'none';
+            video.setAttribute('controls', 'controls');
+            video.play();
+            video.addEventListener('ended', function() {
+                overlay.style.display = 'flex';
+                video.removeAttribute('controls');
+            });
+        }
+        function filterCategory(category) {
+            document.querySelectorAll('.category-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            const cards = document.querySelectorAll('.article-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        function openDocument(title, url) {
+            const modal = document.getElementById('documentModal');
+            const titleElement = document.getElementById('documentTitle');
+            const iframe = document.getElementById('documentFrame');
+            if (!modal) return;
+            titleElement.textContent = title;
+            if (url && url.includes('pcloud.link')) {
+                iframe.src = url;
+            } else {
+                iframe.srcdoc = `<html><body style="font-family:Arial;padding:40px;line-height:1.6;"><h1>${title}</h1><p>Document placeholder.</p></body></html>`;
+            }
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeDocument() {
+            const modal = document.getElementById('documentModal');
+            const iframe = document.getElementById('documentFrame');
+            if (!modal) return;
+            modal.classList.remove('active');
+            iframe.src = '';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
 </head>
 <body>
     <nav>
@@ -2065,9 +2197,9 @@
                 
                 <div class="category-filters" style="margin-top: 2rem;">
                     <div class="category-tag active" data-category="all" onclick="filterVideoCategory('all')">All</div>
-                    <div class="category-tag" data-category="Education" onclick="filterVideoCategory('Education')">Education</div>
-                    <div class="category-tag" data-category="Lifestyle" onclick="filterVideoCategory('Lifestyle')">Lifestyle</div>
-                    <div class="category-tag" data-category="Travel" onclick="filterVideoCategory('Travel')">Travel</div>
+                    <div class="category-tag" data-category="Work" onclick="filterVideoCategory('Work')">Work</div>
+                    <div class="category-tag" data-category="Other" onclick="filterVideoCategory('Other')">Other</div>
+                    <div class="category-tag" data-category="Moments" onclick="filterVideoCategory('Moments')">Moments</div>
                 </div>
             </div>
 
@@ -2209,7 +2341,8 @@
         </div>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
         function scrollToSection(sectionId) {
             const section = document.getElementById(sectionId);
             if (section) {
