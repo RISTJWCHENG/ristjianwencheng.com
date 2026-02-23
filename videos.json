@@ -12,7 +12,7 @@
   {
     "title": "N HAIR SETUP_Tool",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/N%20HAIR%20SETUP_Tool_RISTJIANWENCHENG.mov",
-    "description": "C"
+    "description": "N HAIR SETUP Tool is a technical utility for creating dynamic curve setups in Maya, designed to automate and standardise the creation of dynamic curve simulations in a production environment. It eliminates tedious and error-prone manual node construction, significantly reducing common setup issues in complex workflows. At the same time, it enforces a unified and highly predictable node architecture and connection rules, ensuring stable collaboration between all components while preventing conflicts or inconsistencies caused by manual operations.\n\nDuring the creation stage, the tool generates a fully deterministic, pipeline-compliant dynamic curve setup, consistently applying strict naming conventions and structural standards. This not only greatly improves the efficiency of artists but also enhances overall simulation stability and consistency. The resulting setups exhibit reliable, repeatable, and scalable behaviour, allowing them to be easily applied across different shots, assets, and large-scale productions, ultimately improving the productivity and output quality of CFX artists."
   },
   {
     "title": "CFX SETUP FOR FEATURE FILM",
@@ -52,4 +52,5 @@
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2010_Animation%20Showreel_Student%20Animation%20Work_RISTJIANWENCHENG.mov",
     "description": "This is my 2010 student animation showreel, featuring exercises completed during my studies."
   }
+
 ]
