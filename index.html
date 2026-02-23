@@ -106,10 +106,11 @@
         #home {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             text-align: center;
             background: linear-gradient(135deg, #f5f3f0 0%, #faf9f7 100%);
+            padding: 5.5rem 0 4rem;
         }
 
         .hero-title {
@@ -1805,6 +1806,21 @@
     </nav>
 
     <section id="home" class="section">
+        <div class="container">
+            <video
+                id="heroLogoVideo"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                style="width: 100%; display: block; margin: 0 auto 2rem;"
+            >
+                <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO.mov" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+                <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO.mov" type="video/quicktime">
+                <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO.mov" type="video/mp4">
+            </video>
+        </div>
         <p class="hero-subtitle">ARTIST / VISUAL CREATOR</p>
         <p class="hero-statement">
             I enjoy exploring and constantly experimenting with new software and mediums, mapping reality into virtual worlds and using these worlds to create new possibilities. I seek to capture subtle, enduring moments suspended between stillness and motion.
@@ -2654,6 +2670,48 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadImages();
             loadVideos();
+
+            // Hero video: robust autoplay + scroll play/pause + sound unlock
+            const heroVideo = document.getElementById('heroLogoVideo');
+            if (heroVideo) {
+                let isVisible = true;
+
+                // Try to play, retry on canplay if first attempt fails
+                function attemptPlay() {
+                    heroVideo.play().catch(function() {
+                        // If play fails, wait for canplay then try again
+                        heroVideo.addEventListener('canplay', function onCanPlay() {
+                            heroVideo.removeEventListener('canplay', onCanPlay);
+                            heroVideo.play().catch(() => {});
+                        });
+                    });
+                }
+                attemptPlay();
+
+                // Unlock sound on first user click/touch
+                function restoreSound() {
+                    heroVideo.muted = false;
+                    heroVideo.volume = 1;
+                    document.removeEventListener('click', restoreSound);
+                    document.removeEventListener('touchstart', restoreSound);
+                }
+                document.addEventListener('click', restoreSound);
+                document.addEventListener('touchstart', restoreSound);
+
+                // IntersectionObserver: auto pause when scrolled away, resume when back
+                const observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            isVisible = true;
+                            heroVideo.play().catch(() => {});
+                        } else {
+                            isVisible = false;
+                            heroVideo.pause();
+                        }
+                    });
+                }, { threshold: 0.1 });
+                observer.observe(heroVideo);
+            }
             document.querySelectorAll('.category-tag').forEach(tag => {
                 tag.addEventListener('click', function() {
                     filterCategory(this.dataset.category);
