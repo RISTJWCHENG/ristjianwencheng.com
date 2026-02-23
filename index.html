@@ -2621,11 +2621,12 @@
         function createVideoCard(video, isFull) {
             const card = document.createElement('div');
             card.className = 'video-card-featured';
-            card.dataset.category = 'CFX';
+            card.dataset.category = 'Work';
             card.innerHTML = `
                 <div class="video-thumbnail-wrapper">
                     <video class="video-thumbnail-bg" preload="metadata">
                         <source src="${video.video_url}" type="video/mp4">
+                        <source src="${video.video_url}" type="video/quicktime">
                     </video>
                     <div class="video-overlay" onclick="playVideo(this)">
                         <div class="play-button-circle">
@@ -2636,7 +2637,7 @@
                     </div>
                 </div>
                 <div class="video-card-info">
-                    <div class="video-category">CFX / RIGGING</div>
+                    <div class="video-category">WORK</div>
                     <h3 class="video-card-title">${video.title}</h3>
                     <p class="video-card-description">${video.description || ''}</p>
                     ${video.updated_time ? `<div class="video-card-meta" style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem;">📅 ${video.updated_time}</div>` : ''}
