@@ -1748,7 +1748,7 @@
     <nav>
         <div class="nav-content">
             <div class="logo" onclick="scrollToSection('home')">
-                <img src="https://ristjianwencheng-career.oss-cn-shanghai.aliyuncs.com/Website_LOGO.png" alt="RIST JIANWEN CHENG" class="logo-image">
+                <img src="https://ristjianwencheng-career.oss-cn-shanghai.aliyuncs.com/Website_LOGO.png" alt="RIST JIANWEN CHENG" class="logo-image" id="navLogo">
             </div>
             <ul class="nav-links">
                 <li><a onclick="scrollToSection('home')">
@@ -1805,7 +1805,6 @@
     </nav>
 
     <section id="home" class="section">
-        <h1 class="hero-title">RIST JIANWEN CHENG</h1>
         <p class="hero-subtitle">ARTIST / VISUAL CREATOR</p>
         <p class="hero-statement">
             I enjoy exploring and constantly experimenting with new software and mediums, mapping reality into virtual worlds and using these worlds to create new possibilities. I seek to capture subtle, enduring moments suspended between stillness and motion.
@@ -2579,6 +2578,21 @@
             });
         }
 
+        // Load logo from images.json
+        function loadImages() {
+            fetch('images.json')
+                .then(res => res.json())
+                .then(images => {
+                    if (images && images.length > 0) {
+                        const logo = document.getElementById('navLogo');
+                        if (logo) {
+                            logo.src = images[0].image_url;
+                        }
+                    }
+                })
+                .catch(err => console.warn('Could not load images.json:', err));
+        }
+
         // Load videos from videos.json
         function createVideoCard(video, isFull) {
             const card = document.createElement('div');
@@ -2630,6 +2644,7 @@
 
         // Add click handlers for category tags
         document.addEventListener('DOMContentLoaded', function() {
+            loadImages();
             loadVideos();
             document.querySelectorAll('.category-tag').forEach(tag => {
                 tag.addEventListener('click', function() {
