@@ -1846,67 +1846,8 @@
                 </div>
                 <a onclick="openVideoPage()" class="view-all-link">View All →</a>
             </div>
-            <div class="video-grid-featured">
-                <div class="video-card-featured">
-                    <div class="video-thumbnail-wrapper">
-                        <video class="video-thumbnail-bg">
-                            <source src="https://edef3.pcloud.com/cfZW7t3pIZWVNcB17Z7ueBZZalEL0kZ2ZZxnJZZOVDRXZx8ZyzZLpZ4HZgpZl4Zb0ZGVZ3kZw8Z28ZwJZ9LZ6JZyNlNDjt3iubbUL3tMb4F3j05mnn7/video1.mp4" type="video/mp4">
-                        </video>
-                        <div class="video-overlay" onclick="playVideo(this)">
-                            <div class="play-button-circle">
-                                <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="video-duration">8:42</div>
-                    </div>
-                    <div class="video-card-info">
-                        <div class="video-category">LIFESTYLE</div>
-                        <h3 class="video-card-title">Creative Process: Behind the Scenes</h3>
-                        <p class="video-card-description">A look into my creative workflow and daily routines that inspire productivity and innovation.</p>
-                    </div>
-                </div>
-                <div class="video-card-featured">
-                    <div class="video-thumbnail-wrapper">
-                        <video class="video-thumbnail-bg">
-                            <source src="https://edef9.pcloud.com/cfZ8zx3pIZgfKcB17Z7ueBZZDqEL0kZ2ZZxnJZZP9H6VZvLZ38Zf8Zk4ZeRZEFZY5Zk0ZyHZ8JZSRZE0ZHRZcVZ9X5D7gaj3U0rmN9j193cqudNmfDX/video2.mp4" type="video/mp4">
-                        </video>
-                        <div class="video-overlay" onclick="playVideo(this)">
-                            <div class="play-button-circle">
-                                <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="video-duration">12:15</div>
-                    </div>
-                    <div class="video-card-info">
-                        <div class="video-category">TRAVEL</div>
-                        <h3 class="video-card-title">Travel Vlog: Exploring Hidden Gems</h3>
-                        <p class="video-card-description">Join me as I discover off-the-beaten-path locations and share travel tips for adventurous souls.</p>
-                    </div>
-                </div>
-                <div class="video-card-featured">
-                    <div class="video-thumbnail-wrapper">
-                        <video class="video-thumbnail-bg">
-                            <source src="https://edef4.pcloud.com/cfZ7KM3pIZwN9cB17Z7ueBZZ0tEL0kZ2ZZxnJZZxoLRkZn4ZtHZgLZy4Z35ZV5ZgRZypZWzZezZt4Zr0ZWJZVFZamUN6FdPVuRQrLENgrx2opt07GvX/video3.mp4" type="video/mp4">
-                        </video>
-                        <div class="video-overlay" onclick="playVideo(this)">
-                            <div class="play-button-circle">
-                                <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="video-duration">6:40</div>
-                    </div>
-                    <div class="video-card-info">
-                        <div class="video-category">ART</div>
-                        <h3 class="video-card-title">Interstitial: Performance Art</h3>
-                        <p class="video-card-description">Documentation of performance art exploring liminal spaces and the boundaries of visual expression.</p>
-                    </div>
-                </div>
+            <div class="video-grid-featured" id="videoGridFeatured">
+                <!-- Videos will be loaded from videos.json -->
             </div>
         </div>
     </section>
@@ -2052,7 +1993,7 @@
                             <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
                             <polyline points="3 7 12 13 21 7"/>
                         </svg>
-                        <span>rist.cheng@gmail.com</span>
+                        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d9abb0aaadf7bab1bcb7be99beb4b8b0b5f7bab6b4">[email&#160;protected]</a></span>
                     </div>
                     <div class="contact-item">
                         <svg class="contact-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2086,7 +2027,7 @@
         <div class="footer-container">
             <p class="footer-tagline">Showcasing creativity and passion through images, videos, and articles.</p>
             <div class="footer-social">
-                <a href="mailto:rist.cheng@gmail.com" class="social-icon" aria-label="Email">
+                <a href="/cdn-cgi/l/email-protection#681a011b1c460b000d060f280f05090104460b0705" class="social-icon" aria-label="Email">
                     <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                         <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                     </svg>
@@ -2131,66 +2072,7 @@
             </div>
 
             <div class="video-grid-featured" id="videoGridFull">
-                <div class="video-card-featured" data-category="Education">
-                    <div class="video-thumbnail-wrapper">
-                        <video class="video-thumbnail-bg">
-                            <source src="https://edef4.pcloud.com/cfZ7KM3pIZwN9cB17Z7ueBZZ0tEL0kZ2ZZxnJZZxoLRkZn4ZtHZgLZy4Z35ZV5ZgRZypZWzZezZt4Zr0ZWJZVFZamUN6FdPVuRQrLENgrx2opt07GvX/video3.mp4" type="video/mp4">
-                        </video>
-                        <div class="video-overlay" onclick="playVideo(this)">
-                            <div class="play-button-circle">
-                                <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="video-duration">10:30</div>
-                    </div>
-                    <div class="video-card-info">
-                        <div class="video-category">Education</div>
-                        <h3 class="video-card-title">Photography Tutorial: Natural Light</h3>
-                        <p class="video-card-description">Learn how to work with natural light to create stunning portraits and landscape...</p>
-                    </div>
-                </div>
-                <div class="video-card-featured" data-category="Lifestyle">
-                    <div class="video-thumbnail-wrapper">
-                        <video class="video-thumbnail-bg">
-                            <source src="https://edef3.pcloud.com/cfZW7t3pIZWVNcB17Z7ueBZZalEL0kZ2ZZxnJZZOVDRXZx8ZyzZLpZ4HZgpZl4Zb0ZGVZ3kZw8Z28ZwJZ9LZ6JZyNlNDjt3iubbUL3tMb4F3j05mnn7/video1.mp4" type="video/mp4">
-                        </video>
-                        <div class="video-overlay" onclick="playVideo(this)">
-                            <div class="play-button-circle">
-                                <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="video-duration">8:42</div>
-                    </div>
-                    <div class="video-card-info">
-                        <div class="video-category">Lifestyle</div>
-                        <h3 class="video-card-title">Creative Process: Behind the Scenes</h3>
-                        <p class="video-card-description">A look into my creative workflow and daily routines that inspire productivity and...</p>
-                    </div>
-                </div>
-                <div class="video-card-featured" data-category="Travel">
-                    <div class="video-thumbnail-wrapper">
-                        <video class="video-thumbnail-bg">
-                            <source src="https://edef9.pcloud.com/cfZ8zx3pIZgfKcB17Z7ueBZZDqEL0kZ2ZZxnJZZP9H6VZvLZ38Zf8Zk4ZeRZEFZY5Zk0ZyHZ8JZSRZE0ZHRZcVZ9X5D7gaj3U0rmN9j193cqudNmfDX/video2.mp4" type="video/mp4">
-                        </video>
-                        <div class="video-overlay" onclick="playVideo(this)">
-                            <div class="play-button-circle">
-                                <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="video-duration">12:15</div>
-                    </div>
-                    <div class="video-card-info">
-                        <div class="video-category">Travel</div>
-                        <h3 class="video-card-title">Travel Vlog: Exploring Hidden Gems</h3>
-                        <p class="video-card-description">Join me as I discover off-the-beaten-path locations and share travel tips for adventuro...</p>
-                    </div>
-                </div>
+                <!-- Videos will be loaded from videos.json -->
             </div>
         </div>
     </div>
@@ -2327,7 +2209,7 @@
         </div>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         function scrollToSection(sectionId) {
             const section = document.getElementById(sectionId);
             if (section) {
@@ -2564,8 +2446,58 @@
             });
         }
 
+        // Load videos from videos.json
+        function createVideoCard(video, isFull) {
+            const card = document.createElement('div');
+            card.className = 'video-card-featured';
+            card.dataset.category = 'CFX';
+            card.innerHTML = `
+                <div class="video-thumbnail-wrapper">
+                    <video class="video-thumbnail-bg" preload="metadata">
+                        <source src="${video.video_url}" type="video/mp4">
+                    </video>
+                    <div class="video-overlay" onclick="playVideo(this)">
+                        <div class="play-button-circle">
+                            <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-card-info">
+                    <div class="video-category">CFX / RIGGING</div>
+                    <h3 class="video-card-title">${video.title}</h3>
+                    <p class="video-card-description">${video.description || ''}</p>
+                    ${video.updated_time ? `<div class="video-card-meta" style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem;">📅 ${video.updated_time}</div>` : ''}
+                </div>
+            `;
+            return card;
+        }
+
+        function loadVideos() {
+            fetch('videos.json')
+                .then(res => res.json())
+                .then(videos => {
+                    const featuredGrid = document.getElementById('videoGridFeatured');
+                    const fullGrid = document.getElementById('videoGridFull');
+
+                    videos.forEach((video, index) => {
+                        // Featured section: show first 3 videos
+                        if (index < 3 && featuredGrid) {
+                            featuredGrid.appendChild(createVideoCard(video, false));
+                        }
+                        // Full page: show all videos
+                        if (fullGrid) {
+                            fullGrid.appendChild(createVideoCard(video, true));
+                        }
+                    });
+                })
+                .catch(err => console.warn('Could not load videos.json:', err));
+        }
+
         // Add click handlers for category tags
         document.addEventListener('DOMContentLoaded', function() {
+            loadVideos();
             document.querySelectorAll('.category-tag').forEach(tag => {
                 tag.addEventListener('click', function() {
                     filterCategory(this.dataset.category);
@@ -2606,13 +2538,4 @@
             });
             
             // Show overlay when paused
-            video.addEventListener('pause', function() {
-                if (video.currentTime < video.duration) {
-                    overlay.style.display = 'flex';
-                    video.removeAttribute('controls');
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+            video.addE
