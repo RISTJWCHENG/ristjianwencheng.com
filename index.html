@@ -2820,31 +2820,34 @@
           }
         ];
 
-        // Thumbnail data embedded directly
-        const THUMBNAILS_DATA = [
-          {
-            "title": "CFX SETUP FOR FEATURE FILM Thumbnail",
-            "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/CFX%20SETUP%20FOR%20FEATURE%20FILM_Thumbnail_RISTJIANWENCHENG.png",
-            "match": "CFX SETUP FOR FEATURE FILM"
-          },
-          {
-            "title": "N HAIR SETUP Tool Thumbnail",
-            "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/N%20HAIR%20SETUP_Tool_Thumbnail_RISTJIANWENCHENG.png",
-            "match": "N HAIR SETUP"
-          },
-          {
-            "title": "Reset Curves Tool Thumbnail",
-            "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Reset%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
-            "match": "Reset Curves"
-          }
-        ];
+        // Thumbnails loaded from videoThumbnails.json — no hardcoded data
+        let THUMBNAILS_DATA = [];
 
-        // Find thumbnail URL by matching video title
+        // Normalize title for fuzzy matching: lowercase, remove punctuation/special chars
+        function normalizeTitle(str) {
+            return str.toLowerCase()
+                .replace(/[_\-|,\.\'\"]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // Score how well two titles match (word overlap)
+        function matchScore(jsonTitle, videoTitle) {
+            const a = normalizeTitle(jsonTitle).split(' ').filter(Boolean);
+            const b = normalizeTitle(videoTitle).split(' ').filter(Boolean);
+            const common = a.filter(function(w) { return w.length > 2 && b.includes(w); });
+            return common.length / Math.max(a.length, b.length);
+        }
+
+        // Find best matching thumbnail for a video title
         function getThumbnail(videoTitle) {
-            const t = THUMBNAILS_DATA.find(function(t) {
-                return videoTitle.toLowerCase().includes(t.match.toLowerCase());
+            if (!THUMBNAILS_DATA.length) return null;
+            var best = null, bestScore = 0;
+            THUMBNAILS_DATA.forEach(function(t) {
+                var score = matchScore(t.title, videoTitle);
+                if (score > bestScore) { bestScore = score; best = t; }
             });
-            return t ? t.image_url : null;
+            return (bestScore >= 0.3) ? best.thumbnail_url : null;
         }
 
         function createVideoCard(video) {
@@ -2909,24 +2912,19 @@
 
         // Render videos immediately on DOM ready
         document.addEventListener('DOMContentLoaded', function() {
-            // Render embedded video data right away
+            // First render without thumbnails
             renderVideos(VIDEOS_DATA);
 
-            // Try to load fresh thumbnails from videoThumbnails.json
-            try {
-                fetch('videoThumbnails.json')
-                    .then(function(res) { if (!res.ok) throw new Error(); return res.json(); })
-                    .then(function(thumbs) {
-                        thumbs.forEach(function(t) {
-                            // Add to THUMBNAILS_DATA with a match key derived from title
-                            var match = t.title.replace(' Thumbnail', '').trim();
-                            THUMBNAILS_DATA.push({ title: t.title, image_url: t.image_url, match: match });
-                        });
-                        // Re-render with updated thumbnails
-                        renderVideos(VIDEOS_DATA);
-                    })
-                    .catch(function() {});
-            } catch(e) {}
+            // Load thumbnails from videoThumbnails.json, then re-render
+            fetch('videoThumbnails.json')
+                .then(function(res) { if (!res.ok) throw new Error(); return res.json(); })
+                .then(function(thumbs) {
+                    THUMBNAILS_DATA = thumbs;
+                    renderVideos(VIDEOS_DATA);
+                })
+                .catch(function() {
+                    // No thumbnails available, keep plain render
+                });
 
             // Try to load fresh videos from videos.json
             try {
