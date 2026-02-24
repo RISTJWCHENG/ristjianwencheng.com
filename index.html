@@ -315,12 +315,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.3s;
+            transition: background 0.3s, box-shadow 0.3s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #667eea 100%) rgba(255,255,255,0.9);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s linear infinite;
+            font-weight: 700;
         }
 
         .close-gallery-btn:hover {
-            background: white;
+            animation: gradient-flow 1.5s linear infinite;
+            box-shadow: 0 6px 20px rgba(102,126,234,0.3);
         }
 
         .back-to-gallery-btn {
@@ -332,7 +340,7 @@
             padding: 0.75rem 1.5rem;
             border-radius: 50px;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
             letter-spacing: 0.5px;
             cursor: pointer;
             z-index: 1600;
@@ -342,12 +350,18 @@
             transition: all 0.3s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            color: var(--text-primary);
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #667eea 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s linear infinite;
         }
 
         .back-to-gallery-btn:hover {
-            background: white;
+            animation: gradient-flow 1.5s linear infinite;
             transform: translateX(-5px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.3);
         }
 
         .back-to-gallery-btn::before {
@@ -736,13 +750,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0);
             cursor: pointer;
             transition: background 0.3s;
         }
 
         .video-overlay:hover {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.35);
         }
 
         .play-button-circle {
@@ -753,13 +767,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s, background 0.3s;
+            transition: transform 0.3s, background 0.3s, opacity 0.3s;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            opacity: 0;
         }
 
-        .play-button-circle:hover {
-            transform: scale(1.1);
-            background: white;
+        .video-overlay:hover .play-button-circle {
+            opacity: 1;
+            transform: scale(1.05);
         }
 
         .play-button-circle svg {
@@ -785,7 +800,7 @@
         .video-category {
             font-size: 0.75rem;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: #7c6fcd;
             letter-spacing: 1px;
             margin-bottom: 0.5rem;
         }
@@ -801,6 +816,49 @@
             font-size: 0.95rem;
             color: var(--text-secondary);
             line-height: 1.6;
+        }
+
+        .desc-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .desc-clamp.expanded {
+            display: block;
+            -webkit-line-clamp: unset;
+            overflow: visible;
+        }
+        .desc-more-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+            margin-top: 0.3rem;
+            display: inline-block;
+            font-family: inherit;
+        }
+        .desc-more-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal description area */
+        .video-modal-desc-area {
+            background: #111;
+            padding: 1rem 1.2rem;
+            border-top: 1px solid #2a2a2a;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .video-modal-desc-area .desc-clamp {
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .video-modal-desc-area .desc-more-btn {
+            color: #d4a574;
         }
 
         .featured-articles-grid {
@@ -1764,7 +1822,7 @@
             setTimeout(() => { scrollToSection('gallery'); }, 300);
         }
         // Open video in modal (medium size), stop any previously playing video
-        function openVideoModal(videoUrl, title) {
+        function openVideoModal(videoUrl, title, description) {
             // Stop all inline card videos
             document.querySelectorAll('.video-thumbnail-bg').forEach(function(v) {
                 v.pause();
@@ -1785,6 +1843,20 @@
             source.src = videoUrl;
             player.load();
             player.play().catch(function(){});
+
+            // Show description if available
+            const descArea = document.getElementById('videoModalDescArea');
+            const descEl = document.getElementById('videoModalDesc');
+            const moreBtn = document.getElementById('videoModalMoreBtn');
+            if (description && description.trim()) {
+                descEl.textContent = description;
+                descEl.classList.remove('expanded');
+                moreBtn.textContent = 'more';
+                descArea.style.display = 'block';
+            } else {
+                descArea.style.display = 'none';
+            }
+
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -1811,13 +1883,26 @@
             else if (player.mozRequestFullScreen) player.mozRequestFullScreen();
         }
 
+        function toggleModalDesc() {
+            const descEl = document.getElementById('videoModalDesc');
+            const btn = document.getElementById('videoModalMoreBtn');
+            if (descEl.classList.contains('expanded')) {
+                descEl.classList.remove('expanded');
+                btn.textContent = 'more';
+            } else {
+                descEl.classList.add('expanded');
+                btn.textContent = 'less';
+            }
+        }
+
         function playVideo(overlay) {
             const wrapper = overlay.parentElement;
             const video = wrapper.querySelector('.video-thumbnail-bg');
             const source = video.querySelector('source');
             const card = wrapper.closest('.video-card-featured');
             const title = card ? card.querySelector('.video-card-title').textContent : '';
-            openVideoModal(source.src, title);
+            const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
+            openVideoModal(source.src, title, desc);
         }
 
         function playVideoWithThumb(overlay) {
@@ -1826,7 +1911,8 @@
             const source = video.querySelector('source');
             const card = wrapper.closest('.video-card-featured');
             const title = card ? card.querySelector('.video-card-title').textContent : '';
-            openVideoModal(source.src, title);
+            const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
+            openVideoModal(source.src, title, desc);
         }
         function filterCategory(category) {
             document.querySelectorAll('.category-tag').forEach(tag => {
@@ -1863,6 +1949,17 @@
             modal.classList.remove('active');
             iframe.src = '';
             document.body.style.overflow = 'auto';
+        }
+        function toggleCardDesc(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.classList.contains('expanded')) {
+                el.classList.remove('expanded');
+                btn.textContent = 'more';
+            } else {
+                el.classList.add('expanded');
+                btn.textContent = 'less';
+            }
         }
     </script>
 </head>
@@ -1932,7 +2029,10 @@
                 loop
                 playsinline
                 preload="auto"
-                style="width: 100%; display: block; margin: 0 auto 2rem;"
+                disablepictureinpicture
+                controlslist="nodownload noremoteplayback"
+                oncontextmenu="return false;"
+                style="width: 100%; display: block; margin: 0 auto 2rem; pointer-events: none;"
             >
                 <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO1.mov" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
                 <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO1.mov" type="video/quicktime">
@@ -2204,6 +2304,22 @@
                     <div class="cv-item">
                         <div class="cv-year">Current Project</div>
                         <p>YUG – Feature Film (Currently in Production), responsible for character FX setup and simulation for feature film production.</p>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h2>PREVIOUS</h2>
+                    <div class="cv-item">
+                        <div class="cv-year">Company</div>
+                        <p>DreamWorks Animation | in Shanghai Studio</p>
+                    </div>
+                    <div class="cv-item">
+                        <div class="cv-year">Location</div>
+                        <p>Shanghai, China</p>
+                    </div>
+                    <div class="cv-item">
+                        <div class="cv-year">Job Position</div>
+                        <p>Rigging & CFX Artist</p>
                     </div>
                 </div>
 
@@ -2500,6 +2616,10 @@
             <video id="videoModalPlayer" controls playsinline style="flex:1;">
                 <source id="videoModalSource" src="" type="video/mp4">
             </video>
+            <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
+                <p class="desc-clamp" id="videoModalDesc"></p>
+                <button class="desc-more-btn" id="videoModalMoreBtn" onclick="toggleModalDesc()">more</button>
+            </div>
         </div>
     </div>
 
@@ -2858,6 +2978,8 @@
             const thumbHTML = thumbUrl
                 ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
                 : '';
+            const descId = 'desc-' + Math.random().toString(36).substr(2, 8);
+            const hasDesc = video.description && video.description.trim();
             card.innerHTML = `
                 <div class="video-thumbnail-wrapper">
                     ${thumbHTML}
@@ -2876,8 +2998,11 @@
                 <div class="video-card-info">
                     <div class="video-category">WORK</div>
                     <h3 class="video-card-title">${video.title}</h3>
-                    <p class="video-card-description">${video.description || ''}</p>
-                    ${video.updated_time ? `<div style="font-size:0.8rem;color:#6a6a6a;margin-top:0.5rem;">📅 ${video.updated_time}</div>` : ''}
+                    <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;">📅 ${video.updated_time || '2025'}</div>
+                    <div>
+                        <p class="video-card-description desc-clamp" id="${descId}">${video.description || ''}</p>
+                        ${hasDesc ? `<button class="desc-more-btn" onclick="toggleCardDesc('${descId}', this)">more</button>` : ''}
+                    </div>
                 </div>
             `;
             return card;
