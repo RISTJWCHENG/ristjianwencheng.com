@@ -315,12 +315,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.3s;
+            transition: background 0.3s, box-shadow 0.3s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #667eea 100%) rgba(255,255,255,0.9);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s linear infinite;
+            font-weight: 700;
         }
 
         .close-gallery-btn:hover {
-            background: white;
+            animation: gradient-flow 1.5s linear infinite;
+            box-shadow: 0 6px 20px rgba(102,126,234,0.3);
         }
 
         .back-to-gallery-btn {
@@ -332,7 +340,7 @@
             padding: 0.75rem 1.5rem;
             border-radius: 50px;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
             letter-spacing: 0.5px;
             cursor: pointer;
             z-index: 1600;
@@ -342,12 +350,18 @@
             transition: all 0.3s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            color: var(--text-primary);
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #667eea 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s linear infinite;
         }
 
         .back-to-gallery-btn:hover {
-            background: white;
+            animation: gradient-flow 1.5s linear infinite;
             transform: translateX(-5px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.3);
         }
 
         .back-to-gallery-btn::before {
@@ -2015,7 +2029,10 @@
                 loop
                 playsinline
                 preload="auto"
-                style="width: 100%; display: block; margin: 0 auto 2rem;"
+                disablepictureinpicture
+                controlslist="nodownload noremoteplayback"
+                oncontextmenu="return false;"
+                style="width: 100%; display: block; margin: 0 auto 2rem; pointer-events: none;"
             >
                 <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO1.mov" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
                 <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO1.mov" type="video/quicktime">
