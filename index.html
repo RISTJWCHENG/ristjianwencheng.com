@@ -806,7 +806,7 @@
         }
 
         .video-card-title {
-            font-size: 1.3rem;
+            font-size: 1.05rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
             color: var(--text-primary);
@@ -820,7 +820,7 @@
 
         .desc-clamp {
             display: -webkit-box;
-            -webkit-line-clamp: 5;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -842,6 +842,51 @@
         }
         .desc-more-btn:hover {
             text-decoration: underline;
+        }
+
+        .video-card-footer {
+            display: none;
+        }
+        .video-share-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .video-share-btn:hover {
+            color: #7c6fcd;
+            background: rgba(124,111,205,0.08);
+        }
+        .video-share-btn svg {
+            flex-shrink: 0;
+        }
+        .video-share-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #222;
+            color: #fff;
+            padding: 0.6rem 1.4rem;
+            border-radius: 24px;
+            font-size: 0.85rem;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+        .video-share-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* Modal description area */
@@ -1997,6 +2042,26 @@
                 btn.textContent = 'less';
             }
         }
+        function shareVideo(url, btn) {
+            navigator.clipboard.writeText(url).then(function() {
+                const toast = document.getElementById('shareToast');
+                toast.classList.add('show');
+                setTimeout(function() { toast.classList.remove('show'); }, 2200);
+            }).catch(function() {
+                // Fallback for older browsers
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                const toast = document.getElementById('shareToast');
+                toast.classList.add('show');
+                setTimeout(function() { toast.classList.remove('show'); }, 2200);
+            });
+        }
     </script>
 </head>
 <body>
@@ -2049,7 +2114,7 @@
                     <option value="gallery">GALLERY</option>
                     <option value="video">VIDEOS</option>
                     <option value="articles">ARTICLES</option>
-                    <option value="information">INFORMATION</option>
+                    <option value="information">Information</option>
                 </select>
                 <span class="dropdown-icon"></span>
             </div>
@@ -2305,7 +2370,7 @@
 
     <section id="information" class="section">
         <div class="container">
-            <h2 class="section-title">INFORMATION</h2>
+            <h2 class="section-title">Information</h2>
             <div style="text-align: center; margin: 0 auto 4rem; max-width: 400px;">
                 <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/p1.jpg" alt="RIST JIANWEN CHENG" style="width: 100%; max-width: 300px; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
             </div>
@@ -2663,6 +2728,9 @@
         </div>
     </div>
 
+    <!-- Share toast notification -->
+    <div class="video-share-toast" id="shareToast">🔗 Link copied!</div>
+
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
         function scrollToSection(sectionId) {
@@ -2924,59 +2992,77 @@
                 .catch(err => console.warn('Could not load images.json:', err));
         }
 
-        // Video data embedded directly
+        // Video data embedded directly (fallback if videos.json unavailable)
         const VIDEOS_DATA = [
           {
-            "title": "Search And BlendShape For Curves_Tool",
+            "title": "Search And BlendShape For Curves Tool",
+            "updated_time": "2024",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Search%20And%20BlendShape%20For%20Curves_Tool_RISTJIANWENCHENG.mov",
-            "description": "A"
+            "description": "Description",
+            "category": "work"
           },
           {
-            "title": "Reset Curves_Tool",
+            "title": "Reset Curves Tool",
+            "updated_time": "2024",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Reset%20Curves_Tool_RISTJIANWENCHENG.mov",
-            "description": "B"
+            "description": "Description",
+            "category": "work"
           },
           {
-            "title": "N HAIR SETUP_Tool",
+            "title": "N HAIR SETUP Tool",
+            "updated_time": "2024",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/N%20HAIR%20SETUP_Tool_RISTJIANWENCHENG.mov",
-            "description": "C"
+            "description": "Description",
+            "category": "work"
           },
           {
-            "title": "CFX SETUP FOR FEATURE FILM",
+            "title": "CFX Setup for Feature Film",
+            "updated_time": "2022–2024",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/CFX%20SETUP%20FOR%20FEATURE%20FILM_RISTJIANWENCHENG.mov",
-            "description": "This showcases part of the CFX setups I contributed to on several feature films."
+            "description": "Description",
+            "category": "work"
           },
           {
-            "title": "2022_CFX SHOWREEL_Stromae - Multitude, le film - The concert",
+            "title": "2022 CFX Showreel | Stromae – Multitude, le film – The Concert",
+            "updated_time": "2022",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2022_CFX%20SHOWREEL_Stromae%20-%20Multitude%2C%20le%20film%20-%20The%20concert_RISTJIANWENCHENG.mov",
-            "description": "E"
+            "description": "Description",
+            "category": "work"
           },
           {
-            "title": "2015_Updated_Rigging Demo Reel",
+            "title": "2015 Updated Rigging Demo Reel",
+            "updated_time": "2015",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2015_Updated_Rigging%20Demo%20Reel_RISTJIANWENCHENG.mov",
-            "description": "F"
+            "description": "Description",
+            "category": "work"
           },
           {
-            "title": "2015_Updated_CFX SHOWREEL",
+            "title": "2015 Updated CFX Showreel",
+            "updated_time": "2015",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2015_Updated_CFX%20SHOWREEL_RISTJIANWENCHENG.mov",
-            "description": "G"
+            "description": "Description",
+            "category": "work"
           },
           {
-            "title": "2014_Updated_Character Rigging Setup Demo Reel",
+            "title": "2014 Updated Character Rigging Setup Demo Reel",
+            "updated_time": "2014",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2014_Updated_Character%20Rigging%20Setup%20Demo%20Reel_RISTJIANWENCHENG.mov",
-            "description": "H"
+            "description": "Description",
+            "category": "work"
           },
           {
-            "title": "N DYNAMIC CURVES RIGGING SETUP Tool",
+            "title": "N Dynamic Curves Rigging Setup Tool",
             "updated_time": "2013",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2013_N%20DYNAMIC%20CURVES%20RIGGING%20SETUP_%20Tool_RISTJIANWENCHENG.mov",
-            "description": "J"
+            "description": "Description",
+            "category": "work"
           },
           {
             "title": "Animation Showreel | Student Animation Work",
             "updated_time": "2010",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2010_Animation%20Showreel_Student%20Animation%20Work_RISTJIANWENCHENG.mov",
-            "description": "This is my 2010 student animation showreel, featuring exercises completed during my studies."
+            "description": "Description",
+            "category": "work"
           }
         ];
 
@@ -3013,13 +3099,13 @@
         function createVideoCard(video) {
             const card = document.createElement('div');
             card.className = 'video-card-featured';
-            card.dataset.category = 'Work';
+            card.dataset.category = (video.category || 'work').charAt(0).toUpperCase() + (video.category || 'work').slice(1);
             const thumbUrl = getThumbnail(video.title);
             const thumbHTML = thumbUrl
                 ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
                 : '';
             const descId = 'desc-' + Math.random().toString(36).substr(2, 8);
-            const hasDesc = video.description && video.description.trim();
+            const descText = video.description && video.description.trim() ? video.description : 'Description';
             card.innerHTML = `
                 <div class="video-thumbnail-wrapper">
                     ${thumbHTML}
@@ -3036,15 +3122,32 @@
                     </div>
                 </div>
                 <div class="video-card-info">
-                    <div class="video-category">WORK</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+                        <div class="video-category">${(video.category || 'work').toUpperCase()}</div>
+                        <button class="video-share-btn" onclick="shareVideo('${video.video_url}', this)" title="Copy link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                            </svg>
+                            Share
+                        </button>
+                    </div>
                     <h3 class="video-card-title">${video.title}</h3>
                     <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;" data-time="${video.updated_time || '2025'}">📅 ${video.updated_time || '2025'}</div>
                     <div>
-                        <p class="video-card-description desc-clamp" id="${descId}">${video.description || ''}</p>
-                        ${hasDesc ? `<button class="desc-more-btn" onclick="toggleCardDesc('${descId}', this)">more</button>` : ''}
+                        <p class="video-card-description desc-clamp" id="${descId}">${descText}</p>
+                        <button class="desc-more-btn" id="btn-${descId}" onclick="toggleCardDesc('${descId}', this)" style="display:none;">more</button>
                     </div>
                 </div>
             `;
+            // Show more button only if text actually overflows 5 lines
+            requestAnimationFrame(function() {
+                const descEl = document.getElementById(descId);
+                const moreBtn = document.getElementById('btn-' + descId);
+                if (descEl && moreBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
+                    moreBtn.style.display = 'inline-block';
+                }
+            });
             return card;
         }
 
@@ -3053,12 +3156,20 @@
             const fullGrid = document.getElementById('videoGridFull');
             if (featuredGrid) featuredGrid.innerHTML = '';
             if (fullGrid) fullGrid.innerHTML = '';
-            videos.forEach(function(video, index) {
-                if (index < 3 && featuredGrid) {
+
+            // Group by category for featured section (first 3 per category)
+            const categoryCounts = {};
+            videos.forEach(function(video) {
+                const cat = (video.category || 'work').toLowerCase();
+                if (!categoryCounts[cat]) categoryCounts[cat] = 0;
+                const card = createVideoCard(video);
+                // Featured: show first 3 across all (or customize per category)
+                if (categoryCounts[cat] < 3 && featuredGrid) {
                     featuredGrid.appendChild(createVideoCard(video));
                 }
+                categoryCounts[cat]++;
                 if (fullGrid) {
-                    fullGrid.appendChild(createVideoCard(video));
+                    fullGrid.appendChild(card);
                 }
             });
         }
@@ -3077,27 +3188,27 @@
 
         // Render videos immediately on DOM ready
         document.addEventListener('DOMContentLoaded', function() {
-            // First render without thumbnails
+            // First render with embedded data immediately
             renderVideos(VIDEOS_DATA);
 
-            // Load thumbnails from videoThumbnails.json, then re-render
+            // Load thumbnails, then try fresh videos.json
             fetch('videoThumbnails.json')
                 .then(function(res) { if (!res.ok) throw new Error(); return res.json(); })
                 .then(function(thumbs) {
                     THUMBNAILS_DATA = thumbs;
-                    renderVideos(VIDEOS_DATA);
+                    // Now try videos.json with thumbnails ready
+                    return fetch('videos.json')
+                        .then(function(res) { if (!res.ok) throw new Error(); return res.json(); })
+                        .then(function(videos) { renderVideos(videos); })
+                        .catch(function() { renderVideos(VIDEOS_DATA); }); // thumbnails loaded, re-render embedded
                 })
                 .catch(function() {
-                    // No thumbnails available, keep plain render
+                    // No thumbnails, try videos.json anyway
+                    fetch('videos.json')
+                        .then(function(res) { if (!res.ok) throw new Error(); return res.json(); })
+                        .then(function(videos) { renderVideos(videos); })
+                        .catch(function() {});
                 });
-
-            // Try to load fresh videos from videos.json
-            try {
-                fetch('videos.json')
-                    .then(function(res) { if (!res.ok) throw new Error(); return res.json(); })
-                    .then(function(videos) { renderVideos(videos); })
-                    .catch(function() {});
-            } catch(e) {}
 
             loadImages();
 
