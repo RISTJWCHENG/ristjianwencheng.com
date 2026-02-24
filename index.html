@@ -374,110 +374,53 @@
             font-size: 1.2rem;
         }
 
+        /* ── Featured Gallery: 5-item masonry layout ── */
         .gallery-masonry {
             display: grid;
-            grid-template-columns: 1fr 1.3fr 0.55fr;
-            grid-template-rows: repeat(3, 220px);
-            gap: 1rem;
+            grid-template-columns: 38% 42% 20%;
+            grid-template-rows: 215px 215px 215px;
+            gap: 10px;
         }
-
-        .gallery-item-large {
+        /* Left tall image: spans all 3 rows */
+        .g-left {
             grid-column: 1;
             grid-row: 1 / 4;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            background: #e5e3df;
-            border-radius: 16px;
-            transition: transform 0.4s;
         }
-
-        .gallery-item-col2 {
+        /* Center tall image: spans all 3 rows */
+        .g-center {
             grid-column: 2;
             grid-row: 1 / 4;
+        }
+        /* Right column: 3 stacked small images */
+        .g-right-1 { grid-column: 3; grid-row: 1; }
+        .g-right-2 { grid-column: 3; grid-row: 2; }
+        .g-right-3 { grid-column: 3; grid-row: 3; }
+
+        .g-left, .g-center, .g-right-1, .g-right-2, .g-right-3 {
             position: relative;
             overflow: hidden;
             cursor: pointer;
             background: #e5e3df;
             border-radius: 16px;
-            transition: transform 0.4s;
+            transition: transform 0.35s ease;
         }
-
-        .gallery-item-r1 {
-            grid-column: 3;
-            grid-row: 1;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            background: #e5e3df;
-            border-radius: 16px;
-            transition: transform 0.4s;
-        }
-
-        .gallery-item-r2 {
-            grid-column: 3;
-            grid-row: 2;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            background: #e5e3df;
-            border-radius: 16px;
-            transition: transform 0.4s;
-        }
-
-        .gallery-item-r3 {
-            grid-column: 3;
-            grid-row: 3;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            background: #e5e3df;
-            border-radius: 16px;
-            transition: transform 0.4s;
-        }
-
-        .gallery-item-small {
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            background: #e5e3df;
-            border-radius: 16px;
-            transition: transform 0.4s;
-        }
-
-        .gallery-featured-hidden {
-            display: none;
-        }
-
-        .gallery-item-large:hover,
-        .gallery-item-col2:hover,
-        .gallery-item-r1:hover,
-        .gallery-item-r2:hover,
-        .gallery-item-r3:hover,
-        .gallery-item-small:hover {
-            transform: translateY(-4px);
-        }
-
-        .gallery-item-large img,
-        .gallery-item-col2 img,
-        .gallery-item-r1 img,
-        .gallery-item-r2 img,
-        .gallery-item-r3 img,
-        .gallery-item-small img {
+        .g-left img, .g-center img,
+        .g-right-1 img, .g-right-2 img, .g-right-3 img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s;
+            display: block;
+            transition: transform 0.5s ease;
         }
-
-        .gallery-item-large:hover img,
-        .gallery-item-col2:hover img,
-        .gallery-item-r1:hover img,
-        .gallery-item-r2:hover img,
-        .gallery-item-r3:hover img,
-        .gallery-item-small:hover img {
-            transform: scale(1.05);
+        .g-left:hover, .g-center:hover,
+        .g-right-1:hover, .g-right-2:hover, .g-right-3:hover {
+            transform: translateY(-4px);
         }
+        .g-left:hover img, .g-center:hover img,
+        .g-right-1:hover img, .g-right-2:hover img, .g-right-3:hover img {
+            transform: scale(1.06);
+        }
+        .gallery-featured-hidden { display: none; }
 
         .section-subtitle {
             text-align: center;
@@ -2273,96 +2216,41 @@
                 <a onclick="openFullGallery()" class="view-all-link">View All</a>
             </div>
             <div class="gallery-masonry">
-                <div class="gallery-item-large" onclick="openImageModal(this)">
+                <!-- Left: tall image spanning full height -->
+                <div class="g-left" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/1%20or%202%20%40wolfcubwolfcub%20(1).jpg" alt="Gallery Image 1">
-                    <div class="gallery-info">
-                        <h3>Visual Story I</h3>
-                        <p>Contemporary Art, 2024</p>
-                    </div>
+                    <div class="gallery-info"><h3>Visual Story I</h3><p>Contemporary Art, 2024</p></div>
                 </div>
-                <div class="gallery-item-col2" onclick="openImageModal(this)">
+                <!-- Center: tall image spanning full height -->
+                <div class="g-center" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Scratches%20of%20a%20Croatian%20summer%E2%80%A2%E2%80%A2%E2%80%A2%23croatia%20%23summer%20%23passionpasport%20%23mytinyatlas%20(4).jpg" alt="Gallery Image 2">
-                    <div class="gallery-info">
-                        <h3>Visual Story II</h3>
-                        <p>Mixed Media, 2024</p>
-                    </div>
+                    <div class="gallery-info"><h3>Visual Story II</h3><p>Mixed Media, 2024</p></div>
                 </div>
-                <div class="gallery-item-r1" onclick="openImageModal(this)">
+                <!-- Right column: 3 stacked small images -->
+                <div class="g-right-1" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="Gallery Image 3">
-                    <div class="gallery-info">
-                        <h3>Visual Story III</h3>
-                        <p>Photography, 2024</p>
-                    </div>
+                    <div class="gallery-info"><h3>Visual Story III</h3><p>Photography, 2024</p></div>
                 </div>
-                <div class="gallery-item-r2" onclick="openImageModal(this)">
+                <div class="g-right-2" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Gallery Image 4">
-                    <div class="gallery-info">
-                        <h3>Visual Story IV</h3>
-                        <p>Digital Art, 2023</p>
-                    </div>
+                    <div class="gallery-info"><h3>Visual Story IV</h3><p>Digital Art, 2023</p></div>
                 </div>
-                <div class="gallery-item-r3" onclick="openImageModal(this)">
+                <div class="g-right-3" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481765748_650136240890917_7887633390541422267_n.jpg" alt="Gallery Image 5">
-                    <div class="gallery-info">
-                        <h3>Visual Story V</h3>
-                        <p>Architecture, 2023</p>
-                    </div>
+                    <div class="gallery-info"><h3>Visual Story V</h3><p>Architecture, 2023</p></div>
                 </div>
-                <div class="gallery-item-small gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Baroque%20Perspective%20at%20Val-de-Gr%C3%A2ce%20%20%23vanishingpoint%23dome%23straightfacades%23facade%23baroque%23architecture%23perspective%23symmetry%23accidentallywesanderson%23vsco%23france%23paris%23portroya.jpg" alt="Gallery Image 7">
-                    <div class="gallery-info">
-                        <h3>Visual Story VII</h3>
-                        <p>Fine Art, 2023</p>
-                    </div>
+                <!-- Hidden items — only visible in View All -->
+                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
+                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Baroque%20Perspective%20at%20Val-de-Gr%C3%A2ce%20%20%23vanishingpoint%23dome%23straightfacades%23facade%23baroque%23architecture%23perspective%23symmetry%23accidentallywesanderson%23vsco%23france%23paris%23portroya.jpg" alt="Gallery Image 6">
+                    <div class="gallery-info"><h3>Visual Story VI</h3><p>Fine Art, 2023</p></div>
                 </div>
-                <div class="gallery-item-small gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Scratches%20of%20a%20Croatian%20summer%E2%80%A2%E2%80%A2%E2%80%A2%23croatia%20%23summer%20%23passionpasport%20%23mytinyatlas%20(4).jpg" alt="Gallery Image 8">
-                    <div class="gallery-info">
-                        <h3>Visual Story VIII</h3>
-                        <p>Technical Art, 2024</p>
-                    </div>
-                    <div class="mini-gallery-container">
-                        <div class="mini-gallery-item">
-                            <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Rest%20Curves_LE_upscale_strong_x4.jpg" alt="Mini 1">
-                        </div>
-                        <div class="mini-gallery-item">
-                            <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="Mini 2">
-                        </div>
-                        <div class="mini-gallery-item">
-                            <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Mini 3">
-                        </div>
-                        <div class="mini-gallery-item">
-                            <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/p1.jpg" alt="Mini 4">
-                        </div>
-                    </div>
+                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
+                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Half%20of%20expression%2CAre%20the%20things%20we%20leave%20unsaid.%20(5).jpg" alt="Gallery Image 7">
+                    <div class="gallery-info"><h3>Visual Story VII</h3><p>Photography, 2024</p></div>
                 </div>
-                <div class="gallery-item-small gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Half%20of%20expression%2CAre%20the%20things%20we%20leave%20unsaid.%20(5).jpg" alt="Gallery Image 9">
-                    <div class="gallery-info">
-                        <h3>Visual Story IX</h3>
-                        <p>Photography, 2024</p>
-                    </div>
-                </div>
-                <div class="gallery-item-small gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Rest%20Curves_LE_upscale_strong_x4.jpg" alt="Gallery Image 10">
-                    <div class="gallery-info">
-                        <h3>Visual Story X</h3>
-                        <p>Technical Art, 2024</p>
-                    </div>
-                </div>
-                <div class="gallery-item-small gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="Gallery Image 11">
-                    <div class="gallery-info">
-                        <h3>Visual Story XI</h3>
-                        <p>Photography, 2024</p>
-                    </div>
-                </div>
-                <div class="gallery-item-small gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Gallery Image 12">
-                    <div class="gallery-info">
-                        <h3>Visual Story XII</h3>
-                        <p>Digital Art, 2023</p>
-                    </div>
+                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
+                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Rest%20Curves_LE_upscale_strong_x4.jpg" alt="Gallery Image 8">
+                    <div class="gallery-info"><h3>Visual Story VIII</h3><p>Technical Art, 2024</p></div>
                 </div>
             </div>
             
