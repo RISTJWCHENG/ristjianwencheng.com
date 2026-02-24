@@ -847,18 +847,34 @@
         /* Modal description area */
         .video-modal-desc-area {
             background: #111;
-            padding: 1rem 1.2rem;
+            padding: 0.8rem 1.2rem 1rem;
             border-top: 1px solid #2a2a2a;
-            max-height: 200px;
-            overflow-y: auto;
+        }
+        .video-modal-meta {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .video-modal-category {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #7c6fcd;
+            letter-spacing: 1px;
+        }
+        .video-modal-time {
+            font-size: 0.78rem;
+            color: #888;
         }
         .video-modal-desc-area .desc-clamp {
             color: #ccc;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             line-height: 1.6;
+            margin: 0;
         }
         .video-modal-desc-area .desc-more-btn {
-            color: #d4a574;
+            color: #7c6fcd;
+            margin-top: 0.2rem;
         }
 
         .featured-articles-grid {
@@ -1169,7 +1185,17 @@
             border: none;
         }
 
-        /* Video Player Modal */
+        /* Hero logo video - no browser controls or hover UI */
+        #heroLogoVideo {
+            pointer-events: none;
+            user-select: none;
+        }
+        #heroLogoVideo::-webkit-media-controls { display: none !important; }
+        #heroLogoVideo::-webkit-media-controls-enclosure { display: none !important; }
+        #heroLogoVideo::-webkit-media-controls-overlay-cast-button { display: none !important; }
+        #heroLogoVideo::--webkit-media-controls-download-button { display: none !important; }
+
+
         .video-modal {
             display: none;
             position: fixed;
@@ -1822,7 +1848,7 @@
             setTimeout(() => { scrollToSection('gallery'); }, 300);
         }
         // Open video in modal (medium size), stop any previously playing video
-        function openVideoModal(videoUrl, title, description) {
+        function openVideoModal(videoUrl, title, description, time) {
             // Stop all inline card videos
             document.querySelectorAll('.video-thumbnail-bg').forEach(function(v) {
                 v.pause();
@@ -1844,17 +1870,23 @@
             player.load();
             player.play().catch(function(){});
 
-            // Show description if available
+            // Always show meta area with WORK + time
             const descArea = document.getElementById('videoModalDescArea');
             const descEl = document.getElementById('videoModalDesc');
             const moreBtn = document.getElementById('videoModalMoreBtn');
+            const timeEl = document.getElementById('videoModalTime');
+
+            timeEl.textContent = '📅 ' + (time || '2025');
+            descArea.style.display = 'block';
+
             if (description && description.trim()) {
                 descEl.textContent = description;
                 descEl.classList.remove('expanded');
+                moreBtn.style.display = 'inline-block';
                 moreBtn.textContent = 'more';
-                descArea.style.display = 'block';
             } else {
-                descArea.style.display = 'none';
+                descEl.textContent = '';
+                moreBtn.style.display = 'none';
             }
 
             modal.classList.add('active');
@@ -1902,7 +1934,9 @@
             const card = wrapper.closest('.video-card-featured');
             const title = card ? card.querySelector('.video-card-title').textContent : '';
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
-            openVideoModal(source.src, title, desc);
+            const timeEl = card ? card.querySelector('[data-time]') : null;
+            const time = timeEl ? timeEl.dataset.time : '2025';
+            openVideoModal(source.src, title, desc, time);
         }
 
         function playVideoWithThumb(overlay) {
@@ -1912,7 +1946,9 @@
             const card = wrapper.closest('.video-card-featured');
             const title = card ? card.querySelector('.video-card-title').textContent : '';
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
-            openVideoModal(source.src, title, desc);
+            const timeEl = card ? card.querySelector('[data-time]') : null;
+            const time = timeEl ? timeEl.dataset.time : '2025';
+            openVideoModal(source.src, title, desc, time);
         }
         function filterCategory(category) {
             document.querySelectorAll('.category-tag').forEach(tag => {
@@ -2030,9 +2066,9 @@
                 playsinline
                 preload="auto"
                 disablepictureinpicture
-                controlslist="nodownload noremoteplayback"
+                controlslist="nodownload noremoteplayback nofullscreen"
                 oncontextmenu="return false;"
-                style="width: 100%; display: block; margin: 0 auto 2rem; pointer-events: none;"
+                style="width: 100%; display: block; margin: 0 auto 2rem; pointer-events: none; user-select: none;"
             >
                 <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO1.mov" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
                 <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO1.mov" type="video/quicktime">
@@ -2617,6 +2653,10 @@
                 <source id="videoModalSource" src="" type="video/mp4">
             </video>
             <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
+                <div class="video-modal-meta">
+                    <span class="video-modal-category">WORK</span>
+                    <span class="video-modal-time" id="videoModalTime"></span>
+                </div>
                 <p class="desc-clamp" id="videoModalDesc"></p>
                 <button class="desc-more-btn" id="videoModalMoreBtn" onclick="toggleModalDesc()">more</button>
             </div>
@@ -2998,7 +3038,7 @@
                 <div class="video-card-info">
                     <div class="video-category">WORK</div>
                     <h3 class="video-card-title">${video.title}</h3>
-                    <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;">📅 ${video.updated_time || '2025'}</div>
+                    <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;" data-time="${video.updated_time || '2025'}">📅 ${video.updated_time || '2025'}</div>
                     <div>
                         <p class="video-card-description desc-clamp" id="${descId}">${video.description || ''}</p>
                         ${hasDesc ? `<button class="desc-more-btn" onclick="toggleCardDesc('${descId}', this)">more</button>` : ''}
