@@ -371,8 +371,8 @@
 
         .gallery-masonry {
             display: grid;
-            grid-template-columns: 1fr 1.3fr 0.3fr;
-            grid-template-rows: repeat(3, 200px);
+            grid-template-columns: 1fr 1.3fr 0.5fr;
+            grid-template-rows: repeat(3, 220px);
             gap: 1rem;
         }
 
@@ -419,7 +419,10 @@
         .gallery-item-small:nth-of-type(6),
         .gallery-item-small:nth-of-type(7),
         .gallery-item-small:nth-of-type(8),
-        .gallery-item-small:nth-of-type(9) {
+        .gallery-item-small:nth-of-type(9),
+        .gallery-item-small:nth-of-type(10),
+        .gallery-item-small:nth-of-type(11),
+        .gallery-item-small:nth-of-type(12) {
             display: none;
         }
 
@@ -899,6 +902,7 @@
             display: flex;
             gap: 1.2rem;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 0.5rem;
         }
         .video-modal-category {
@@ -1924,11 +1928,23 @@
             timeEl.textContent = '📅 ' + (time || '2025');
             descArea.style.display = 'block';
 
+            // Wire share button to current video URL
+            const shareBtn = document.getElementById('videoModalShareBtn');
+            if (shareBtn) {
+                shareBtn.onclick = function() { shareVideo(videoUrl, this); };
+            }
+
             if (description && description.trim()) {
                 descEl.textContent = description;
                 descEl.classList.remove('expanded');
-                moreBtn.style.display = 'inline-block';
+                moreBtn.style.display = 'none';
                 moreBtn.textContent = 'more';
+                // Check after paint if text actually overflows 3 lines
+                requestAnimationFrame(function() {
+                    if (descEl.scrollHeight > descEl.clientHeight + 2) {
+                        moreBtn.style.display = 'inline-block';
+                    }
+                });
             } else {
                 descEl.textContent = '';
                 moreBtn.style.display = 'none';
@@ -2719,11 +2735,20 @@
             </video>
             <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
                 <div class="video-modal-meta">
-                    <span class="video-modal-category">WORK</span>
-                    <span class="video-modal-time" id="videoModalTime"></span>
+                    <div style="display:flex;align-items:center;gap:0.8rem;">
+                        <span class="video-modal-category">WORK</span>
+                        <span class="video-modal-time" id="videoModalTime"></span>
+                    </div>
+                    <button class="video-share-btn" id="videoModalShareBtn" onclick="shareVideo('', this)" style="color:#aaa;" title="Copy link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                        Share
+                    </button>
                 </div>
                 <p class="desc-clamp" id="videoModalDesc"></p>
-                <button class="desc-more-btn" id="videoModalMoreBtn" onclick="toggleModalDesc()">more</button>
+                <button class="desc-more-btn" id="videoModalMoreBtn" onclick="toggleModalDesc()" style="display:none;">more</button>
             </div>
         </div>
     </div>
