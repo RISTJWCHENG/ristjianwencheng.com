@@ -198,6 +198,11 @@
             animation: gradient-flow 1.5s linear infinite;
         }
 
+        .view-all-link::after {
+            content: '→';
+            font-size: 1.2rem;
+        }
+
         @keyframes gradient-flow {
             0% {
                 background-position: 0% center;
@@ -371,7 +376,7 @@
 
         .gallery-masonry {
             display: grid;
-            grid-template-columns: 1fr 1.3fr 0.5fr;
+            grid-template-columns: 1fr 1.3fr 0.55fr;
             grid-template-rows: repeat(3, 220px);
             gap: 1rem;
         }
@@ -379,6 +384,50 @@
         .gallery-item-large {
             grid-column: 1;
             grid-row: 1 / 4;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            background: #e5e3df;
+            border-radius: 16px;
+            transition: transform 0.4s;
+        }
+
+        .gallery-item-col2 {
+            grid-column: 2;
+            grid-row: 1 / 4;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            background: #e5e3df;
+            border-radius: 16px;
+            transition: transform 0.4s;
+        }
+
+        .gallery-item-r1 {
+            grid-column: 3;
+            grid-row: 1;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            background: #e5e3df;
+            border-radius: 16px;
+            transition: transform 0.4s;
+        }
+
+        .gallery-item-r2 {
+            grid-column: 3;
+            grid-row: 2;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            background: #e5e3df;
+            border-radius: 16px;
+            transition: transform 0.4s;
+        }
+
+        .gallery-item-r3 {
+            grid-column: 3;
+            grid-row: 3;
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -396,36 +445,24 @@
             transition: transform 0.4s;
         }
 
-        .gallery-item-small:nth-of-type(2) {
-            grid-column: 2;
-            grid-row: 1 / 4;
-        }
-
-        .gallery-item-small:nth-of-type(3) {
-            grid-column: 3;
-            grid-row: 1;
-        }
-
-        .gallery-item-small:nth-of-type(4) {
-            grid-column: 3;
-            grid-row: 2;
-        }
-
-        .gallery-item-small:nth-of-type(5) {
-            grid-column: 3;
-            grid-row: 3;
-        }
-
         .gallery-featured-hidden {
             display: none;
         }
 
         .gallery-item-large:hover,
+        .gallery-item-col2:hover,
+        .gallery-item-r1:hover,
+        .gallery-item-r2:hover,
+        .gallery-item-r3:hover,
         .gallery-item-small:hover {
-            transform: translateY(-8px);
+            transform: translateY(-4px);
         }
 
         .gallery-item-large img,
+        .gallery-item-col2 img,
+        .gallery-item-r1 img,
+        .gallery-item-r2 img,
+        .gallery-item-r3 img,
         .gallery-item-small img {
             width: 100%;
             height: 100%;
@@ -434,6 +471,10 @@
         }
 
         .gallery-item-large:hover img,
+        .gallery-item-col2:hover img,
+        .gallery-item-r1:hover img,
+        .gallery-item-r2:hover img,
+        .gallery-item-r3:hover img,
         .gallery-item-small:hover img {
             transform: scale(1.05);
         }
@@ -2083,26 +2124,61 @@
                 btn.textContent = 'less';
             }
         }
-        function shareVideo(url, btn) {
-            navigator.clipboard.writeText(url).then(function() {
+        function shareVideo(videoUrl, btn) {
+            // Build a deep-link: current page URL + ?play=base64(videoUrl)
+            const pageBase = window.location.href.split('?')[0];
+            const encoded = btoa(encodeURIComponent(videoUrl));
+            const shareUrl = pageBase + '?play=' + encoded;
+            const copyText = shareUrl;
+            function doToast() {
                 const toast = document.getElementById('shareToast');
-                toast.classList.add('show');
-                setTimeout(function() { toast.classList.remove('show'); }, 2200);
-            }).catch(function() {
-                // Fallback for older browsers
+                if (toast) {
+                    toast.classList.add('show');
+                    setTimeout(function() { toast.classList.remove('show'); }, 2200);
+                }
+            }
+            navigator.clipboard.writeText(copyText).then(doToast).catch(function() {
                 const ta = document.createElement('textarea');
-                ta.value = url;
+                ta.value = copyText;
                 ta.style.position = 'fixed';
                 ta.style.opacity = '0';
                 document.body.appendChild(ta);
                 ta.select();
                 document.execCommand('copy');
                 document.body.removeChild(ta);
-                const toast = document.getElementById('shareToast');
-                toast.classList.add('show');
-                setTimeout(function() { toast.classList.remove('show'); }, 2200);
+                doToast();
             });
         }
+
+        // On page load, check for ?play= param and auto-open the video
+        (function() {
+            function tryAutoPlay() {
+                const params = new URLSearchParams(window.location.search);
+                const encoded = params.get('play');
+                if (!encoded) return;
+                try {
+                    const videoUrl = decodeURIComponent(atob(encoded));
+                    // Find matching video in VIDEOS_DATA
+                    const match = (typeof VIDEOS_DATA !== 'undefined' ? VIDEOS_DATA : [])
+                        .find(function(v) { return v.video_url === videoUrl; });
+                    const title = match ? match.title : '';
+                    const desc = match ? (match.description || '') : '';
+                    const time = match ? (match.updated_time || '2025') : '2025';
+                    // Scroll to video section first
+                    const sec = document.getElementById('video');
+                    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(function() {
+                        openVideoModal(videoUrl, title, desc, time);
+                    }, 600);
+                } catch(e) {}
+            }
+            // Run after DOM + scripts loaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', tryAutoPlay);
+            } else {
+                setTimeout(tryAutoPlay, 300);
+            }
+        })();
     </script>
 </head>
 <body>
@@ -2194,7 +2270,7 @@
                     <h2 class="section-title">Featured Gallery</h2>
                     <p class="gallery-subtitle">Explore my collection of artworks and captured moments</p>
                 </div>
-                <a onclick="openFullGallery()" class="view-all-link">View All →</a>
+                <a onclick="openFullGallery()" class="view-all-link">View All</a>
             </div>
             <div class="gallery-masonry">
                 <div class="gallery-item-large" onclick="openImageModal(this)">
@@ -2204,39 +2280,32 @@
                         <p>Contemporary Art, 2024</p>
                     </div>
                 </div>
-                <div class="gallery-item-small" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Half%20of%20expression%2CAre%20the%20things%20we%20leave%20unsaid.%20(5).jpg" alt="Gallery Image 2">
+                <div class="gallery-item-col2" onclick="openImageModal(this)">
+                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Scratches%20of%20a%20Croatian%20summer%E2%80%A2%E2%80%A2%E2%80%A2%23croatia%20%23summer%20%23passionpasport%20%23mytinyatlas%20(4).jpg" alt="Gallery Image 2">
                     <div class="gallery-info">
                         <h3>Visual Story II</h3>
                         <p>Mixed Media, 2024</p>
                     </div>
                 </div>
-                <div class="gallery-item-small" onclick="openImageModal(this)">
+                <div class="gallery-item-r1" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="Gallery Image 3">
                     <div class="gallery-info">
                         <h3>Visual Story III</h3>
                         <p>Photography, 2024</p>
                     </div>
                 </div>
-                <div class="gallery-item-small" onclick="openImageModal(this)">
+                <div class="gallery-item-r2" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Gallery Image 4">
                     <div class="gallery-info">
                         <h3>Visual Story IV</h3>
                         <p>Digital Art, 2023</p>
                     </div>
                 </div>
-                <div class="gallery-item-small" onclick="openImageModal(this)">
+                <div class="gallery-item-r3" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481765748_650136240890917_7887633390541422267_n.jpg" alt="Gallery Image 5">
                     <div class="gallery-info">
                         <h3>Visual Story V</h3>
                         <p>Architecture, 2023</p>
-                    </div>
-                </div>
-                <div class="gallery-item-small" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Half%20of%20expression%2CAre%20the%20things%20we%20leave%20unsaid.%20(5).jpg" alt="Gallery Image 6">
-                    <div class="gallery-info">
-                        <h3>Visual Story VI</h3>
-                        <p>Travel Photography, 2023</p>
                     </div>
                 </div>
                 <div class="gallery-item-small gallery-featured-hidden" onclick="openImageModal(this)">
@@ -2351,7 +2420,7 @@
                     <h2 class="section-title">Featured Videos</h2>
                     <p class="video-subtitle">Explore my latest video creations</p>
                 </div>
-                <a onclick="openVideoPage()" class="view-all-link">View All →</a>
+                <a onclick="openVideoPage()" class="view-all-link">View All</a>
             </div>
             <div class="video-grid-featured" id="videoGridFeatured">
                 <!-- Videos will be loaded from videos.json -->
@@ -2366,7 +2435,7 @@
                     <h2 class="section-title">Featured Articles</h2>
                     <p class="gallery-subtitle">Explore my thoughts, ideas, and stories from my creative journey</p>
                 </div>
-                <a onclick="openArticlePage()" class="view-all-link">View All →</a>
+                <a onclick="openArticlePage()" class="view-all-link">View All</a>
             </div>
             <div class="featured-articles-grid">
                 <div class="featured-article-card" onclick="openDocument('Reset Curve(s) Tool', 'https://e.pcloud.link/publink/show?code=XZUSQIZ2AbRIYw1Qw5VGGfSMWlmpmAx8IHy')">
@@ -2779,7 +2848,7 @@
     </div>
 
     <!-- Share toast notification -->
-    <div class="video-share-toast" id="shareToast">🔗 Link copied!</div>
+    <div class="video-share-toast" id="shareToast">🔗 Video link copied!</div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
