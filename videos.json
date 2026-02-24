@@ -1,23 +1,30 @@
 [
   {
     "title": "Search And BlendShape For Curves Tool",
-    "updated_time": "2024",
+    "updated_time": "2022",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Search%20And%20BlendShape%20For%20Curves_Tool_RISTJIANWENCHENG.mov",
     "description": "A utility tool designed to quickly search, match, and generate blendShape connections for curve-based systems in Maya. It streamlines repetitive manual operations and ensures consistent deformation relationships across complex curve setups, improving both accuracy and production efficiency.",
     "category": "work"
   },
   {
     "title": "Reset Curves Tool",
-    "updated_time": "2024",
+    "updated_time": "2023",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Reset%20Curves_Tool_RISTJIANWENCHENG.mov",
     "description": "A production-oriented tool for safely resetting curve states in complex scenes. It restores curve transforms and deformation data to predefined defaults while preserving structural integrity, reducing troubleshooting time during iterative CFX workflows.",
     "category": "work"
   },
   {
     "title": "N HAIR SETUP Tool",
-    "updated_time": "2024",
+    "updated_time": "2022",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/N%20HAIR%20SETUP_Tool_RISTJIANWENCHENG.mov",
     "description": "N HAIR SETUP Tool is a technical utility for creating dynamic curve setups in Maya, designed to automate and standardise the creation of dynamic curve simulations in a production environment. It eliminates tedious and error-prone manual node construction, significantly reducing common setup issues in complex workflows.\n\nDuring the creation stage, the tool generates a fully deterministic, pipeline-compliant dynamic curve setup, consistently applying strict naming conventions and structural standards. This improves artist efficiency while enhancing simulation stability and predictability. The resulting setups are reliable, repeatable, and scalable across shots, assets, and large-scale productions, supporting robust CFX pipelines.",
+    "category": "work"
+  },
+  {
+    "title": "2025 Updated CFX SHOWREEL",
+    "updated_time": "2025",
+    "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2025_Updated_CFX%20SHOWREEL_RISTJIANWENCHENG.mov",
+    "description": "CFX showreel within production environments.",
     "category": "work"
   },
   {
