@@ -1111,6 +1111,73 @@
             border: none;
         }
 
+        /* Video Player Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-modal.active {
+            display: flex;
+        }
+        .video-modal-box {
+            position: relative;
+            width: 70vw;
+            max-width: 960px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        .video-modal-box video {
+            width: 100%;
+            display: block;
+            max-height: 75vh;
+            background: #000;
+        }
+        .video-modal-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            background: #1a1a1a;
+        }
+        .video-modal-title {
+            color: white;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70%;
+        }
+        .video-modal-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .video-modal-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+        }
+        .video-modal-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
         @media (max-width: 1024px) {
             .nav-content {
                 padding: 1.2rem 1.5rem;
@@ -1696,16 +1763,70 @@
             document.body.style.overflow = 'auto';
             setTimeout(() => { scrollToSection('gallery'); }, 300);
         }
+        // Open video in modal (medium size), stop any previously playing video
+        function openVideoModal(videoUrl, title) {
+            // Stop all inline card videos
+            document.querySelectorAll('.video-thumbnail-bg').forEach(function(v) {
+                v.pause();
+                v.currentTime = 0;
+                v.removeAttribute('controls');
+            });
+            // Restore all overlays and thumbnails
+            document.querySelectorAll('.video-overlay').forEach(function(o) { o.style.display = 'flex'; });
+            document.querySelectorAll('.video-thumbnail-wrapper img').forEach(function(img) { img.style.display = ''; });
+            document.querySelectorAll('.video-thumbnail-bg').forEach(function(v) { v.style.opacity = '0'; });
+
+            const modal = document.getElementById('videoPlayerModal');
+            const player = document.getElementById('videoModalPlayer');
+            const source = document.getElementById('videoModalSource');
+            const titleEl = document.getElementById('videoModalTitle');
+
+            titleEl.textContent = title || '';
+            source.src = videoUrl;
+            player.load();
+            player.play().catch(function(){});
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoPlayerModal');
+            const player = document.getElementById('videoModalPlayer');
+            player.pause();
+            player.currentTime = 0;
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function handleVideoModalBgClick(e) {
+            if (e.target === document.getElementById('videoPlayerModal')) {
+                closeVideoModal();
+            }
+        }
+
+        function expandVideoFullscreen() {
+            const player = document.getElementById('videoModalPlayer');
+            if (player.requestFullscreen) player.requestFullscreen();
+            else if (player.webkitRequestFullscreen) player.webkitRequestFullscreen();
+            else if (player.mozRequestFullScreen) player.mozRequestFullScreen();
+        }
+
         function playVideo(overlay) {
             const wrapper = overlay.parentElement;
             const video = wrapper.querySelector('.video-thumbnail-bg');
-            overlay.style.display = 'none';
-            video.setAttribute('controls', 'controls');
-            video.play();
-            video.addEventListener('ended', function() {
-                overlay.style.display = 'flex';
-                video.removeAttribute('controls');
-            });
+            const source = video.querySelector('source');
+            const card = wrapper.closest('.video-card-featured');
+            const title = card ? card.querySelector('.video-card-title').textContent : '';
+            openVideoModal(source.src, title);
+        }
+
+        function playVideoWithThumb(overlay) {
+            const wrapper = overlay.parentElement;
+            const video = wrapper.querySelector('.video-thumbnail-bg');
+            const source = video.querySelector('source');
+            const card = wrapper.closest('.video-card-featured');
+            const title = card ? card.querySelector('.video-card-title').textContent : '';
+            openVideoModal(source.src, title);
         }
         function filterCategory(category) {
             document.querySelectorAll('.category-tag').forEach(tag => {
@@ -2361,6 +2482,27 @@
         </div>
     </div>
 
+    <!-- Video Player Modal -->
+    <div class="video-modal" id="videoPlayerModal" onclick="handleVideoModalBgClick(event)">
+        <div class="video-modal-box" id="videoModalBox" style="display:flex;flex-direction:column;">
+            <div class="video-modal-topbar">
+                <span class="video-modal-title" id="videoModalTitle"></span>
+                <div class="video-modal-actions">
+                    <button class="video-modal-btn" onclick="expandVideoFullscreen()" title="全屏">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="16" height="16">
+                            <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                            <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                        </svg>
+                    </button>
+                    <button class="video-modal-btn" onclick="closeVideoModal()" title="关闭">×</button>
+                </div>
+            </div>
+            <video id="videoModalPlayer" controls playsinline style="flex:1;">
+                <source id="videoModalSource" src="" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
         function scrollToSection(sectionId) {
@@ -2457,6 +2599,14 @@
         function closeImageModal() {
             document.getElementById('imageModal').classList.remove('active');
         }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+                closeVideoModal();
+                if (typeof closeDocument === 'function') closeDocument();
+            }
+        });
 
         function openDocument(title, url) {
             const modal = document.getElementById('documentModal');
@@ -2614,36 +2764,7 @@
                 .catch(err => console.warn('Could not load images.json:', err));
         }
 
-        // Load videos from videos.json
-        function createVideoCard(video) {
-            const card = document.createElement('div');
-            card.className = 'video-card-featured';
-            card.dataset.category = 'Work';
-            card.innerHTML = `
-                <div class="video-thumbnail-wrapper">
-                    <video class="video-thumbnail-bg" preload="metadata">
-                        <source src="${video.video_url}" type="video/mp4">
-                        <source src="${video.video_url}" type="video/quicktime">
-                    </video>
-                    <div class="video-overlay" onclick="playVideo(this)">
-                        <div class="play-button-circle">
-                            <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="video-card-info">
-                    <div class="video-category">WORK</div>
-                    <h3 class="video-card-title">${video.title}</h3>
-                    <p class="video-card-description">${video.description || ''}</p>
-                    ${video.updated_time ? `<div class="video-card-meta" style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem;">📅 ${video.updated_time}</div>` : ''}
-                </div>
-            `;
-            return card;
-        }
-
-        // Video data embedded directly as fallback
+        // Video data embedded directly
         const VIDEOS_DATA = [
           {
             "title": "Search And BlendShape For Curves_Tool",
@@ -2663,7 +2784,7 @@
           {
             "title": "CFX SETUP FOR FEATURE FILM",
             "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/CFX%20SETUP%20FOR%20FEATURE%20FILM_RISTJIANWENCHENG.mov",
-            "description": "This showcases part of the CFX setups I contributed to on several feature films. The simulations were based on the default setup."
+            "description": "This showcases part of the CFX setups I contributed to on several feature films."
           },
           {
             "title": "2022_CFX SHOWREEL_Stromae - Multitude, le film - The concert",
@@ -2699,12 +2820,72 @@
           }
         ];
 
+        // Thumbnail data embedded directly
+        const THUMBNAILS_DATA = [
+          {
+            "title": "CFX SETUP FOR FEATURE FILM Thumbnail",
+            "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/CFX%20SETUP%20FOR%20FEATURE%20FILM_Thumbnail_RISTJIANWENCHENG.png",
+            "match": "CFX SETUP FOR FEATURE FILM"
+          },
+          {
+            "title": "N HAIR SETUP Tool Thumbnail",
+            "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/N%20HAIR%20SETUP_Tool_Thumbnail_RISTJIANWENCHENG.png",
+            "match": "N HAIR SETUP"
+          },
+          {
+            "title": "Reset Curves Tool Thumbnail",
+            "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Reset%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
+            "match": "Reset Curves"
+          }
+        ];
+
+        // Find thumbnail URL by matching video title
+        function getThumbnail(videoTitle) {
+            const t = THUMBNAILS_DATA.find(function(t) {
+                return videoTitle.toLowerCase().includes(t.match.toLowerCase());
+            });
+            return t ? t.image_url : null;
+        }
+
+        function createVideoCard(video) {
+            const card = document.createElement('div');
+            card.className = 'video-card-featured';
+            card.dataset.category = 'Work';
+            const thumbUrl = getThumbnail(video.title);
+            const thumbHTML = thumbUrl
+                ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
+                : '';
+            card.innerHTML = `
+                <div class="video-thumbnail-wrapper">
+                    ${thumbHTML}
+                    <video class="video-thumbnail-bg" preload="metadata" style="${thumbUrl ? 'opacity:0;' : ''}">
+                        <source src="${video.video_url}" type="video/mp4">
+                        <source src="${video.video_url}" type="video/quicktime">
+                    </video>
+                    <div class="video-overlay" onclick="playVideoWithThumb(this)">
+                        <div class="play-button-circle">
+                            <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-card-info">
+                    <div class="video-category">WORK</div>
+                    <h3 class="video-card-title">${video.title}</h3>
+                    <p class="video-card-description">${video.description || ''}</p>
+                    ${video.updated_time ? `<div style="font-size:0.8rem;color:#6a6a6a;margin-top:0.5rem;">📅 ${video.updated_time}</div>` : ''}
+                </div>
+            `;
+            return card;
+        }
+
         function renderVideos(videos) {
             const featuredGrid = document.getElementById('videoGridFeatured');
             const fullGrid = document.getElementById('videoGridFull');
             if (featuredGrid) featuredGrid.innerHTML = '';
             if (fullGrid) fullGrid.innerHTML = '';
-            videos.forEach((video, index) => {
+            videos.forEach(function(video, index) {
                 if (index < 3 && featuredGrid) {
                     featuredGrid.appendChild(createVideoCard(video));
                 }
@@ -2714,44 +2895,58 @@
             });
         }
 
-        function loadVideos() {
-            // Always render embedded data immediately (no async fetch needed)
-            renderVideos(VIDEOS_DATA);
-            // Also try to fetch videos.json to override with latest data
-            try {
-                fetch('videos.json')
-                    .then(res => {
-                        if (!res.ok) throw new Error('fetch failed');
-                        return res.json();
-                    })
-                    .then(videos => renderVideos(videos))
-                    .catch(() => { /* keep embedded data */ });
-            } catch(e) { /* keep embedded data */ }
+        function loadImages() {
+            fetch('images.json')
+                .then(function(res) { return res.json(); })
+                .then(function(images) {
+                    if (images && images.length > 0) {
+                        const logo = document.getElementById('navLogo');
+                        if (logo) logo.src = images[0].image_url;
+                    }
+                })
+                .catch(function() {});
         }
 
-        // Add click handlers for category tags
+        // Render videos immediately on DOM ready
         document.addEventListener('DOMContentLoaded', function() {
-            loadImages();
-            loadVideos();
+            // Render embedded video data right away
+            renderVideos(VIDEOS_DATA);
 
-            // Hero video: robust autoplay + scroll play/pause + sound unlock
+            // Try to load fresh thumbnails from videoThumbnails.json
+            try {
+                fetch('videoThumbnails.json')
+                    .then(function(res) { if (!res.ok) throw new Error(); return res.json(); })
+                    .then(function(thumbs) {
+                        thumbs.forEach(function(t) {
+                            // Add to THUMBNAILS_DATA with a match key derived from title
+                            var match = t.title.replace(' Thumbnail', '').trim();
+                            THUMBNAILS_DATA.push({ title: t.title, image_url: t.image_url, match: match });
+                        });
+                        // Re-render with updated thumbnails
+                        renderVideos(VIDEOS_DATA);
+                    })
+                    .catch(function() {});
+            } catch(e) {}
+
+            // Try to load fresh videos from videos.json
+            try {
+                fetch('videos.json')
+                    .then(function(res) { if (!res.ok) throw new Error(); return res.json(); })
+                    .then(function(videos) { renderVideos(videos); })
+                    .catch(function() {});
+            } catch(e) {}
+
+            loadImages();
+
+            // Hero video autoplay
             const heroVideo = document.getElementById('heroLogoVideo');
             if (heroVideo) {
-                let isVisible = true;
-
-                // Try to play, retry on canplay if first attempt fails
-                function attemptPlay() {
-                    heroVideo.play().catch(function() {
-                        // If play fails, wait for canplay then try again
-                        heroVideo.addEventListener('canplay', function onCanPlay() {
-                            heroVideo.removeEventListener('canplay', onCanPlay);
-                            heroVideo.play().catch(() => {});
-                        });
+                heroVideo.play().catch(function() {
+                    heroVideo.addEventListener('canplay', function onCan() {
+                        heroVideo.removeEventListener('canplay', onCan);
+                        heroVideo.play().catch(function(){});
                     });
-                }
-                attemptPlay();
-
-                // Unlock sound on first user click/touch
+                });
                 function restoreSound() {
                     heroVideo.muted = false;
                     heroVideo.volume = 1;
@@ -2761,58 +2956,27 @@
                 document.addEventListener('click', restoreSound);
                 document.addEventListener('touchstart', restoreSound);
 
-                // IntersectionObserver: auto pause when scrolled away, resume when back
-                const observer = new IntersectionObserver(function(entries) {
+                const obs = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
-                            isVisible = true;
-                            heroVideo.play().catch(() => {});
+                            heroVideo.play().catch(function(){});
                         } else {
-                            isVisible = false;
                             heroVideo.pause();
                         }
                     });
                 }, { threshold: 0.1 });
-                observer.observe(heroVideo);
+                obs.observe(heroVideo);
             }
-            document.querySelectorAll('.category-tag').forEach(tag => {
-                tag.addEventListener('click', function() {
-                    filterCategory(this.dataset.category);
-                });
-            });
 
-            document.querySelectorAll('.filter-tag').forEach(tag => {
+            document.querySelectorAll('.filter-tag').forEach(function(tag) {
                 tag.addEventListener('click', function() {
-                    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.filter-tag').forEach(function(t) { t.classList.remove('active'); });
                     this.classList.add('active');
                     filterGallery(this.dataset.filter);
                 });
             });
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeImageModal();
-                closeDocument();
-            }
-        });
-
-        function playVideo(overlay) {
-            const wrapper = overlay.parentElement;
-            const video = wrapper.querySelector('.video-thumbnail-bg');
-            
-            // Hide overlay
-            overlay.style.display = 'none';
-            
-            // Show controls and play
-            video.setAttribute('controls', 'controls');
-            video.play();
-            
-            // Show overlay again when video ends
-            video.addEventListener('ended', function() {
-                overlay.style.display = 'flex';
-                video.removeAttribute('controls');
-            });
-            
-            // Show overlay when paused
-            video.addE
+    </script>
+</body>
+</html>
