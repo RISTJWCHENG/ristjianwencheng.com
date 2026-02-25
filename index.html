@@ -377,9 +377,9 @@
         /* ── Featured Gallery: 5-item masonry layout ── */
         .gallery-masonry {
             display: grid;
-            grid-template-columns: 30% 44% 26%;
+            grid-template-columns: 28% 46% 26%;
             grid-template-rows: repeat(3, 220px);
-            gap: 12px;
+            gap: 10px;
         }
         /* Left tall image: spans all 3 rows */
         .g-left {
@@ -801,19 +801,18 @@
 
         .desc-clamp {
             display: -webkit-box;
-            -webkit-line-clamp: 10;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
         .desc-clamp.expanded {
-            display: block;
-            -webkit-line-clamp: unset;
-            overflow: visible;
+            -webkit-line-clamp: 10;
+            overflow: hidden;
         }
         .desc-more-btn {
             background: none;
             border: none;
-            color: #f59e0b;
+            color: #d4a017;
             cursor: pointer;
             font-size: 0.9rem;
             padding: 0;
@@ -823,7 +822,7 @@
         }
         .desc-more-btn:hover {
             text-decoration: underline;
-            color: #f97316;
+            color: #e8b84b;
         }
 
         .video-card-footer {
@@ -901,12 +900,12 @@
             margin: 0;
         }
         .video-modal-desc-area .desc-more-btn {
-            color: #f97316;
+            color: #d4a017;
             margin-top: 0.2rem;
             font-weight: 500;
         }
         .video-modal-desc-area .desc-more-btn:hover {
-            color: #fb923c;
+            color: #e8b84b;
         }
         /* Modal share button - gradient on hover */
         #videoModalShareBtn {
@@ -2424,7 +2423,7 @@
                 </div>
 
                 <div class="info-section">
-                    <h2>FILMOGRAPHY</h2>
+                    <h2>FILMOGRAPHY <span style="font-size:0.85rem;font-weight:300;color:var(--text-secondary);letter-spacing:1px;">(Selected Film Projects)</span></h2>
                     <div class="cv-item">
                         <div class="cv-year">Release Date: June 12, 2025</div>
                         <p>Chickenhare and the Secret of the Groundhog — Feature Film | Brussels, Belgium / Paris, France<br>
