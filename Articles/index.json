@@ -47,5 +47,17 @@
     "cover": "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
     "featured": false,
     "type": "html"
+  },
+    {
+    "id": "article_06",
+    "file": "Articles/article_06.html",
+    "title": "dsdfsdfsdfsdfsdfs",
+    "category": "Writing",
+    "date": "2025-09-15",
+    "readTime": "4 min read",
+    "description": "Essential techniques for amateur photographers looking to elevate their craft and capture stunning images.",
+    "cover": "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
+    "featured": false,
+    "type": "html"
   }
 ]
