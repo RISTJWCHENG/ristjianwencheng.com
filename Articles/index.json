@@ -1,0 +1,51 @@
+[
+  {
+    "id": "article_00",
+    "file": "Articles/article_00.html",
+    "title": "N Hair Setup — Technical Documentation",
+    "category": "Technical",
+    "date": "2025-01-10",
+    "readTime": "10 min read",
+    "description": "A comprehensive technical document covering the N Hair setup process, workflow, and implementation details.",
+    "cover": "",
+    "featured": true,
+    "type": "pdf",
+    "pdfUrl": "https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/N%20HAIR%20SETUP_Document.pdf"
+  },
+  {
+    "id": "article_01",
+    "file": "Articles/article_01.html",
+    "title": "Reset Curve(s) Tool — Technical Development",
+    "category": "Technical",
+    "date": "2025-08-01",
+    "readTime": "8 min read",
+    "description": "Developed a Maya plugin tool for precise curve rebuilding and recreation in 3D animation workflows.",
+    "cover": "https://edef1.pcloud.com/DLZ8Q5GpIZJM1oB17Z7ueBZZfAEL0kZ2ZZxnJZZtsAZvzZu0ZzFZQO9krDNmwJBCUjXrbgB13uV29H47/Article1.jpg",
+    "featured": true,
+    "type": "html"
+  },
+  {
+    "id": "article_02",
+    "file": "Articles/article_02.html",
+    "title": "Journey Through Southeast Asia",
+    "category": "Travel",
+    "date": "2025-10-22",
+    "readTime": "6 min read",
+    "description": "Tales from backpacking across vibrant cultures, stunning landscapes, and unforgettable experiences.",
+    "cover": "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800",
+    "featured": true,
+    "type": "html"
+  },
+  {
+    "id": "article_03",
+    "file": "Articles/article_03.html",
+    "title": "Capturing Perfect Moments: Photography Tips",
+    "category": "Writing",
+    "date": "2025-09-15",
+    "readTime": "4 min read",
+    "description": "Essential techniques for amateur photographers looking to elevate their craft and capture stunning images.",
+    "cover": "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
+    "featured": false,
+    "type": "html"
+  }
+]
