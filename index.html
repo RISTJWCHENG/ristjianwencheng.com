@@ -377,9 +377,9 @@
         /* ── Featured Gallery: 5-item masonry layout ── */
         .gallery-masonry {
             display: grid;
-            grid-template-columns: 38% 42% 20%;
-            grid-template-rows: 215px 215px 215px;
-            gap: 10px;
+            grid-template-columns: 30% 44% 26%;
+            grid-template-rows: repeat(3, 220px);
+            gap: 12px;
         }
         /* Left tall image: spans all 3 rows */
         .g-left {
@@ -801,7 +801,7 @@
 
         .desc-clamp {
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 10;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -813,7 +813,7 @@
         .desc-more-btn {
             background: none;
             border: none;
-            color: var(--accent);
+            color: #f59e0b;
             cursor: pointer;
             font-size: 0.9rem;
             padding: 0;
@@ -823,6 +823,7 @@
         }
         .desc-more-btn:hover {
             text-decoration: underline;
+            color: #f97316;
         }
 
         .video-card-footer {
