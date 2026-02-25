@@ -2290,43 +2290,8 @@
                 </div>
                 <a onclick="openArticlePage()" class="view-all-link">View All</a>
             </div>
-            <div class="featured-articles-grid">
-                <div class="featured-article-card" onclick="openDocument('Reset Curve(s) Tool', 'https://e.pcloud.link/publink/show?code=XZUSQIZ2AbRIYw1Qw5VGGfSMWlmpmAx8IHy')">
-                    <img src="https://edef1.pcloud.com/DLZ8Q5GpIZJM1oB17Z7ueBZZfAEL0kZ2ZZxnJZZtsAZvzZu0ZzFZQO9krDNmwJBCUjXrbgB13uV29H47/Article1.jpg" alt="Reset Curves Tool" class="featured-article-image">
-                    <div class="featured-article-content">
-                        <div class="featured-article-category">Technical</div>
-                        <h3 class="featured-article-title">Reset Curve(s) Tool - Technical Development</h3>
-                        <p class="featured-article-description">Developed a Maya plugin tool for precise curve rebuilding and recreation in 3D animation workflows.</p>
-                        <div class="featured-article-meta">
-                            <span>📅 Aug 01, 2025</span>
-                            <span>⏱️ 8 min read</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="featured-article-card" onclick="openDocument('Journey Through Southeast Asia', 'travel-sea')">
-                    <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800" alt="Southeast Asia" class="featured-article-image">
-                    <div class="featured-article-content">
-                        <div class="featured-article-category">Travel</div>
-                        <h3 class="featured-article-title">Journey Through Southeast Asia</h3>
-                        <p class="featured-article-description">Tales from backpacking across vibrant cultures, stunning landscapes, and unforgettable experiences.</p>
-                        <div class="featured-article-meta">
-                            <span>📅 October 22, 2025</span>
-                            <span>⏱️ 6 min read</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="featured-article-card" onclick="openDocument('Capturing Perfect Moments', 'writing-photo')">
-                    <img src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800" alt="Writing" class="featured-article-image">
-                    <div class="featured-article-content">
-                        <div class="featured-article-category">Writing</div>
-                        <h3 class="featured-article-title">Capturing Perfect Moments: Photography Tips</h3>
-                        <p class="featured-article-description">Essential techniques for amateur photographers looking to elevate their craft and capture stunning images.</p>
-                        <div class="featured-article-meta">
-                            <span>📅 September 15, 2025</span>
-                            <span>⏱️ 4 min read</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="featured-articles-grid" id="featuredArticlesGrid">
+                <!-- Dynamically loaded from Articles/index.json -->
             </div>
         </div>
     </section>
@@ -2561,44 +2526,7 @@
             </div>
 
             <div class="article-grid" id="articleGridFull">
-                <div class="article-card" data-category="Technical" onclick="openDocument('Reset Curve(s) Tool', 'https://e.pcloud.link/publink/show?code=XZUSQIZ2AbRIYw1Qw5VGGfSMWlmpmAx8IHy')">
-                    <img src="https://edef1.pcloud.com/DLZ8Q5GpIZJM1oB17Z7ueBZZfAEL0kZ2ZZxnJZZtsAZvzZu0ZzFZQO9krDNmwJBCUjXrbgB13uV29H47/Article1.jpg" alt="Reset Curves Tool" class="article-card-image">
-                    <div class="article-card-content">
-                        <div class="article-card-category">Technical</div>
-                        <h3 class="article-card-title">Reset Curve(s) Tool - Technical Development</h3>
-                        <p class="article-card-description">Developed a Maya plugin tool for precise curve rebuilding and recreation in 3D animation workflows.</p>
-                        <div class="article-card-meta">
-                            <span>📅 Aug 01, 2025</span>
-                            <span>⏱️ 8 min read</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="article-card" data-category="Travel" onclick="openDocument('Journey Through Southeast Asia', 'travel-sea')">
-                    <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800" alt="Southeast Asia" class="article-card-image">
-                    <div class="article-card-content">
-                        <div class="article-card-category">Travel</div>
-                        <h3 class="article-card-title">Journey Through Southeast Asia</h3>
-                        <p class="article-card-description">Tales from backpacking across vibrant cultures, stunning landscapes, and unforgettable experiences.</p>
-                        <div class="article-card-meta">
-                            <span>📅 October 22, 2025</span>
-                            <span>⏱️ 6 min read</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="article-card" data-category="Writing" onclick="openDocument('Capturing Perfect Moments', 'writing-photo')">
-                    <img src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800" alt="Writing" class="article-card-image">
-                    <div class="article-card-content">
-                        <div class="article-card-category">Writing</div>
-                        <h3 class="article-card-title">Capturing Perfect Moments: Photography Tips</h3>
-                        <p class="article-card-description">Essential techniques for amateur photographers looking to elevate their craft and capture stunning images.</p>
-                        <div class="article-card-meta">
-                            <span>📅 September 15, 2025</span>
-                            <span>⏱️ 4 min read</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- Dynamically loaded from Articles/index.json -->
             </div>
         </div>
     </div>
@@ -2656,6 +2584,18 @@
             <button class="modal-close" onclick="closeImageModal()">×</button>
             <img id="modalImage" src="" alt="">
         </div>
+    </div>
+
+    <!-- PDF Viewer Modal (using iframe + Mozilla PDF.js online viewer) -->
+    <div id="pdfModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:3000;flex-direction:column;">
+        <div style="background:#fff;padding:0.8rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e3df;flex-shrink:0;">
+            <span id="pdfModalTitle" style="color:#2a2a2a;font-size:1rem;font-weight:300;letter-spacing:1px;font-family:'Helvetica Neue',Arial,sans-serif;"></span>
+            <div style="display:flex;align-items:center;gap:0.8rem;">
+                <a id="pdfDirectLink" href="#" target="_blank" style="color:#d4a017;font-size:0.85rem;font-family:'Helvetica Neue',Arial,sans-serif;text-decoration:none;border:1px solid #d4a017;padding:0.3rem 0.8rem;border-radius:20px;transition:all 0.2s;" onmouseover="this.style.background='rgba(212,160,23,0.1)'" onmouseout="this.style.background='transparent'">Open PDF ↗</a>
+                <button onclick="closePdfModal()" style="background:rgba(0,0,0,0.06);border:none;color:#2a2a2a;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.4rem;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.12)'" onmouseout="this.style.background='rgba(0,0,0,0.06)'">×</button>
+            </div>
+        </div>
+        <iframe id="pdfModalIframe" style="flex:1;width:100%;border:none;background:#fff;" src=""></iframe>
     </div>
 
     <div class="document-modal" id="documentModal">
@@ -3152,6 +3092,99 @@
             });
         }
 
+        // ── Article loader: reads Articles/index.json ──────────────────────
+        function loadArticles() {
+            fetch('Articles/index.json')
+                .then(function(res) { if (!res.ok) throw new Error('No articles index'); return res.json(); })
+                .then(function(articles) {
+                    renderFeaturedArticles(articles);
+                    renderFullArticles(articles);
+                })
+                .catch(function(err) { console.warn('Could not load Articles/index.json:', err); });
+        }
+
+        function openArticleFile(article) {
+            if (article.type === 'pdf') {
+                openPdfModal(article.title, article.pdfUrl);
+            } else {
+                var modal = document.getElementById('documentModal');
+                document.getElementById('documentTitle').textContent = article.title;
+                document.getElementById('documentFrame').src = article.file;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function makePdfCoverHTML(article) {
+            return '<div style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);height:220px;">'
+                + '<div style="text-align:center;padding:2rem;">'
+                + '<svg viewBox="0 0 48 48" width="52" height="52" fill="none" style="margin-bottom:1rem;opacity:0.9;">'
+                + '<rect x="8" y="4" width="32" height="40" rx="3" fill="#fff" opacity="0.12"/>'
+                + '<rect x="8" y="4" width="32" height="40" rx="3" stroke="#fff" stroke-width="1.5" opacity="0.6"/>'
+                + '<line x1="16" y1="16" x2="32" y2="16" stroke="#fff" stroke-width="1.5" opacity="0.8"/>'
+                + '<line x1="16" y1="22" x2="32" y2="22" stroke="#fff" stroke-width="1.5" opacity="0.8"/>'
+                + '<line x1="16" y1="28" x2="26" y2="28" stroke="#fff" stroke-width="1.5" opacity="0.8"/>'
+                + '<text x="24" y="38" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="6" fill="#e8b84b" letter-spacing="0.5">PDF</text>'
+                + '</svg>'
+                + '<div style="color:#fff;font-size:0.95rem;font-weight:500;letter-spacing:1px;font-family:\'Helvetica Neue\',Arial,sans-serif;">' + article.title.substring(0,24) + '</div>'
+                + '<div style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin-top:0.4rem;letter-spacing:0.5px;">PDF Document</div>'
+                + '</div></div>';
+        }
+
+        function formatArticleDate(dateStr) {
+            if (!dateStr) return '';
+            var d = new Date(dateStr);
+            return '📅 ' + d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
+        }
+
+        function renderFeaturedArticles(articles) {
+            var grid = document.getElementById('featuredArticlesGrid');
+            if (!grid) return;
+            var featured = articles.filter(function(a) { return a.featured; }).slice(0, 3);
+            grid.innerHTML = featured.map(function(article) {
+                var coverHTML = article.type === 'pdf'
+                    ? makePdfCoverHTML(article)
+                    : '<img src="' + article.cover + '" alt="' + article.title + '" class="featured-article-image" onerror="this.style.background=\'#e5e3df\'">';
+                var metaDate = article.type === 'pdf' ? '📄 PDF Document' : formatArticleDate(article.date);
+                var metaRead = article.type === 'pdf' ? '🖱️ Click to read' : (article.readTime ? '⏱️ ' + article.readTime : '');
+                var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
+                return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
+                    + coverHTML
+                    + '<div class="featured-article-content">'
+                    + '<div class="featured-article-category">' + article.category + '</div>'
+                    + '<h3 class="featured-article-title">' + article.title + '</h3>'
+                    + '<p class="featured-article-description">' + article.description + '</p>'
+                    + '<div class="featured-article-meta">'
+                    + '<span>' + metaDate + '</span>'
+                    + (metaRead ? '<span>' + metaRead + '</span>' : '')
+                    + '</div></div></div>';
+            }).join('');
+        }
+
+        function renderFullArticles(articles) {
+            var grid = document.getElementById('articleGridFull');
+            if (!grid) return;
+            grid.innerHTML = articles.map(function(article) {
+                var coverHTML = article.type === 'pdf'
+                    ? '<div class="article-card-image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#0f3460);"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><rect x="8" y="4" width="32" height="40" rx="3" stroke="#fff" stroke-width="1.5" opacity="0.6"/><text x="24" y="38" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="7" fill="#e8b84b">PDF</text></svg></div>'
+                    : '<img src="' + article.cover + '" alt="' + article.title + '" class="article-card-image" onerror="this.style.background=\'#e5e3df\'">';
+                var metaDate = article.type === 'pdf' ? '📄 PDF' : formatArticleDate(article.date);
+                var metaRead = article.readTime ? '⏱️ ' + article.readTime : '';
+                var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
+                return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
+                    + coverHTML
+                    + '<div class="article-card-content">'
+                    + '<div class="article-card-category">' + article.category + '</div>'
+                    + '<h3 class="article-card-title">' + article.title + '</h3>'
+                    + '<p class="article-card-description">' + article.description + '</p>'
+                    + '<div class="article-card-meta">'
+                    + '<span>' + metaDate + '</span>'
+                    + (metaRead ? '<span>' + metaRead + '</span>' : '')
+                    + '</div></div></div>';
+            }).join('');
+        }
+        // ───────────────────────────────────────────────────────────────────
+
         function loadImages() {
             fetch('images.json')
                 .then(function(res) { return res.json(); })
@@ -3163,8 +3196,6 @@
                 })
                 .catch(function() {});
         }
-
-        // Render videos immediately on DOM ready
         document.addEventListener('DOMContentLoaded', function() {
             // First render with embedded data immediately
             renderVideos(VIDEOS_DATA);
@@ -3189,6 +3220,9 @@
                 });
 
             loadImages();
+
+            // Load articles from Articles/index.json
+            loadArticles();
 
             // Hero video autoplay
             const heroVideo = document.getElementById('heroLogoVideo');
@@ -3229,6 +3263,26 @@
             });
         });
 
+    </script>
+
+    <script>
+        function openPdfModal(title, url) {
+            const modal = document.getElementById('pdfModal');
+            document.getElementById('pdfModalTitle').textContent = title;
+            document.getElementById('pdfDirectLink').href = url;
+            // Use Google Docs viewer as a reliable cross-origin PDF renderer
+            const viewerUrl = 'https://docs.google.com/viewer?url=' + encodeURIComponent(url) + '&embedded=true';
+            document.getElementById('pdfModalIframe').src = viewerUrl;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePdfModal() {
+            const modal = document.getElementById('pdfModal');
+            modal.style.display = 'none';
+            document.getElementById('pdfModalIframe').src = '';
+            document.body.style.overflow = 'auto';
+        }
     </script>
 </body>
 </html>
