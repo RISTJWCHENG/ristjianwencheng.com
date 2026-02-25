@@ -1,1 +1,98 @@
-<h2>文章标题</h2><p>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="UTF-8"&gt;<br>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;<br>&lt;title&gt;Word-Style Article Editor&lt;/title&gt;</p><p>&lt;!-- CKEditor 5 --&gt;<br>&lt;script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"&gt;&lt;/script&gt;</p><p>&lt;style&gt;<br>body {<br>&nbsp; &nbsp;font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;<br>&nbsp; &nbsp;margin: 20px;<br>&nbsp; &nbsp;background: #fdfdfd;<br>&nbsp; &nbsp;color: #222;<br>}</p><p>header {<br>&nbsp; &nbsp;text-align: center;<br>&nbsp; &nbsp;margin-bottom: 20px;<br>}</p><p>#editor {<br>&nbsp; &nbsp;min-height: 500px;<br>&nbsp; &nbsp;border: 1px solid #ccc;<br>&nbsp; &nbsp;border-radius: 6px;<br>&nbsp; &nbsp;padding: 10px;<br>&nbsp; &nbsp;background: #fff;<br>}</p><p>button {<br>&nbsp; &nbsp;margin-top: 10px;<br>&nbsp; &nbsp;padding: 8px 14px;<br>&nbsp; &nbsp;border-radius: 4px;<br>&nbsp; &nbsp;border: 1px solid #ccc;<br>&nbsp; &nbsp;background: #f5f5f5;<br>&nbsp; &nbsp;cursor: pointer;<br>&nbsp; &nbsp;margin-right: 8px;<br>}</p><p>button:hover {<br>&nbsp; &nbsp;background: #eaeaea;<br>}</p><p>img {<br>&nbsp; &nbsp;max-width: 100%;<br>&nbsp; &nbsp;border-radius: 6px;<br>&nbsp; &nbsp;margin: 15px 0;<br>}<br>&lt;/style&gt;<br>&lt;/head&gt;<br>&lt;body&gt;</p><p>&lt;header&gt;<br>&nbsp; &nbsp;&lt;h1&gt;Word-Style Article Editor&lt;/h1&gt;<br>&nbsp; &nbsp;&lt;p&gt;Fully WYSIWYG editing – text styles, paragraphs, images, just like in Microsoft Word&lt;/p&gt;<br>&lt;/header&gt;</p><p>&lt;!-- Editor container --&gt;<br>&lt;div id="editor"&gt;<br>&lt;h1&gt;Article Title&lt;/h1&gt;<br>&lt;p&gt;You can edit text directly here, just like in Word.&lt;/p&gt;<br>&lt;p&gt;Change font, color, bold, italic, lists, alignment, and more.&lt;/p&gt;<br>&lt;/div&gt;</p><p>&lt;br&gt;<br>&lt;button id="insertImageBtn"&gt;Insert Image by URL&lt;/button&gt;<br>&lt;button id="saveBtn"&gt;Save Article&lt;/button&gt;</p><p>&lt;script&gt;<br>let editorInstance;</p><p>// Initialize CKEditor<br>ClassicEditor<br>&nbsp; &nbsp;.create(document.querySelector('#editor'), {<br>&nbsp; &nbsp; &nbsp; &nbsp;toolbar: [<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'heading', '|',<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'bold', 'italic', 'underline', 'strikethrough', '|',<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'fontColor', 'fontBackgroundColor', 'fontSize', 'fontFamily', '|',<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'alignment', '|',<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'bulletedList', 'numberedList', '|',<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'link', 'insertImage', 'insertTable', '|',<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'undo', 'redo'<br>&nbsp; &nbsp; &nbsp; &nbsp;]<br>&nbsp; &nbsp;})<br>&nbsp; &nbsp;.then(editor =&gt; {<br>&nbsp; &nbsp; &nbsp; &nbsp;editorInstance = editor;<br>&nbsp; &nbsp; &nbsp; &nbsp;console.log('Editor initialized');<br>&nbsp; &nbsp;})<br>&nbsp; &nbsp;.catch(error =&gt; {<br>&nbsp; &nbsp; &nbsp; &nbsp;console.error('CKEditor initialization failed:', error);<br>&nbsp; &nbsp;});</p><p>// Insert image from URL<br>document.getElementById('insertImageBtn').addEventListener('click', function() {<br>&nbsp; &nbsp;if (!editorInstance) {<br>&nbsp; &nbsp; &nbsp; &nbsp;alert('Editor not ready yet. Please wait a moment.');<br>&nbsp; &nbsp; &nbsp; &nbsp;return;<br>&nbsp; &nbsp;}</p><p>&nbsp; &nbsp;const imageUrl = prompt("Please enter the image URL:");</p><p>&nbsp; &nbsp;if (imageUrl &amp;&amp; imageUrl.trim() !== "") {<br>&nbsp; &nbsp; &nbsp; &nbsp;const url = imageUrl.trim();</p><p>&nbsp; &nbsp; &nbsp; &nbsp;// Optional: basic check before inserting<br>&nbsp; &nbsp; &nbsp; &nbsp;const testImg = new Image();<br>&nbsp; &nbsp; &nbsp; &nbsp;testImg.onload = () =&gt; {<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// Image loads successfully → insert it<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;editorInstance.execute('insertImage', {<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;source: url<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;});<br>&nbsp; &nbsp; &nbsp; &nbsp;};<br>&nbsp; &nbsp; &nbsp; &nbsp;testImg.onerror = () =&gt; {<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;alert("Cannot load this image.\n\n" +<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"Possible reasons:\n" +<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"• The link is not a direct image (must end with .jpg, .png, .gif, etc.)\n" +<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"• The image is blocked (anti-hotlinking)\n" +<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"• The URL is invalid or the image was deleted\n\n" +<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"Try another link or use a public image host like imgur.com");<br>&nbsp; &nbsp; &nbsp; &nbsp;};<br>&nbsp; &nbsp; &nbsp; &nbsp;testImg.src = url; &nbsp;// start loading test<br>&nbsp; &nbsp;}<br>});</p><p>// Save article as HTML file<br>document.getElementById('saveBtn').addEventListener('click', function() {<br>&nbsp; &nbsp;if (!editorInstance) {<br>&nbsp; &nbsp; &nbsp; &nbsp;alert('Editor not ready yet.');<br>&nbsp; &nbsp; &nbsp; &nbsp;return;<br>&nbsp; &nbsp;}</p><p>&nbsp; &nbsp;const content = editorInstance.getData();</p><p>&nbsp; &nbsp;const blob = new Blob([content], { type: "text/html" });<br>&nbsp; &nbsp;const url = URL.createObjectURL(blob);</p><p>&nbsp; &nbsp;const a = document.createElement('a');<br>&nbsp; &nbsp;a.href = url;<br>&nbsp; &nbsp;a.download = 'article.html';<br>&nbsp; &nbsp;a.click();</p><p>&nbsp; &nbsp;URL.revokeObjectURL(url);</p><p>&nbsp; &nbsp;alert('Article saved as article.html');<br>});<br>&lt;/script&gt;</p><p>&lt;/body&gt;<br>&lt;/html&gt;<img src="https://i.pinimg.com/736x/21/64/25/21642530c18a02c71735886f6953ac66.jpg"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey Through Southeast Asia</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #faf9f7;
+            color: #2a2a2a;
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.8;
+        }
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .article-category {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #d4a574;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .article-meta {
+            font-size: 0.85rem;
+            color: #6a6a6a;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+        .article-cover {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+        }
+        p {
+            margin-bottom: 1.2rem;
+            color: #3a3a3a;
+        }
+        blockquote {
+            border-left: 3px solid #d4a574;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            color: #6a6a6a;
+            font-style: italic;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e5e3df;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="article-container">
+        <div class="article-category">Travel</div>
+        <h1>Journey Through Southeast Asia</h1>
+        <div class="article-meta">
+            <span>📅 October 22, 2025</span>
+            <span>⏱️ 6 min read</span>
+        </div>
+        <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800" alt="Southeast Asia" class="article-cover">
+
+        <h2>The Beginning</h2>
+        <p>Southeast Asia has always been a destination that calls to the curious traveler. From the ancient temples of Cambodia to the bustling streets of Bangkok, every corner of this region tells a story layered with history, culture, and human connection.</p>
+
+        <blockquote>
+            "Travel is the only thing you buy that makes you richer."
+        </blockquote>
+
+        <h2>Vietnam & Cambodia</h2>
+        <p>Starting in Ho Chi Minh City, the energy is immediate and electric. Motorbikes weave through traffic like a choreographed dance, street vendors fill the air with the scent of pho, and every alleyway reveals a new story waiting to be discovered.</p>
+
+        <h2>Reflections</h2>
+        <p>After weeks of traveling, what stays with you isn't the landmarks — it's the people. The warmth of strangers who become friends, the shared meals, the quiet moments watching the sun set over the Mekong. These are the moments that reshape how you see the world.</p>
+
+        <hr>
+        <p><em>This article was written by RIST JIANWEN CHENG. All rights reserved.</em></p>
+    </div>
+</body>
+</html>

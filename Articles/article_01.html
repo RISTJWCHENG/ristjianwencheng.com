@@ -1,1 +1,115 @@
-<h2><img src="https://pin.it/39nYaCbTX">文章标题</h2><p>这里可以直接编辑文字，就像在 Word 中一样。</p><p>你可以调整字体、颜色、加粗、斜体、列表。<img src="https://share.google/InTQfPeSkuchnG5FI"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Curve(s) Tool — Technical Development</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #faf9f7;
+            color: #2a2a2a;
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.8;
+        }
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .article-category {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #d4a574;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .article-meta {
+            font-size: 0.85rem;
+            color: #6a6a6a;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+        .article-cover {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+        }
+        p {
+            margin-bottom: 1.2rem;
+            color: #3a3a3a;
+        }
+        code {
+            background: #f0ede8;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        pre {
+            background: #1a1a1a;
+            color: #e5e3df;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e5e3df;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="article-container">
+        <div class="article-category">Technical</div>
+        <h1>Reset Curve(s) Tool — Technical Development</h1>
+        <div class="article-meta">
+            <span>📅 Aug 01, 2025</span>
+            <span>⏱️ 8 min read</span>
+        </div>
+        <img src="https://edef1.pcloud.com/DLZ8Q5GpIZJM1oB17Z7ueBZZfAEL0kZ2ZZxnJZZtsAZvzZu0ZzFZQO9krDNmwJBCUjXrbgB13uV29H47/Article1.jpg" alt="Reset Curves Tool" class="article-cover">
+
+        <h2>Overview</h2>
+        <p>The Reset Curve(s) Tool is a Maya plugin developed to streamline the process of rebuilding and recreating curves in 3D animation workflows. This tool addresses a common pain point in rigging pipelines where curves need to be precisely reset without losing their shape or position data.</p>
+
+        <h2>Technical Details</h2>
+        <p>Built using Python and Maya's API, the tool provides a simple interface for artists to reset curve CVs to their default positions while maintaining the overall curve structure. The implementation leverages Maya's <code>cmds</code> and <code>OpenMaya</code> modules for reliable curve manipulation.</p>
+
+        <pre><code>import maya.cmds as cmds
+import maya.OpenMaya as om
+
+def resetCurve(curveName):
+    # Get curve shape
+    shape = cmds.listRelatives(curveName, shapes=True)[0]
+    # Reset CV positions
+    cvs = cmds.ls(shape + '.cv[*]', flatten=True)
+    for cv in cvs:
+        cmds.xform(cv, translation=[0, 0, 0])
+</code></pre>
+
+        <h2>Workflow Integration</h2>
+        <p>The tool integrates seamlessly into existing rigging workflows, allowing technical directors to reset curves during the rig build process without breaking downstream dependencies. It supports batch processing of multiple curves simultaneously.</p>
+
+        <hr>
+        <p><em>This article was written by RIST JIANWEN CHENG. All rights reserved.</em></p>
+    </div>
+</body>
+</html>
