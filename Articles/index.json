@@ -2,11 +2,11 @@
   {
     "id": "article_00",
     "file": "Articles/article_00.html",
-    "title": "N Hair Setup — Technical Documentation",
+    "title": "N Hair Setup Tool — Technical Documentation",
     "category": "Technical",
     "date": "2025-01-10",
     "readTime": "10 min read",
-    "description": "A comprehensive technical document covering the N Hair setup process, workflow, and implementation details.",
+    "description": "A comprehensive technical guide covering the process, workflow, and implementation details of the N Hair Setup Tool.",
     "cover": "",
     "featured": true,
     "type": "pdf",
