@@ -1,7 +1,7 @@
 [
   {
-    "id": "article_00",
-    "file": "Articles/article_00.html",
+    "id": "article_01",
+    "file": "Articles/article_01.html",
     "title": "N Hair Setup Tool — Technical Documentation",
     "category": "Technical",
     "date": "2022-2025",
@@ -12,31 +12,31 @@
     "type": "html"
   },
   {
-    "id": "article_01",
-    "file": "Articles/article_01.html",
-    "title": "Reset Curve(s) Tool — Technical Development",
-    "category": "Technical",
-    "date": "2022-2025",
-    "readTime": "8 min read",
-    "description": "Developed a Maya plugin tool for precise curve rebuilding and recreation in 3D animation workflows.",
-    "cover": "https://i.pinimg.com/736x/21/64/25/21642530c18a02c71735886f6953ac66.jpg",
-    "featured": true,
-    "type": "html"
-  },
-  {
     "id": "article_02",
     "file": "Articles/article_02.html",
-    "title": "Journey Through Southeast Asia",
-    "category": "Travel",
-    "date": "2025-10-22",
-    "readTime": "6 min read",
-    "description": "Tales from backpacking across vibrant cultures, stunning landscapes, and unforgettable experiences.",
-    "cover": "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800",
+    "title": "Reset Curve(s) Tool — Technical Documentation",
+    "category": "Technical",
+    "date": "2016-2025",
+    "readTime": "8 min read",
+    "description": "A comprehensive technical guide offers greater flexibility and power, automatically calculating rebuild parameters based on the length of each curve.",
+    "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_02/Reset%20Curves_Tool_Document_Thumbnail.png",
     "featured": true,
     "type": "html"
   },
   {
     "id": "article_03",
+    "file": "Articles/article_03.html",
+    "title": "Search And BlendShape For Curves Tool — Technical Documentation",
+    "category": "Technical",
+    "date": "2017-2023",
+    "readTime": "6 min read",
+    "description": "A comprehensive technical guide automatically matches curves and creates the BlendShapes.",
+    "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_03/Search%20And%20BlendShape%20For%20Curves_Tool_Thumbnail.png",
+    "featured": true,
+    "type": "html"
+  },
+  {
+    "id": "article_04",
     "file": "Articles/article_03.html",
     "title": "Capturing Perfect Moments: Photography Tips",
     "category": "Writing",
@@ -48,7 +48,7 @@
     "type": "html"
   },
   {
-    "id": "article_06",
+    "id": "article_05",
     "file": "Articles/article_06.html",
     "title": "dsdfsdfsdfsdfsdfs",
     "category": "Writing",
