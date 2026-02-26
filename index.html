@@ -2102,29 +2102,6 @@
             });
         }
 
-        function shareArticle(articleIdEncoded, btn) {
-            const pageBase = window.location.href.split('?')[0];
-            const shareUrl = pageBase + '?article=' + articleIdEncoded;
-            function doToast() {
-                const toast = document.getElementById('shareToast');
-                if (toast) {
-                    toast.classList.add('show');
-                    setTimeout(function() { toast.classList.remove('show'); }, 2200);
-                }
-            }
-            navigator.clipboard.writeText(shareUrl).then(doToast).catch(function() {
-                const ta = document.createElement('textarea');
-                ta.value = shareUrl;
-                ta.style.position = 'fixed';
-                ta.style.opacity = '0';
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                doToast();
-            });
-        }
-
         // On page load, check for ?play= param and auto-open the video
         (function() {
             function tryAutoPlay() {
@@ -2509,16 +2486,16 @@
             <div class="article-header">
                 <h2 class="section-title" style="text-align: center;">All Videos</h2>
                 <p class="section-subtitle">Watch my multidisciplinary video creations.</p>
-
-                <div class="search-bar">
+                
+                <div class="search-bar" style="margin-top: 2rem;">
                     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                         <circle cx="11" cy="11" r="8"/>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
-                    <input type="text" placeholder="Search videos..." id="searchVideosInput" onkeyup="searchVideosFull()">
+                    <input type="text" placeholder="Search videos..." id="searchInputVideoFull" onkeyup="searchVideosFull()">
                 </div>
-                
-                <div class="category-filters" style="margin-top: 1rem;">
+
+                <div class="category-filters" style="margin-top: 2rem;">
                     <div class="category-tag active" data-category="all" onclick="filterVideoCategory('all')">All</div>
                     <div class="category-tag" data-category="Work" onclick="filterVideoCategory('Work')">Work</div>
                     <div class="category-tag" data-category="Other" onclick="filterVideoCategory('Other')">Other</div>
@@ -2883,6 +2860,20 @@
             });
         }
 
+        function searchVideosFull() {
+            const input = document.getElementById('searchInputVideoFull').value.toLowerCase();
+            const cards = document.querySelectorAll('#videoGridFull .video-card-featured');
+            cards.forEach(card => {
+                const title = card.querySelector('.video-card-title') ? card.querySelector('.video-card-title').textContent.toLowerCase() : '';
+                const description = card.querySelector('.video-card-description') ? card.querySelector('.video-card-description').textContent.toLowerCase() : '';
+                if (title.includes(input) || description.includes(input)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
         function filterCategoryFull(category) {
             document.querySelectorAll('#article-full-page .category-tag').forEach(tag => {
                 tag.classList.remove('active');
@@ -2908,23 +2899,6 @@
                 const description = card.querySelector('.article-card-description').textContent.toLowerCase();
                 
                 if (title.includes(input) || description.includes(input)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        function searchVideosFull() {
-            const input = document.getElementById('searchVideosInput').value.toLowerCase();
-            const cards = document.querySelectorAll('#videoGridFull .video-card-featured');
-
-            cards.forEach(card => {
-                const title = card.querySelector('.video-card-title') ? card.querySelector('.video-card-title').textContent.toLowerCase() : '';
-                const desc = card.querySelector('.video-card-description') ? card.querySelector('.video-card-description').textContent.toLowerCase() : '';
-                const category = card.querySelector('.video-category') ? card.querySelector('.video-category').textContent.toLowerCase() : '';
-
-                if (title.includes(input) || desc.includes(input) || category.includes(input)) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
@@ -3147,7 +3121,6 @@
                 .then(function(articles) {
                     renderFeaturedArticles(articles);
                     renderFullArticles(articles);
-                    renderArticleCategoryFilters(articles);
                 })
                 .catch(function(err) { console.warn('Could not load Articles/index.json:', err); });
         }
@@ -3189,84 +3162,48 @@
         function renderFeaturedArticles(articles) {
             var grid = document.getElementById('featuredArticlesGrid');
             if (!grid) return;
-            // Show only featured articles, max 3
             var featured = articles.filter(function(a) { return a.featured; }).slice(0, 3);
             grid.innerHTML = featured.map(function(article) {
-                var isPdf = (article.type === 'pdf');
-                var coverHTML = isPdf
+                var coverHTML = article.type === 'pdf'
                     ? makePdfCoverHTML(article)
                     : '<img src="' + article.cover + '" alt="' + article.title + '" class="featured-article-image" onerror="this.style.background=\'#e5e3df\'">';
-                var metaLeft = isPdf ? '<span>📄 PDF Document</span>' : '<span>' + formatArticleDate(article.date) + '</span>';
-                var metaMid  = isPdf ? '<span>🖱️ Click to read</span>' : (article.readTime ? '<span>⏱️ ' + article.readTime + '</span>' : '');
+                var metaDate = article.type === 'pdf' ? '📄 PDF Document' : formatArticleDate(article.date);
+                var metaRead = article.type === 'pdf' ? '🖱️ Click to read' : (article.readTime ? '⏱️ ' + article.readTime : '');
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
-                var shareUrl = encodeURIComponent(window.location ? window.location.href.split('?')[0] + '?article=' + encodeURIComponent(article.id || article.file) : article.file);
-                return '<div class="featured-article-card" style="cursor:pointer;">'
-                    + '<div onclick=\'openArticleFile(' + articleJson + ')\'>'
+                return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="featured-article-content">'
                     + '<div class="featured-article-category">' + article.category + '</div>'
                     + '<h3 class="featured-article-title">' + article.title + '</h3>'
                     + '<p class="featured-article-description">' + article.description + '</p>'
-                    + '</div></div>'
-                    + '<div class="featured-article-content" style="padding-top:0;">'
-                    + '<div style="display:flex;align-items:center;justify-content:space-between;">'
-                    + '<div class="featured-article-meta" style="margin:0;">' + metaLeft + metaMid + '</div>'
-                    + '<button class="video-share-btn" onclick="shareArticle(\'' + encodeURIComponent(article.id || article.file) + '\', this)" title="Copy link" style="flex-shrink:0;">'
-                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
-                    + ' Share</button>'
-                    + '</div></div>'
-                    + '</div>';
+                    + '<div class="featured-article-meta">'
+                    + '<span>' + metaDate + '</span>'
+                    + (metaRead ? '<span>' + metaRead + '</span>' : '')
+                    + '</div></div></div>';
             }).join('');
         }
 
         function renderFullArticles(articles) {
             var grid = document.getElementById('articleGridFull');
             if (!grid) return;
-            // Show all articles sorted by date descending
-            var sorted = articles.slice().sort(function(a, b) {
-                return new Date(b.date || '2000-01-01') - new Date(a.date || '2000-01-01');
-            });
-            grid.innerHTML = sorted.map(function(article) {
-                var isPdf = (article.type === 'pdf');
-                var coverHTML = isPdf
+            grid.innerHTML = articles.map(function(article) {
+                var coverHTML = article.type === 'pdf'
                     ? '<div class="article-card-image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#0f3460);"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><rect x="8" y="4" width="32" height="40" rx="3" stroke="#fff" stroke-width="1.5" opacity="0.6"/><text x="24" y="38" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="7" fill="#e8b84b">PDF</text></svg></div>'
                     : '<img src="' + article.cover + '" alt="' + article.title + '" class="article-card-image" onerror="this.style.background=\'#e5e3df\'">';
-                var metaLeft = isPdf ? '<span>📄 PDF</span>' : '<span>' + formatArticleDate(article.date) + '</span>';
-                var metaMid  = isPdf ? '' : (article.readTime ? '<span>⏱️ ' + article.readTime + '</span>' : '');
+                var metaDate = article.type === 'pdf' ? '📄 PDF' : formatArticleDate(article.date);
+                var metaRead = article.readTime ? '⏱️ ' + article.readTime : '';
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
-                return '<div class="article-card" data-category="' + article.category + '" style="cursor:pointer;">'
-                    + '<div onclick=\'openArticleFile(' + articleJson + ')\'>'
+                return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="article-card-content">'
                     + '<div class="article-card-category">' + article.category + '</div>'
                     + '<h3 class="article-card-title">' + article.title + '</h3>'
                     + '<p class="article-card-description">' + article.description + '</p>'
-                    + '</div></div>'
-                    + '<div class="article-card-content" style="padding-top:0;">'
-                    + '<div style="display:flex;align-items:center;justify-content:space-between;">'
-                    + '<div class="article-card-meta" style="margin:0;">' + metaLeft + metaMid + '</div>'
-                    + '<button class="video-share-btn" onclick="shareArticle(\'' + encodeURIComponent(article.id || article.file) + '\', this)" title="Copy link" style="flex-shrink:0;">'
-                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
-                    + ' Share</button>'
-                    + '</div></div>'
-                    + '</div>';
+                    + '<div class="article-card-meta">'
+                    + '<span>' + metaDate + '</span>'
+                    + (metaRead ? '<span>' + metaRead + '</span>' : '')
+                    + '</div></div></div>';
             }).join('');
-        }
-
-        function renderArticleCategoryFilters(articles) {
-            // Auto-generate category filter tags from actual article categories
-            var filterContainer = document.querySelector('#article-full-page .category-filters');
-            if (!filterContainer) return;
-            var categories = [];
-            articles.forEach(function(a) {
-                if (a.category && categories.indexOf(a.category) === -1) {
-                    categories.push(a.category);
-                }
-            });
-            filterContainer.innerHTML = '<div class="category-tag active" data-category="all" onclick="filterCategoryFull(\'all\')">All</div>'
-                + categories.map(function(cat) {
-                    return '<div class="category-tag" data-category="' + cat + '" onclick="filterCategoryFull(\'' + cat + '\')">' + cat + '</div>';
-                }).join('');
         }
         // ───────────────────────────────────────────────────────────────────
 
