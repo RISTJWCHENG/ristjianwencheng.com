@@ -2232,7 +2232,7 @@
                 <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/LOGO1.mov" type="video/mp4">
             </video>
         </div>
-        <p class="hero-subtitle">Artist | Technical | Visual Creator</p>
+        <p class="hero-subtitle">Artistic | Technical | Visual Creator</p>
         <p class="hero-statement">
             I am passionate about exploring, continuously learning, and experimenting with new knowledge, technologies, software, and mediums to push creative boundaries and discover new possibilities. By translating reality into virtual worlds, I use these environments to shape new visual experiences and expand what is possible.<br><br>
             I am passionate about capturing subtle, timeless moments within stillness and motion.
@@ -2509,8 +2509,16 @@
             <div class="article-header">
                 <h2 class="section-title" style="text-align: center;">All Videos</h2>
                 <p class="section-subtitle">Watch my multidisciplinary video creations.</p>
+
+                <div class="search-bar">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" placeholder="Search videos..." id="searchVideosInput" onkeyup="searchVideosFull()">
+                </div>
                 
-                <div class="category-filters" style="margin-top: 2rem;">
+                <div class="category-filters" style="margin-top: 1rem;">
                     <div class="category-tag active" data-category="all" onclick="filterVideoCategory('all')">All</div>
                     <div class="category-tag" data-category="Work" onclick="filterVideoCategory('Work')">Work</div>
                     <div class="category-tag" data-category="Other" onclick="filterVideoCategory('Other')">Other</div>
@@ -2900,6 +2908,23 @@
                 const description = card.querySelector('.article-card-description').textContent.toLowerCase();
                 
                 if (title.includes(input) || description.includes(input)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function searchVideosFull() {
+            const input = document.getElementById('searchVideosInput').value.toLowerCase();
+            const cards = document.querySelectorAll('#videoGridFull .video-card-featured');
+
+            cards.forEach(card => {
+                const title = card.querySelector('.video-card-title') ? card.querySelector('.video-card-title').textContent.toLowerCase() : '';
+                const desc = card.querySelector('.video-card-description') ? card.querySelector('.video-card-description').textContent.toLowerCase() : '';
+                const category = card.querySelector('.video-category') ? card.querySelector('.video-category').textContent.toLowerCase() : '';
+
+                if (title.includes(input) || desc.includes(input) || category.includes(input)) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
