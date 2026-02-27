@@ -1837,6 +1837,7 @@
                 articlePage.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
+            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
         }
         function closeArticlePage() {
             const articlePage = document.getElementById('article-full-page');
@@ -1851,6 +1852,7 @@
                 videoPage.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
+            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
         }
         function closeVideoPage() {
             const videoPage = document.getElementById('video-full-page');
@@ -1871,6 +1873,7 @@
                 fullGalleryPage.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
+            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
         }
         function closeFullGallery() {
             const fullGalleryPage = document.getElementById('fullGalleryPage');
@@ -2222,6 +2225,7 @@
         <div class="container">
             <video
                 id="heroLogoVideo"
+                autoplay
                 muted
                 loop
                 playsinline
@@ -2834,6 +2838,7 @@
             const fullGalleryPage = document.getElementById('fullGalleryPage');
             fullGalleryPage.classList.add('active');
             document.body.style.overflow = 'hidden';
+            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
         }
 
         function closeFullGallery() {
@@ -2857,6 +2862,7 @@
             const articlePage = document.getElementById('article-full-page');
             articlePage.classList.add('active');
             document.body.style.overflow = 'hidden';
+            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
         }
 
         function closeArticlePage() {
@@ -2869,6 +2875,7 @@
             const videoPage = document.getElementById('video-full-page');
             videoPage.classList.add('active');
             document.body.style.overflow = 'hidden';
+            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
         }
 
         function closeVideoPage() {
@@ -3289,35 +3296,28 @@
             // Load articles from Articles/index.json
             loadArticles();
 
-            // Hero video: only play when on HOME page AND mouse hovers over nav area
+            // Hero video: autoplay, pause when scrolled out of view
             const heroVideo = document.getElementById('heroLogoVideo');
-            const navEl = document.querySelector('nav');
             if (heroVideo) {
-                // Track whether we're on the HOME page (video section visible)
-                var isOnHome = false;
+                // Start playing
+                heroVideo.play().catch(function() {
+                    heroVideo.addEventListener('canplay', function onCan() {
+                        heroVideo.removeEventListener('canplay', onCan);
+                        heroVideo.play().catch(function(){});
+                    });
+                });
 
-                // IntersectionObserver to detect if #home section is visible
-                const homeObs = new IntersectionObserver(function(entries) {
+                // IntersectionObserver: pause as soon as video scrolls out of view
+                const videoObs = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
-                        isOnHome = entry.isIntersecting;
-                        if (!isOnHome) {
+                        if (entry.isIntersecting) {
+                            heroVideo.play().catch(function(){});
+                        } else {
                             heroVideo.pause();
                         }
                     });
                 }, { threshold: 0.1 });
-                homeObs.observe(document.getElementById('home'));
-
-                // Play only when nav is hovered AND we're on HOME
-                if (navEl) {
-                    navEl.addEventListener('mouseenter', function() {
-                        if (isOnHome) {
-                            heroVideo.play().catch(function(){});
-                        }
-                    });
-                    navEl.addEventListener('mouseleave', function() {
-                        heroVideo.pause();
-                    });
-                }
+                videoObs.observe(heroVideo);
 
                 // Restore sound on first user interaction
                 function restoreSound() {
