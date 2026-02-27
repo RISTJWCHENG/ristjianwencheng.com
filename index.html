@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2102,6 +2101,31 @@
             });
         }
 
+        function shareArticle(articleUrl, btn) {
+            const pageBase = window.location.href.split('?')[0];
+            const encoded = btoa(encodeURIComponent(articleUrl));
+            const shareUrl = pageBase + '?article=' + encoded;
+            function doToast() {
+                const toast = document.getElementById('shareToast');
+                if (toast) {
+                    toast.textContent = '🔗 Article link copied!';
+                    toast.classList.add('show');
+                    setTimeout(function() { toast.classList.remove('show'); }, 2200);
+                }
+            }
+            navigator.clipboard.writeText(shareUrl).then(doToast).catch(function() {
+                const ta = document.createElement('textarea');
+                ta.value = shareUrl;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                doToast();
+            });
+        }
+
         // On page load, check for ?play= param and auto-open the video
         (function() {
             function tryAutoPlay() {
@@ -3170,10 +3194,15 @@
                 var metaDate = article.type === 'pdf' ? '📄 PDF Document' : formatArticleDate(article.date);
                 var metaRead = article.type === 'pdf' ? '🖱️ Click to read' : (article.readTime ? '⏱️ ' + article.readTime : '');
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
+                var articleShareUrl = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
                 return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="featured-article-content">'
+                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">'
                     + '<div class="featured-article-category">' + article.category + '</div>'
+                    + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
+                    + 'Share</button></div>'
                     + '<h3 class="featured-article-title">' + article.title + '</h3>'
                     + '<p class="featured-article-description">' + article.description + '</p>'
                     + '<div class="featured-article-meta">'
@@ -3193,10 +3222,15 @@
                 var metaDate = article.type === 'pdf' ? '📄 PDF' : formatArticleDate(article.date);
                 var metaRead = article.readTime ? '⏱️ ' + article.readTime : '';
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
+                var articleShareUrl2 = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
                 return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="article-card-content">'
+                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">'
                     + '<div class="article-card-category">' + article.category + '</div>'
+                    + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
+                    + 'Share</button></div>'
                     + '<h3 class="article-card-title">' + article.title + '</h3>'
                     + '<p class="article-card-description">' + article.description + '</p>'
                     + '<div class="article-card-meta">'
