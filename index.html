@@ -2102,9 +2102,13 @@
         }
 
         function shareArticle(articleUrl, btn) {
-            const pageBase = window.location.href.split('?')[0];
-            const encoded = btoa(encodeURIComponent(articleUrl));
-            const shareUrl = pageBase + '?article=' + encoded;
+            // Copy the article's direct HTML/PDF link
+            var shareUrl = articleUrl;
+            // If it's a relative path, resolve to absolute
+            if (shareUrl && !shareUrl.match(/^https?:\/\//)) {
+                var base = window.location.href.split('?')[0].replace(/\/[^\/]*$/, '/');
+                shareUrl = base + shareUrl;
+            }
             function doToast() {
                 const toast = document.getElementById('shareToast');
                 if (toast) {
@@ -2218,7 +2222,6 @@
         <div class="container">
             <video
                 id="heroLogoVideo"
-                autoplay
                 muted
                 loop
                 playsinline
@@ -2419,6 +2422,12 @@
                         <p>Kung Fu Panda 3 — Feature Film | California, USA / Shanghai, China<br>
                         The film was co-produced by the Hollywood studio DreamWorks and Oriental DreamWorks in Shanghai, China, with approximately one-third of the production carried out in China. This marked the first time a U.S.-led feature film was co-produced with a Chinese company. World Premiere at China.<br>
                         Distributed by: 20th Century Fox</p>
+                    </div>
+                    <div class="cv-item">
+                        <div class="cv-year">Release Dates: November 11, 2014</div>
+                        <p>How to Train Your Dragon: Dragons - Dawn of the Dragon Racers — TV Series | California, USA / Shanghai, China<br>
+                        The Series was produced by DreamWorks in collaboration with Oriental DreamWorks<br>
+                        Distributed by: Netflix</p>
                     </div>
                     <div class="cv-item">
                         <div class="cv-year">Release Dates: September 19, 2013</div>
@@ -3280,15 +3289,37 @@
             // Load articles from Articles/index.json
             loadArticles();
 
-            // Hero video autoplay
+            // Hero video: only play when on HOME page AND mouse hovers over nav area
             const heroVideo = document.getElementById('heroLogoVideo');
+            const navEl = document.querySelector('nav');
             if (heroVideo) {
-                heroVideo.play().catch(function() {
-                    heroVideo.addEventListener('canplay', function onCan() {
-                        heroVideo.removeEventListener('canplay', onCan);
-                        heroVideo.play().catch(function(){});
+                // Track whether we're on the HOME page (video section visible)
+                var isOnHome = false;
+
+                // IntersectionObserver to detect if #home section is visible
+                const homeObs = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        isOnHome = entry.isIntersecting;
+                        if (!isOnHome) {
+                            heroVideo.pause();
+                        }
                     });
-                });
+                }, { threshold: 0.1 });
+                homeObs.observe(document.getElementById('home'));
+
+                // Play only when nav is hovered AND we're on HOME
+                if (navEl) {
+                    navEl.addEventListener('mouseenter', function() {
+                        if (isOnHome) {
+                            heroVideo.play().catch(function(){});
+                        }
+                    });
+                    navEl.addEventListener('mouseleave', function() {
+                        heroVideo.pause();
+                    });
+                }
+
+                // Restore sound on first user interaction
                 function restoreSound() {
                     heroVideo.muted = false;
                     heroVideo.volume = 1;
@@ -3297,17 +3328,6 @@
                 }
                 document.addEventListener('click', restoreSound);
                 document.addEventListener('touchstart', restoreSound);
-
-                const obs = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            heroVideo.play().catch(function(){});
-                        } else {
-                            heroVideo.pause();
-                        }
-                    });
-                }, { threshold: 0.1 });
-                obs.observe(heroVideo);
             }
 
             document.querySelectorAll('.filter-tag').forEach(function(tag) {
