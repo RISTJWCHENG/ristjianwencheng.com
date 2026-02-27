@@ -49,13 +49,13 @@
   },
   {
     "id": "article_05",
-    "file": "Articles/article_06.html",
-    "title": "dsdfsdfsdfsdfsdfs",
-    "category": "Writing",
-    "date": "2025-09-15",
-    "readTime": "4 min read",
-    "description": "Essential techniques for amateur photographers looking to elevate their craft and capture stunning images.",
-    "cover": "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
+    "file": "Articles/article_05.html",
+    "title": "When I Walking in Brussels, Belgium",
+    "category": "Travel",
+    "date": "2021-09-15",
+    "readTime": "2 min read",
+    "description": "Modern minimalist buildings stand intertwined with classical facades marked by the passage of time, as if past and present whisper and converge here.",
+    "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_04/brussels_02.jpg",
     "featured": false,
     "type": "html"
   }
