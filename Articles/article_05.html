@@ -4,270 +4,296 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Walking in Brussels, Belgium</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Microsoft Himalaya';
+      src: local('Microsoft Himalaya');
+    }
+  </style>
   <style>
     :root {
-      --cream: #f5f0e8;
-      --dark: #1a1714;
-      --warm: #c8864a;
-      --muted: #7a6e63;
-      --accent: #3d6b5e;
-      --light-line: #e0d8cc;
+      --bg: #ffffff;
+      --ink: #0f0f0f;
+      --mid: #6b6b6b;
+      --faint: #d4d4d4;
+      --accent: #a07850;
+      --line: #ebebeb;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--cream);
-      color: var(--dark);
-      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 48px 20px 80px;
+      padding: 64px 24px 100px;
     }
 
     article {
-      max-width: 720px;
+      max-width: 660px;
       width: 100%;
-      animation: fadeUp 0.9s ease both;
+      animation: rise 0.7s cubic-bezier(0.22,1,0.36,1) both;
     }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Category tag */
-    .tag {
-      display: inline-block;
+    /* ── Category ── */
+    .category {
+      font-family: 'Manrope', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-size: 11px;
-      font-weight: 500;
       color: var(--accent);
-      border: 1px solid var(--accent);
-      border-radius: 20px;
-      padding: 4px 14px;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    /* ── Title ── */
+    h1 {
+      font-family: 'Microsoft Himalaya', 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.7rem, 4.2vw, 2.4rem);
+      font-weight: 400;
+      font-style: normal;
+      line-height: 1.18;
+      color: var(--ink);
+      letter-spacing: 0.01em;
       margin-bottom: 22px;
     }
 
-    /* Title */
-    h1 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      line-height: 1.15;
-      color: var(--dark);
-      margin-bottom: 20px;
-      letter-spacing: -0.01em;
+    h1 span.plain {
+      color: #222;
     }
 
-    h1 em {
-      font-style: italic;
-      color: var(--warm);
+    h1 span.city {
+      color: var(--accent);
     }
 
-    /* Meta row */
-    .meta {
+    /* ── Meta row ── */
+    .byline {
       display: flex;
       align-items: center;
-      gap: 20px;
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 400;
-      margin-bottom: 32px;
-      flex-wrap: wrap;
+      gap: 14px;
+      padding: 13px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 0;
     }
 
     .meta-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 10.5px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--mid);
     }
 
-    .meta-item svg {
-      flex-shrink: 0;
-      opacity: 0.75;
+    .meta-item svg { opacity: 0.55; flex-shrink: 0; }
+
+    .sep {
+      width: 1px;
+      height: 11px;
+      background: var(--faint);
     }
 
-    .divider-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--light-line);
+    /* ── Hero image ── */
+    .hero-wrap {
+      margin: 32px 0 36px;
     }
 
-    /* Hero image */
     .hero-img {
       width: 100%;
-      border-radius: 16px;
+      border-radius: 10px;
       display: block;
-      margin-bottom: 40px;
       object-fit: cover;
-      max-height: 480px;
-      box-shadow: 0 12px 40px rgba(26,23,20,0.13);
-      transition: transform 0.6s ease;
+      max-height: 440px;
+      transition: transform 0.8s ease;
     }
 
-    .hero-img:hover { transform: scale(1.01); }
+    .hero-img:hover { transform: scale(1.004); }
 
-    /* Decorative rule */
-    .rule {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 36px;
-    }
-
-    .rule::before, .rule::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--light-line);
-    }
-
-    .rule-icon {
-      font-size: 16px;
-      color: var(--warm);
-    }
-
-    /* Body text */
+    /* ── Body ── */
     .body-text {
-      font-size: 17px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15.5px;
       line-height: 1.85;
-      color: #2e2a26;
+      color: #1c1c1c;
       font-weight: 300;
     }
 
     .body-text p {
-      margin-bottom: 1.6em;
+      margin-bottom: 1.5em;
     }
 
+    /* First letter drop cap */
     .body-text p:first-child::first-letter {
-      font-family: 'Playfair Display', serif;
-      font-size: 4.5em;
-      font-weight: 700;
-      color: var(--warm);
+      font-family: 'DM Serif Display', serif;
+      font-size: 3.6em;
+      font-weight: 400;
+      color: var(--ink);
       float: left;
-      line-height: 0.75;
-      margin: 6px 10px 0 0;
+      line-height: 0.82;
+      margin: 3px 7px 0 0;
     }
 
-    /* Pull quote */
-    blockquote {
-      border-left: 3px solid var(--warm);
-      padding: 6px 0 6px 24px;
-      margin: 40px 0;
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.25rem;
-      line-height: 1.65;
-      color: var(--dark);
+    /* ── Quote block — Comic Sans MS ── */
+    .pull-quote {
+      margin: 36px 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 2px 1fr;
+      gap: 0 20px;
+      align-items: start;
     }
 
-    /* Author section */
+    .pull-quote__bar {
+      width: 2px;
+      height: 100%;
+      background: var(--ink);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .pull-quote__text {
+      font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive;
+      font-style: normal;
+      font-size: clamp(0.88rem, 1.9vw, 0.97rem);
+      line-height: 1.75;
+      color: #2a2a2a;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    /* Artistic color classes */
+    .c-gold  { color: #b07d3a; }
+    .c-sage  { color: #4e7c6a; }
+    .c-slate { color: #3d5f82; }
+    .c-rose  { color: #9b5060; }
+    .c-em    { font-style: italic; }
+
+    /* ── Author section ── */
     .author-section {
-      margin-top: 56px;
-      padding-top: 28px;
-      border-top: 1px solid var(--light-line);
+      margin-top: 52px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
-    .author-avatar {
-      width: 48px;
-      height: 48px;
+    .author-initial {
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--warm), var(--accent));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      color: #fff;
+      border: 1px solid var(--line);
+      overflow: hidden;
       flex-shrink: 0;
     }
 
-    .author-info {
+    .author-initial img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .author-text {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
     }
 
     .author-label {
-      font-size: 11px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--muted);
+      color: #c0c0c0;
     }
 
     .author-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--dark);
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      font-weight: 400;
+      color: #555;
+      letter-spacing: 0.01em;
     }
   </style>
 </head>
 <body>
   <article>
-    <span class="tag">Travel · Belgium</span>
 
-    <h1>Walking in <em>Brussels,</em> Belgium</h1>
+    <div class="header">
+      <span class="category">Travel</span>
 
-    <div class="meta">
-      <div class="meta-item">
-        <!-- Calendar icon -->
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8" y1="2" x2="8" y2="6"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-        2022
-      </div>
-      <div class="divider-dot"></div>
-      <div class="meta-item">
-        <!-- Clock icon -->
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
-        </svg>
-        2 min read
+      <h1>
+        <span class="plain">Walking in </span><span class="city">Brussels, Belgium</span>
+      </h1>
+
+      <div class="byline">
+        <div class="meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          2022
+        </div>
+        <div class="sep"></div>
+        <div class="meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          2 min read
+        </div>
       </div>
     </div>
 
-    <img
-      class="hero-img"
-      src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_04/brussels_02.jpg"
-      alt="Streets of Brussels, Belgium"
-    />
-
-    <div class="rule"><span class="rule-icon">✦</span></div>
+    <div class="hero-wrap">
+      <img
+        class="hero-img"
+        src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_04/brussels_02.jpg"
+        alt="Streets of Brussels, Belgium"
+      />
+    </div>
 
     <div class="body-text">
       <p>
-        As I stroll through the streets of Brussels, modern minimalist buildings stand intertwined with classical facades marked by the passage of time, as if past and present whisper and converge here.
+        As I stroll through the <span class="c-slate c-em">streets of Brussels</span>, modern minimalist buildings stand intertwined with <span class="c-gold">classical facades</span> marked by the passage of time, as if <span class="c-em">past and present</span> whisper and converge here.
       </p>
 
-      <blockquote>
-        Slanting sunlight pierces the shadows, dancing across the cobblestones and tram tracks, transforming the clamor of the world into a warm, serene golden glow.
-      </blockquote>
+      <div class="pull-quote">
+        <span class="pull-quote__bar"></span>
+        <p class="pull-quote__text">Slanting sunlight pierces the shadows, dancing across the cobblestones and tram tracks, transforming the clamor of the world into a warm, serene golden glow.</p>
+      </div>
 
       <p>
-        At the end of the street, the majestic Église Royale Sainte-Marie soars into the sky, its massive dome rendered solemn and sacred by the play of light and shadow, like a pearl embedded in the heart of Brussels. The tram tracks wind off into the distance, not only connecting the city's transit but also serving as a temporal pathway, guiding one toward the centuries-old dome that stands resolute.
+        At the end of the street, the majestic <span class="c-sage">Église Royale Sainte-Marie</span> soars into the sky, its massive dome rendered <span class="c-gold c-em">solemn and sacred</span> by the play of light and shadow, like a <span class="c-rose">pearl</span> embedded in the <span class="c-slate">heart of Brussels</span>. The tram tracks wind off into the distance, not only connecting the city's transit but also serving as a <span class="c-em">temporal pathway</span>, guiding one toward the <span class="c-sage">centuries-old dome</span> that stands resolute.
       </p>
     </div>
 
     <div class="author-section">
-      <div class="author-avatar">R</div>
-      <div class="author-info">
+      <div class="author-initial">
+        <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/p1.jpg" alt="Rist JianWen.CHENG" />
+      </div>
+      <div class="author-text">
         <span class="author-label">Written by</span>
         <span class="author-name">Rist JianWen.CHENG</span>
       </div>
     </div>
+
   </article>
 </body>
 </html>
