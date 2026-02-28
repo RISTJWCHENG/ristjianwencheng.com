@@ -1465,17 +1465,15 @@
         }
 
         .dropdown-icon::before {
-            content: '>';
+            content: '˄';
             display: block;
-            transform: rotate(270deg);
             font-size: 0.9rem;
             line-height: 1;
         }
 
         .dropdown-icon::after {
-            content: '>';
+            content: '˅';
             display: block;
-            transform: rotate(90deg);
             font-size: 0.9rem;
             line-height: 1;
         }
@@ -1503,25 +1501,34 @@
 
             .mobile-nav-dropdown {
                 display: block;
-                max-width: 140px;
+                max-width: 160px;
                 margin-left: auto;
             }
 
             .mobile-nav-select {
-                padding: 0.3rem 1.25rem 0.3rem 0.5rem;
+                padding: 0.3rem 1.8rem 0.3rem 0.7rem;
                 font-size: 0.5rem;
                 border: 1px solid #4a90e2;
                 border-radius: 20px;
             }
 
             .dropdown-icon {
-                right: 0.5rem;
-                gap: 0.5px;
+                right: 0.6rem;
+                gap: 1px;
             }
             
-            .dropdown-icon::before,
+            .dropdown-icon::before {
+                content: '˄';
+                font-size: 0.55rem;
+                line-height: 1;
+                transform: none;
+            }
+
             .dropdown-icon::after {
-                font-size: 0.4rem;
+                content: '˅';
+                font-size: 0.55rem;
+                line-height: 1;
+                transform: none;
             }
 
             .hero-title {
