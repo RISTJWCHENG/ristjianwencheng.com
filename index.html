@@ -1696,6 +1696,19 @@
                 gap: 1.5rem;
             }
 
+            .featured-articles-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .featured-article-image {
+                height: 200px;
+            }
+
+            .featured-article-content {
+                padding: 1rem;
+            }
+
             .video-info {
                 padding: 1rem;
             }
@@ -2582,6 +2595,13 @@
         <div class="full-gallery-header">
             <h2 class="full-gallery-title">Complete Gallery</h2>
             <p class="full-gallery-subtitle">Capture, frame, and create fleeting moments of beauty</p>
+            <div class="search-bar" style="margin-top: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" placeholder="Search images..." id="searchInputGallery" onkeyup="searchGallery()">
+            </div>
             <div class="gallery-filters">
                 <div class="filter-tag active" data-filter="all">All</div>
                 <div class="filter-tag" data-filter="drawing">Drawing & Painting</div>
@@ -2708,6 +2728,10 @@
             const sectionId = select.value;
             if (sectionId === 'articles') {
                 openArticlePage();
+            } else if (sectionId === 'gallery') {
+                openFullGallery();
+            } else if (sectionId === 'video') {
+                openVideoPage();
             } else {
                 scrollToSection(sectionId);
             }
@@ -2947,13 +2971,26 @@
         }
 
         function filterGallery(category) {
+            const input = (document.getElementById('searchInputGallery') ? document.getElementById('searchInputGallery').value : '').toLowerCase();
             const items = document.querySelectorAll('.full-gallery-item');
             items.forEach(item => {
-                if (category === 'all' || item.dataset.category === category) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
+                const matchCat = category === 'all' || item.dataset.category === category;
+                const altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
+                const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
+                item.style.display = (matchCat && matchSearch) ? 'block' : 'none';
+            });
+        }
+
+        function searchGallery() {
+            const input = document.getElementById('searchInputGallery').value.toLowerCase();
+            const activeFilter = document.querySelector('#fullGalleryPage .filter-tag.active');
+            const category = activeFilter ? activeFilter.dataset.filter : 'all';
+            const items = document.querySelectorAll('.full-gallery-item');
+            items.forEach(item => {
+                const matchCat = category === 'all' || item.dataset.category === category;
+                const altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
+                const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
+                item.style.display = (matchCat && matchSearch) ? 'block' : 'none';
             });
         }
 
