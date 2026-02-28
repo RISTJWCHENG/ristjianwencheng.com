@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Walking in Brussels, Belgium</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Raleway:wght@300;400&display=swap" rel="stylesheet" />
   <style>
     @font-face {
       font-family: 'Microsoft Himalaya';
@@ -150,18 +150,17 @@
     .pull-quote {
       margin: 36px 0;
       padding: 0;
-      display: grid;
-      grid-template-columns: 2px 1fr;
-      gap: 0 20px;
-      align-items: start;
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
     }
 
     .pull-quote__bar {
       width: 2px;
-      height: 100%;
+      flex-shrink: 0;
       background: var(--ink);
-      display: block;
-      margin-top: 2px;
+      border-radius: 2px;
+      align-self: stretch;
     }
 
     .pull-quote__text {
@@ -222,11 +221,11 @@
     }
 
     .author-name {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Raleway', sans-serif;
       font-size: 12.5px;
-      font-weight: 400;
-      color: #555;
-      letter-spacing: 0.01em;
+      font-weight: 300;
+      color: #888;
+      letter-spacing: 0.08em;
     }
   </style>
 </head>
@@ -237,7 +236,7 @@
       <span class="category">Travel</span>
 
       <h1>
-        <span class="plain">Walking in </span><span class="city">Brussels, Belgium</span>
+        <span class="plain">Walking Through the Layers of Brussels, </span><span class="city">Belgium</span>
       </h1>
 
       <div class="byline">
@@ -271,16 +270,32 @@
 
     <div class="body-text">
       <p>
-        As I stroll through the <span class="c-slate c-em">streets of Brussels</span>, modern minimalist buildings stand intertwined with <span class="c-gold">classical facades</span> marked by the passage of time, as if <span class="c-em">past and present</span> whisper and converge here.
+        <span class="c-slate">Rationality, institutions, order, negotiation, decision-making</span>—when these <span class="c-gold c-em">grand narratives</span> unfold, what people first perceive is the outline of <span class="c-em">power</span> and well-ordered structure. Together, they shape the external imagination of this city: it is precisely Belgium's capital, <span class="c-sage">Brussels</span>, and also the <span class="c-rose">"capital"</span> of the European Union in both political and geographical senses.
       </p>
 
       <div class="pull-quote">
         <span class="pull-quote__bar"></span>
-        <p class="pull-quote__text">Slanting sunlight pierces the shadows, dancing across the cobblestones and tram tracks, transforming the clamor of the world into a warm, serene golden glow.</p>
+        <p class="pull-quote__text">When I walk through this city, in those wonderful moments—sunlight pouring down on a summer afternoon—I move among the lines of sculptures, the textures of marble, and the domes of buildings, feeling the past glory and the wisdom of civilization, while harboring endless respect for those fearless pioneers and tireless creators.</p>
       </div>
 
       <p>
-        At the end of the street, the majestic <span class="c-sage">Église Royale Sainte-Marie</span> soars into the sky, its massive dome rendered <span class="c-gold c-em">solemn and sacred</span> by the play of light and shadow, like a <span class="c-rose">pearl</span> embedded in the <span class="c-slate">heart of Brussels</span>. The tram tracks wind off into the distance, not only connecting the city's transit but also serving as a <span class="c-em">temporal pathway</span>, guiding one toward the <span class="c-sage">centuries-old dome</span> that stands resolute.
+        However, as residents, people are often more attuned to the city's <span class="c-slate c-em">multiple facets</span>. <span class="c-gold">Power and everyday life</span> coexist, reason and sensibility clash; institutions can be both rigidly structured and, at times, inefficient or loosely organized. Acknowledging this complexity does not mean avoiding the problems. On the contrary, candidly reflecting on the city's <span class="c-rose">"less-than-ideal"</span> aspects should not be overshadowed by the halo of being the <span class="c-sage c-em">"Capital of Europe."</span> Such reflection is a form of self-correction and a prerequisite for maintaining the city's vitality.
+      </p>
+
+      <p>
+        For travelers, however, another perspective emerges: every street and alleyway exudes its own unique charm. Belgium is renowned for its <span class="c-gold">beer</span>—the golden liquid shimmering in glasses, foam gently rolling, carrying <span class="c-em">centuries of brewing wisdom</span>. From the dark, rich abbey beers to the crisp lagers of corner pubs, every sip is a continuation of history and storytelling. Cafés fill the air with the rich aroma of <span class="c-rose">coffee</span>, like a warm mist gently embracing every passerby, while the city's signature <span class="c-gold">chocolate</span> releases deep cocoa scents, its sweetness and richness intertwining, letting time flow slowly across the tongue, inviting one to pause. <span class="c-slate">Colorful comics</span> leap from walls, narrating tales of humor and creativity. The <span class="c-sage">Grand Place</span>, centered around the magnificent Town Hall and surrounded by historic buildings, unfolds like an open-air gallery: sculpted façades and spires glimmer under golden sunlight, echoing <span class="c-gold c-em">past wealth and splendor</span>; the cobblestones reflect light and shadow, letting history and laughter intermingle in the air. Every step reveals the city's glory and the weight of time. <span class="c-slate">Classical carvings</span> juxtapose with modern glass façades, church domes shimmer in shifting light, and streets, coffee aromas, beer foam, and comic colors converge, composing the <span class="c-sage c-em">unique warmth and rhythm of Brussels</span>.
+      </p>
+
+      <p>
+        When you walk through the city, your gaze follows the tram tracks stretching toward the street's end, where the 19th-century Roman-Byzantine <span class="c-sage">Église Royale Sainte-Marie</span> rises prominently. Its dome <span class="c-em">solemnly and silently</span> watches over the city, serving not only as a <span class="c-rose">religious symbol</span> but also as a witness to <span class="c-gold">historical brilliance</span>—reminding modern observers that past courage and creativity forged the enduring, and inspiring future generations to pursue higher values and achievements with passion and wisdom.
+      </p>
+
+      <p>
+        What we face is not the city itself, but our own <span class="c-slate c-em">stance and actions</span>. Just as with any topic of discussion, we need both <span class="c-gold">reason</span>—to analyze structures and logic—and <span class="c-rose">sensibility</span>—to perceive what is worthy of appreciation. The city's multiplicity cannot be erased, and its contradictions and complexities cannot be entirely resolved. Yet we can choose where to linger, where to focus our attention, and how to respond through action to the values we recognize. As modern citizens, we are not merely shaped by our environment; we are <span class="c-sage c-em">agents capable of imbuing it with meaning</span>.
+      </p>
+
+      <p>
+        We are not mere spectators. A city is not an abstract political symbol, but a <span class="c-gold c-em">living community</span> composed of countless individuals. The civility of public spaces, the conscious respect for rules, and the ongoing pursuit of technological and cultural progress all depend on <span class="c-slate">stable and sustained participation</span> from individuals. While institutional design is important, without everyday, subtle <span class="c-sage">civic practices</span>, even the grandest structures cannot truly take root. A single act of following rules, a moment of <span class="c-rose">respect toward others</span>, a participation in public affairs—each is a concrete contribution to the city's quality. In other words, the city's character arises both from macro-level structures and from <span class="c-gold c-em">micro-level individual actions</span>. Each person is part of the city, and each is a shaper of its future form.
       </p>
     </div>
 
