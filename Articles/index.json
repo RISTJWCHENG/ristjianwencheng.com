@@ -37,25 +37,25 @@
   },
   {
     "id": "article_04",
-    "file": "Articles/article_03.html",
-    "title": "Capturing Perfect Moments: Photography Tips",
-    "category": "Writing",
-    "date": "2025-09-15",
-    "readTime": "4 min read",
-    "description": "Essential techniques for amateur photographers looking to elevate their craft and capture stunning images.",
-    "cover": "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
-    "featured": false,
-    "type": "html"
-  },
-  {
-    "id": "article_05",
-    "file": "Articles/article_05.html",
+    "file": "Articles/article_04.html",
     "title": "When I Walking in Brussels, Belgium",
     "category": "Travel",
     "date": "2021-09-15",
     "readTime": "2 min read",
     "description": "Modern minimalist buildings stand intertwined with classical facades marked by the passage of time, as if past and present whisper and converge here.",
     "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_04/brussels_02.jpg",
+    "featured": false,
+    "type": "html"
+  },
+  {
+    "id": "article_05",
+    "file": "Articles/article_05.html",
+    "title": "Gemstone-Blue Waters of the French Riviera",
+    "category": "Travel",
+    "date": "2022-07-23",
+    "readTime": "3 min read",
+    "description": "Capturing the Mediterranean’s blue shimmer, each moment frozen into eternity.",
+    "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_05/nice_01_3.2.1.jpg",
     "featured": false,
     "type": "html"
   }
