@@ -3239,6 +3239,15 @@
             return '📅 ' + d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
         }
 
+        function getCategoryColor(category) {
+            var colors = {
+                'Technical': 'rgb(226,199,20)',
+                'Travel':    'rgb(101,204,203)',
+                'Writing':   'rgb(165,235,196)'
+            };
+            return colors[category] || 'var(--accent)';
+        }
+
         function renderFeaturedArticles(articles) {
             var grid = document.getElementById('featuredArticlesGrid');
             if (!grid) return;
@@ -3251,11 +3260,12 @@
                 var metaRead = article.type === 'pdf' ? '🖱️ Click to read' : (article.readTime ? '⏱️ ' + article.readTime : '');
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
                 var articleShareUrl = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
+                var catColor = getCategoryColor(article.category);
                 return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="featured-article-content">'
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">'
-                    + '<div class="featured-article-category">' + article.category + '</div>'
+                    + '<div class="featured-article-category" style="color:' + catColor + ';">' + article.category + '</div>'
                     + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
                     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
                     + 'Share</button></div>'
@@ -3279,11 +3289,12 @@
                 var metaRead = article.readTime ? '⏱️ ' + article.readTime : '';
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
                 var articleShareUrl2 = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
+                var catColor = getCategoryColor(article.category);
                 return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="article-card-content">'
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">'
-                    + '<div class="article-card-category">' + article.category + '</div>'
+                    + '<div class="article-card-category" style="color:' + catColor + ';">' + article.category + '</div>'
                     + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
                     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
                     + 'Share</button></div>'
