@@ -220,12 +220,35 @@
       color: #c0c0c0;
     }
 
-    .author-name {
-      font-family: 'Raleway', sans-serif;
-      font-size: 12.5px;
-      font-weight: 300;
-      color: #888;
-      letter-spacing: 0.08em;
+    /* ── Mute button ── */
+    .mute-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 9999;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+      backdrop-filter: blur(6px);
+    }
+
+    .mute-btn:hover {
+      background: #fff;
+      transform: scale(1.08);
+    }
+
+    .mute-btn svg {
+      width: 18px;
+      height: 18px;
+      color: #333;
     }
   </style>
 </head>
@@ -309,6 +332,55 @@
       </div>
     </div>
 
-  </article>
+  <!-- Background audio -->
+  <audio id="bgAudio" loop preload="auto">
+    <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_04/Astra%20Club%20-%20Landing%20ft%20Julietta.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Mute toggle button -->
+  <button class="mute-btn" id="muteBtn" title="Toggle sound" onclick="toggleMute()">
+    <svg id="iconMuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <line x1="23" y1="9" x2="17" y2="15"/>
+      <line x1="17" y1="9" x2="23" y2="15"/>
+    </svg>
+    <svg id="iconSound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+    </svg>
+  </button>
+
+  <script>
+    const audio = document.getElementById('bgAudio');
+    let hasTriggered = false;
+
+    window.addEventListener('scroll', function () {
+      if (!hasTriggered && window.scrollY > 0) {
+        hasTriggered = true;
+        audio.play().then(() => {
+          // Successfully playing with sound
+          document.getElementById('iconMuted').style.display = 'none';
+          document.getElementById('iconSound').style.display = 'block';
+        }).catch(() => {
+          // Browser blocked — stay muted state
+        });
+      }
+    }, { passive: true });
+
+    function toggleMute() {
+      if (audio.paused) {
+        audio.play();
+        audio.muted = false;
+        document.getElementById('iconMuted').style.display = 'none';
+        document.getElementById('iconSound').style.display = 'block';
+      } else {
+        audio.muted = !audio.muted;
+        document.getElementById('iconMuted').style.display = audio.muted ? 'block' : 'none';
+        document.getElementById('iconSound').style.display = audio.muted ? 'none' : 'block';
+      }
+    }
+  </script>
+
 </body>
 </html>
