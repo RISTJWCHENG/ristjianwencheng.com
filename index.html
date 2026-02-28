@@ -1459,23 +1459,13 @@
             pointer-events: none;
             color: var(--text-primary);
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 2px;
+            justify-content: center;
         }
 
-        .dropdown-icon::before {
-            content: '˄';
-            display: block;
-            font-size: 0.9rem;
-            line-height: 1;
-        }
-
+        .dropdown-icon::before,
         .dropdown-icon::after {
-            content: '˅';
-            display: block;
-            font-size: 0.9rem;
-            line-height: 1;
+            content: none;
         }
 
         @media (max-width: 768px) {
@@ -1514,21 +1504,11 @@
 
             .dropdown-icon {
                 right: 0.6rem;
-                gap: 1px;
             }
             
-            .dropdown-icon::before {
-                content: '˄';
-                font-size: 0.55rem;
-                line-height: 1;
-                transform: none;
-            }
-
+            .dropdown-icon::before,
             .dropdown-icon::after {
-                content: '˅';
-                font-size: 0.55rem;
-                line-height: 1;
-                transform: none;
+                content: none;
             }
 
             .hero-title {
@@ -2235,7 +2215,12 @@
                     <option value="articles">ARTICLES</option>
                     <option value="information">INFORMATION</option>
                 </select>
-                <span class="dropdown-icon"></span>
+                <span class="dropdown-icon">
+                    <svg viewBox="0 0 10 12" width="10" height="12" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+                        <polyline points="2,4.5 5,1.5 8,4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="2,7.5 5,10.5 8,7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
             </div>
         </div>
     </nav>
