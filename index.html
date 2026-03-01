@@ -1591,10 +1591,8 @@
             }
 
             .article-card-image {
-                height: auto;
-                aspect-ratio: 16/9;
-                width: 100%;
-                object-fit: cover;
+                height: 250px;
+                aspect-ratio: unset;
             }
 
             .article-card-content {
@@ -1713,10 +1711,8 @@
             }
 
             .featured-article-image {
-                height: auto;
-                aspect-ratio: 16/9;
-                width: 100%;
-                object-fit: cover;
+                height: 220px;
+                aspect-ratio: unset;
             }
 
             .featured-article-content {
@@ -2354,7 +2350,7 @@
                 <a onclick="openArticlePage()" class="view-all-link">View All</a>
             </div>
             <div class="featured-articles-grid" id="featuredArticlesGrid">
-                <!-- Dynamically loaded from Articles/index.json -->
+                <!-- Dynamically loaded from Articles/article_index.json -->
             </div>
         </div>
     </section>
@@ -2603,7 +2599,7 @@
             </div>
 
             <div class="article-grid" id="articleGridFull">
-                <!-- Dynamically loaded from Articles/index.json -->
+                <!-- Dynamically loaded from Articles/article_index.json -->
             </div>
         </div>
     </div>
@@ -3210,15 +3206,15 @@
             });
         }
 
-        // ── Article loader: reads Articles/index.json ──────────────────────
+        // ── Article loader: reads Articles/article_index.json ──────────────────────
         function loadArticles() {
-            fetch('Articles/index.json')
+            fetch('Articles/article_index.json')
                 .then(function(res) { if (!res.ok) throw new Error('No articles index'); return res.json(); })
                 .then(function(articles) {
                     renderFeaturedArticles(articles);
                     renderFullArticles(articles);
                 })
-                .catch(function(err) { console.warn('Could not load Articles/index.json:', err); });
+                .catch(function(err) { console.warn('Could not load Articles/article_index.json:', err); });
         }
 
         function openArticleFile(article) {
@@ -3360,7 +3356,7 @@
 
             loadImages();
 
-            // Load articles from Articles/index.json
+            // Load articles from Articles/article_index.json
             loadArticles();
 
             // Hero video: autoplay, pause when scrolled out of view
