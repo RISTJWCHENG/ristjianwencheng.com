@@ -815,8 +815,18 @@
             overflow: hidden;
         }
         .desc-clamp.expanded {
-            -webkit-line-clamp: 10;
-            overflow: hidden;
+            -webkit-line-clamp: unset;
+            display: block;
+            overflow: visible;
+        }
+        /* Wrapper to allow inline more button after clamped text */
+        .desc-clamp-wrap {
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+        .desc-clamp-wrap .desc-more-btn {
+            margin-top: 0.1rem;
+            display: inline-block;
         }
         .desc-more-btn {
             background: none;
@@ -3190,10 +3200,12 @@
                         </div>
                     </div>
                     <h3 class="video-card-title">${video.title}</h3>
-                    <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;">📅 ${video.updated_time || ''}</div>
-                    <div>
+                    <div class="desc-clamp-wrap">
                         <p class="video-card-description desc-clamp" id="${descId}">${descText}</p>
                         <button class="desc-more-btn" id="btn-${descId}" onclick="toggleCardDesc('${descId}', this)" style="display:none;">more</button>
+                    </div>
+                    <div class="article-card-meta">
+                        <span>📅 ${video.updated_time || ''}</span>${video.watchTime ? `<span>⏱️ ${video.watchTime}</span>` : ''}
                     </div>
                 </div>
             `;
