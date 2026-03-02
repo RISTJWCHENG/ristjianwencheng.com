@@ -3227,17 +3227,18 @@
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
                 var articleShareUrl = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
                 var catColor = getCategoryColor(article.category);
+                var dlBtn = article.download && article.download[0] && article.download[1]
+                    ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
+                var lkBtn = article.link && article.link[0] && article.link[1]
+                    ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '';
+                var shareBtn = '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
                 return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
                     + coverHTML
                     + '<div class="featured-article-content">'
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
                     + '<div class="featured-article-category" style="color:' + catColor + ';">' + article.category + '</div>'
-                    + '<div style="display:flex;align-items:center;gap:0.3rem;">'
-                    + (article.download && article.download[0] && article.download[1] ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '')
-                    + (article.link && article.link[0] && article.link[1] ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '')
-                    + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
-                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
-                    + 'Share</button></div></div>'
+                    + '<div style="display:flex;align-items:center;gap:0.3rem;">' + dlBtn + lkBtn + shareBtn + '</div>'
+                    + '</div>'
                     + '<h3 class="featured-article-title">' + article.title + '</h3>'
                     + '<p class="featured-article-description">' + article.description + '</p>'
                     + '<div class="featured-article-meta">'
@@ -3269,13 +3270,13 @@
                 return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
                     + coverHTML
                     + '<div class="article-card-content">'
-                    + '<div class="article-card-category" style="color:' + catColor + ';margin-bottom:0.3rem;">' + article.category + '</div>'
-                    + '<h3 class="article-card-title">' + article.title + '</h3>'
-                    + '<p class="article-card-description">' + article.description + '</p>'
-                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem;">'
-                    + '<div class="article-card-meta" style="margin:0;"><span>' + metaDate + '</span>' + (metaRead ? '<span>' + metaRead + '</span>' : '') + '</div>'
+                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
+                    + '<div class="article-card-category" style="color:' + catColor + ';">' + article.category + '</div>'
                     + '<div style="display:flex;align-items:center;gap:0.3rem;">' + dlBtn + lkBtn + shareBtn + '</div>'
                     + '</div>'
+                    + '<h3 class="article-card-title">' + article.title + '</h3>'
+                    + '<p class="article-card-description">' + article.description + '</p>'
+                    + '<div class="article-card-meta" style="margin-top:0.5rem;"><span>' + metaDate + '</span>' + (metaRead ? '<span>' + metaRead + '</span>' : '') + '</div>'
                     + '</div></div>';
             }).join('');
         }
