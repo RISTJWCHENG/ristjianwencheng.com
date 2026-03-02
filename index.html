@@ -538,7 +538,7 @@
         .article-card-category {
             font-size: 0.85rem;
             color: #2a9d8f;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             font-weight: 500;
         }
 
@@ -979,7 +979,7 @@
         .featured-article-category {
             font-size: 0.8rem;
             color: var(--accent);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             font-weight: 500;
         }
 
@@ -1600,7 +1600,7 @@
             }
 
             .article-card-content {
-                padding: 1rem;
+                padding: 0.7rem 1rem 1rem;
             }
 
             .article-card-title {
@@ -1722,7 +1722,7 @@
             }
 
             .featured-article-content {
-                padding: 1rem;
+                padding: 0.7rem 1rem 1rem;
             }
 
             .video-info {
@@ -3176,7 +3176,7 @@
                 return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="featured-article-content">'
-                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">'
+                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
                     + '<div class="featured-article-category" style="color:' + catColor + ';">' + article.category + '</div>'
                     + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
                     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
@@ -3205,7 +3205,7 @@
                 return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="article-card-content">'
-                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">'
+                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
                     + '<div class="article-card-category" style="color:' + catColor + ';">' + article.category + '</div>'
                     + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
                     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
