@@ -850,10 +850,10 @@
             text-decoration: none;
         }
 
-        /* Label highlights purple when its sibling btn is hovered */
+        /* Label highlights match category color when its sibling btn is hovered */
         .video-share-btn:hover + .video-download-label,
         .video-download-label:hover {
-            color: #7c6fcd;
+            color: var(--cat-color, #7c6fcd);
         }
 
         .video-share-btn {
@@ -873,12 +873,12 @@
             white-space: nowrap;
         }
         .video-share-btn:hover {
-            color: #7c6fcd;
-            background: rgba(124,111,205,0.08);
+            color: var(--cat-color, #7c6fcd);
+            background: color-mix(in srgb, var(--cat-color, #7c6fcd) 12%, transparent);
         }
         /* When btn is hovered, also highlight adjacent label */
         .video-share-btn:hover ~ .video-download-label {
-            color: #7c6fcd;
+            color: var(--cat-color, #7c6fcd);
         }
         .video-share-btn svg {
             flex-shrink: 0;
@@ -3071,6 +3071,7 @@
             const card = document.createElement('div');
             card.className = 'video-card-featured';
             card.dataset.category = (video.category || 'Work').charAt(0).toUpperCase() + (video.category || 'Work').slice(1);
+            card.style.setProperty('--cat-color', '#7c6fcd');
             const thumbUrl = video.thumbnail_url || '';
             const thumbHTML = thumbUrl
                 ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
@@ -3226,7 +3227,7 @@
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
                 var articleShareUrl = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
                 var catColor = getCategoryColor(article.category);
-                return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
+                return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
                     + coverHTML
                     + '<div class="featured-article-content">'
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
@@ -3265,7 +3266,7 @@
                     ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>'
                     : '';
                 var shareBtn = '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
-                return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
+                return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
                     + coverHTML
                     + '<div class="article-card-content">'
                     + '<div class="article-card-category" style="color:' + catColor + ';margin-bottom:0.3rem;">' + article.category + '</div>'
