@@ -3059,7 +3059,7 @@
                 </div>
                 <div class="video-card-info">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
-                        <div class="video-category">${(video.category || 'Work').toUpperCase()}</div>
+                        <div class="video-category">${video.category || 'Work'}</div>
                         <button class="video-share-btn" onclick="shareVideo('${video.video_url}', this)" title="Copy link">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
                                 <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
