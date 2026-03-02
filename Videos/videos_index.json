@@ -28,7 +28,7 @@
     "watchTime": "3.2 min watch",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/N%20HAIR%20SETUP_Tool_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/N%20HAIR%20SETUP_Tool_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "Technical utility for creating dynamic curve setups in Maya.",
+    "description": "N HAIR SETUP Tool is a technical utility for Maya that automates and standardizes dynamic curve simulations in production. It replaces tedious, error-prone manual node construction with a deterministic, pipeline-compliant setup, enforcing strict naming conventions and predictable node architecture. By ensuring stable connections and eliminating structural inconsistencies, it improves efficiency, simulation stability, and scalability—allowing reliable, repeatable setups across shots, assets, and large-scale productions while enhancing overall CFX workflow quality.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
     "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
   },
