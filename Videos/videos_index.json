@@ -6,7 +6,7 @@
     "watchTime": "2.12 min watch",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Search%20And%20BlendShape%20For%20Curves_Tool_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Search%20And%20BlendShape%20For%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "A utility tool designed to quickly search, match, and generate blendShape connections for curve-based systems in Maya.",
+    "description": "Search And BlendShape For Curves enables fast automatic curve matching. You can define a maximum world-space search radius for the first CV (Base CV) of target curves relative to base curves. The tool uses this threshold to automatically pair curves and generate the corresponding BlendShapes.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
     "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
   },
@@ -127,7 +127,7 @@
     "watchTime": "2.7 min watch",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Search%20And%20BlendShape%20For%20Curves_Tool_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Search%20And%20BlendShape%20For%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "Duplicate entry of the same search & blendshape video.",
+    "description": "Search And BlendShape For Curves enables fast automatic curve matching. You can define a maximum world-space search radius for the first CV (Base CV) of target curves relative to base curves. The tool uses this threshold to automatically pair curves and generate the corresponding BlendShapes.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
     "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
   },
