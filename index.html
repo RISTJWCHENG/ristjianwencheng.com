@@ -3091,16 +3091,11 @@
             const fullGrid = document.getElementById('videoGridFull');
             if (featuredGrid) featuredGrid.innerHTML = '';
             if (fullGrid) fullGrid.innerHTML = '';
-            const categoryCounts = {};
-            videos.forEach(function(video) {
-                const cat = (video.category || 'Work').toLowerCase();
-                if (!categoryCounts[cat]) categoryCounts[cat] = 0;
-                const card = createVideoCard(video);
-                if (categoryCounts[cat] < 3 && featuredGrid) {
+            videos.forEach(function(video, index) {
+                if (index < 3 && featuredGrid) {
                     featuredGrid.appendChild(createVideoCard(video));
                 }
-                categoryCounts[cat]++;
-                if (fullGrid) fullGrid.appendChild(card);
+                if (fullGrid) fullGrid.appendChild(createVideoCard(video));
             });
         }
 
