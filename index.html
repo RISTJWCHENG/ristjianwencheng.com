@@ -3116,12 +3116,21 @@
                 .catch(err => console.warn('Could not load images.json:', err));
         }
 
+        function getVideoCategoryColor(category) {
+            var colors = {
+                'Other':   'rgb(155,231,113)',
+                'Moment':  'rgb(255,153,129)'
+            };
+            return colors[category] || '#7c6fcd';
+        }
+
         // ── Video loader: reads Videos/videos_index.json ──────────────────────
         function createVideoCard(video) {
             const card = document.createElement('div');
             card.className = 'video-card-featured';
             card.dataset.category = (video.category || 'Work').charAt(0).toUpperCase() + (video.category || 'Work').slice(1);
-            card.style.setProperty('--cat-color', '#7c6fcd');
+            const catColor = getVideoCategoryColor(card.dataset.category);
+            card.style.setProperty('--cat-color', catColor);
             if (video.download && video.download[0] && video.download[1]) {
                 card.dataset.downloadLabel = video.download[0];
                 card.dataset.downloadUrl = video.download[1];
@@ -3153,7 +3162,7 @@
                 </div>
                 <div class="video-card-info">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
-                        <div class="video-category">${video.category || 'Work'}</div>
+                        <div class="video-category" style="color:${catColor};">${video.category || 'Work'}</div>
                         <div style="display:flex;align-items:center;gap:0.3rem;">
                             ${video.download && video.download[0] && video.download[1] ? `
                             <a class="video-share-btn video-download-btn" href="${video.download[1]}" download title="Download ${video.download[0]}">
@@ -3267,9 +3276,7 @@
             var colors = {
                 'Technical': 'rgb(226,199,20)',
                 'Travel':    'rgb(127,156,239)',
-                'Writing':   'rgb(101,204,203)',
-                'Other':     'rgb(155,231,113)',
-                'Moment':    'rgb(255,153,129)'
+                'Writing':   'rgb(101,204,203)'
             };
             return colors[category] || 'var(--accent)';
         }
