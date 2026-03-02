@@ -843,10 +843,17 @@
             color: var(--text-secondary);
             font-family: inherit;
             white-space: nowrap;
+            transition: color 0.2s;
         }
 
         .video-download-btn {
             text-decoration: none;
+        }
+
+        /* Label highlights purple when its sibling btn is hovered */
+        .video-share-btn:hover + .video-download-label,
+        .video-download-label:hover {
+            color: #7c6fcd;
         }
 
         .video-share-btn {
@@ -868,6 +875,10 @@
         .video-share-btn:hover {
             color: #7c6fcd;
             background: rgba(124,111,205,0.08);
+        }
+        /* When btn is hovered, also highlight adjacent label */
+        .video-share-btn:hover ~ .video-download-label {
+            color: #7c6fcd;
         }
         .video-share-btn svg {
             flex-shrink: 0;
@@ -3086,22 +3097,20 @@
                         <div class="video-category">${video.category || 'Work'}</div>
                         <div style="display:flex;align-items:center;gap:0.3rem;">
                             ${video.download && video.download[0] && video.download[1] ? `
-                            <span class="video-download-label">${video.download[0]}</span>
                             <a class="video-share-btn video-download-btn" href="${video.download[1]}" download title="Download ${video.download[0]}">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                     <polyline points="7 10 12 15 17 10"/>
                                     <line x1="12" y1="15" x2="12" y2="3"/>
-                                </svg>
+                                </svg>${video.download[0]}
                             </a>` : ''}
                             ${video.link && video.link[0] && video.link[1] ? `
-                            <span class="video-download-label">${video.link[0]}</span>
                             <a class="video-share-btn video-download-btn" href="${video.link[1]}" target="_blank" rel="noopener noreferrer" title="Open ${video.link[0]}" onclick="event.stopPropagation()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
                                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                                     <polyline points="15 3 21 3 21 9"/>
                                     <line x1="10" y1="14" x2="21" y2="3"/>
-                                </svg>
+                                </svg>${video.link[0]}
                             </a>` : ''}
                             <button class="video-share-btn" onclick="shareVideo('${video.video_url}', this)" title="Copy link">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
@@ -3223,8 +3232,8 @@
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
                     + '<div class="featured-article-category" style="color:' + catColor + ';">' + article.category + '</div>'
                     + '<div style="display:flex;align-items:center;gap:0.3rem;">'
-                    + (article.download && article.download[0] && article.download[1] ? '<span class="video-download-label">' + article.download[0] + '</span><a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>' : '')
-                    + (article.link && article.link[0] && article.link[1] ? '<span class="video-download-label">' + article.link[0] + '</span><a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>' : '')
+                    + (article.download && article.download[0] && article.download[1] ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '')
+                    + (article.link && article.link[0] && article.link[1] ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '')
                     + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
                     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
                     + 'Share</button></div></div>'
@@ -3255,8 +3264,8 @@
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
                     + '<div class="article-card-category" style="color:' + catColor + ';">' + article.category + '</div>'
                     + '<div style="display:flex;align-items:center;gap:0.3rem;">'
-                    + (article.download && article.download[0] && article.download[1] ? '<span class="video-download-label">' + article.download[0] + '</span><a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>' : '')
-                    + (article.link && article.link[0] && article.link[1] ? '<span class="video-download-label">' + article.link[0] + '</span><a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>' : '')
+                    + (article.download && article.download[0] && article.download[1] ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '')
+                    + (article.link && article.link[0] && article.link[1] ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '')
                     + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
                     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
                     + 'Share</button></div></div>'
