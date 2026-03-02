@@ -3153,31 +3153,33 @@
                     </div>
                 </div>
                 <div class="video-card-info">
-                    <div class="video-category">${video.category || 'Work'}</div>
-                    <div style="display:flex;align-items:center;gap:0.3rem;margin-bottom:0.3rem;">
-                        ${video.download && video.download[0] && video.download[1] ? `
-                        <a class="video-share-btn video-download-btn" href="${video.download[1]}" download title="Download ${video.download[0]}">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>${video.download[0]}
-                        </a>` : ''}
-                        ${video.link && video.link[0] && video.link[1] ? `
-                        <a class="video-share-btn video-download-btn" href="${video.link[1]}" target="_blank" rel="noopener noreferrer" title="Open ${video.link[0]}" onclick="event.stopPropagation()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                                <polyline points="15 3 21 3 21 9"/>
-                                <line x1="10" y1="14" x2="21" y2="3"/>
-                            </svg>${video.link[0]}
-                        </a>` : ''}
-                        <button class="video-share-btn" onclick="shareVideo('${video.video_url}', this)" title="Copy link">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                            </svg>
-                            Share
-                        </button>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
+                        <div class="video-category">${video.category || 'Work'}</div>
+                        <div style="display:flex;align-items:center;gap:0.3rem;">
+                            ${video.download && video.download[0] && video.download[1] ? `
+                            <a class="video-share-btn video-download-btn" href="${video.download[1]}" download title="Download ${video.download[0]}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>${video.download[0]}
+                            </a>` : ''}
+                            ${video.link && video.link[0] && video.link[1] ? `
+                            <a class="video-share-btn video-download-btn" href="${video.link[1]}" target="_blank" rel="noopener noreferrer" title="Open ${video.link[0]}" onclick="event.stopPropagation()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>${video.link[0]}
+                            </a>` : ''}
+                            <button class="video-share-btn" onclick="shareVideo('${video.video_url}', this)" title="Copy link">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                </svg>
+                                Share
+                            </button>
+                        </div>
                     </div>
                     <h3 class="video-card-title">${video.title}</h3>
                     <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;">📅 ${video.updated_time || ''}</div>
