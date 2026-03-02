@@ -785,7 +785,7 @@
         }
 
         .video-card-info {
-            padding: 0.7rem 1.5rem 1.5rem;
+            padding: 0.7rem 0 1.5rem;
         }
 
         .video-category {
@@ -843,17 +843,10 @@
             color: var(--text-secondary);
             font-family: inherit;
             white-space: nowrap;
-            transition: color 0.2s;
         }
 
         .video-download-btn {
             text-decoration: none;
-        }
-
-        /* Label highlights match category color when its sibling btn is hovered */
-        .video-share-btn:hover + .video-download-label,
-        .video-download-label:hover {
-            color: var(--cat-color, #7c6fcd);
         }
 
         .video-share-btn {
@@ -873,12 +866,8 @@
             white-space: nowrap;
         }
         .video-share-btn:hover {
-            color: var(--cat-color, #7c6fcd);
-            background: color-mix(in srgb, var(--cat-color, #7c6fcd) 12%, transparent);
-        }
-        /* When btn is hovered, also highlight adjacent label */
-        .video-share-btn:hover ~ .video-download-label {
-            color: var(--cat-color, #7c6fcd);
+            color: #7c6fcd;
+            background: rgba(124,111,205,0.08);
         }
         .video-share-btn svg {
             flex-shrink: 0;
@@ -1972,7 +1961,7 @@
             setTimeout(() => { scrollToSection('gallery'); }, 300);
         }
         // Open video in modal (medium size), stop any previously playing video
-        function openVideoModal(videoUrl, title, description, time, download, link) {
+        function openVideoModal(videoUrl, title, description, time) {
             // Stop all inline card videos
             document.querySelectorAll('.video-thumbnail-bg').forEach(function(v) {
                 v.pause();
@@ -2007,33 +1996,6 @@
             const shareBtn = document.getElementById('videoModalShareBtn');
             if (shareBtn) {
                 shareBtn.onclick = function() { shareVideo(videoUrl, this); };
-            }
-
-            // Render download button in modal
-            const modalDlBtn = document.getElementById('videoModalDownloadBtn');
-            if (modalDlBtn) {
-                if (download && download[0] && download[1]) {
-                    modalDlBtn.href = download[1];
-                    modalDlBtn.setAttribute('download', '');
-                    modalDlBtn.title = 'Download ' + download[0];
-                    modalDlBtn.querySelector('.modal-btn-label').textContent = download[0];
-                    modalDlBtn.style.display = 'flex';
-                } else {
-                    modalDlBtn.style.display = 'none';
-                }
-            }
-
-            // Render link button in modal
-            const modalLkBtn = document.getElementById('videoModalLinkBtn');
-            if (modalLkBtn) {
-                if (link && link[0] && link[1]) {
-                    modalLkBtn.href = link[1];
-                    modalLkBtn.title = 'Open ' + link[0];
-                    modalLkBtn.querySelector('.modal-btn-label').textContent = link[0];
-                    modalLkBtn.style.display = 'flex';
-                } else {
-                    modalLkBtn.style.display = 'none';
-                }
             }
 
             if (description && description.trim()) {
@@ -2099,9 +2061,7 @@
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
             const timeEl = card ? card.querySelector('[data-time]') : null;
             const time = timeEl ? timeEl.dataset.time : '2025';
-            const download = card && card.dataset.downloadLabel ? [card.dataset.downloadLabel, card.dataset.downloadUrl] : null;
-            const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
-            openVideoModal(source.src, title, desc, time, download, link);
+            openVideoModal(source.src, title, desc, time);
         }
 
         function playVideoWithThumb(overlay) {
@@ -2113,9 +2073,7 @@
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
             const timeEl = card ? card.querySelector('[data-time]') : null;
             const time = timeEl ? timeEl.dataset.time : '2025';
-            const download = card && card.dataset.downloadLabel ? [card.dataset.downloadLabel, card.dataset.downloadUrl] : null;
-            const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
-            openVideoModal(source.src, title, desc, time, download, link);
+            openVideoModal(source.src, title, desc, time);
         }
         function filterCategory(category) {
             document.querySelectorAll('.category-tag').forEach(tag => {
@@ -2233,13 +2191,11 @@
                     const title = match ? match.title : '';
                     const desc = match ? (match.description || '') : '';
                     const time = match ? (match.updated_time || '2025') : '2025';
-                    const download = match && match.download && match.download[0] ? match.download : null;
-                    const link = match && match.link && match.link[0] ? match.link : null;
                     // Scroll to video section first
                     const sec = document.getElementById('video');
                     if (sec) sec.scrollIntoView({ behavior: 'smooth' });
                     setTimeout(function() {
-                        openVideoModal(videoUrl, title, desc, time, download, link);
+                        openVideoModal(videoUrl, title, desc, time);
                     }, 600);
                 } catch(e) {}
             }
@@ -2777,31 +2733,13 @@
                         <span class="video-modal-category">WORK</span>
                         <span class="video-modal-time" id="videoModalTime"></span>
                     </div>
-                    <div style="display:flex;align-items:center;gap:0.3rem;">
-                        <a id="videoModalDownloadBtn" class="video-share-btn video-download-btn" href="#" style="display:none;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>
-                            <span class="modal-btn-label"></span>
-                        </a>
-                        <a id="videoModalLinkBtn" class="video-share-btn video-download-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                                <polyline points="15 3 21 3 21 9"/>
-                                <line x1="10" y1="14" x2="21" y2="3"/>
-                            </svg>
-                            <span class="modal-btn-label"></span>
-                        </a>
-                        <button class="video-share-btn" id="videoModalShareBtn" onclick="shareVideo('', this)" title="Copy link">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                            </svg>
-                            <span>Share</span>
-                        </button>
-                    </div>
+                    <button class="video-share-btn" id="videoModalShareBtn" onclick="shareVideo('', this)" title="Copy link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                        <span>Share</span>
+                    </button>
                 </div>
                 <p class="desc-clamp" id="videoModalDesc"></p>
                 <button class="desc-more-btn" id="videoModalMoreBtn" onclick="toggleModalDesc()" style="display:none;">more</button>
@@ -2839,7 +2777,7 @@
         function updateMobileNav() {
             if (window.innerWidth > 768) return;
 
-            const sections = ['home', 'gallery', 'video', 'featured-articles', 'information'];
+            const sections = ['home', 'gallery', 'video', 'information'];
             const select = document.getElementById('mobileNav');
             
             let currentSection = 'home';
@@ -2852,18 +2790,8 @@
                 }
             }
 
-            // Map section IDs to dropdown option values
-            const sectionToOption = {
-                'home': 'home',
-                'gallery': 'gallery',
-                'video': 'video',
-                'featured-articles': 'articles',
-                'information': 'information'
-            };
-
-            const optionValue = sectionToOption[currentSection] || currentSection;
-            if (select && select.value !== optionValue) {
-                select.value = optionValue;
+            if (select && select.value !== currentSection) {
+                select.value = currentSection;
             }
         }
 
@@ -3122,15 +3050,6 @@
             const card = document.createElement('div');
             card.className = 'video-card-featured';
             card.dataset.category = (video.category || 'Work').charAt(0).toUpperCase() + (video.category || 'Work').slice(1);
-            card.style.setProperty('--cat-color', '#7c6fcd');
-            if (video.download && video.download[0] && video.download[1]) {
-                card.dataset.downloadLabel = video.download[0];
-                card.dataset.downloadUrl = video.download[1];
-            }
-            if (video.link && video.link[0] && video.link[1]) {
-                card.dataset.linkLabel = video.link[0];
-                card.dataset.linkUrl = video.link[1];
-            }
             const thumbUrl = video.thumbnail_url || '';
             const thumbHTML = thumbUrl
                 ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
@@ -3153,24 +3072,17 @@
                     </div>
                 </div>
                 <div class="video-card-info">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;padding:0 1.5rem;">
                         <div class="video-category">${video.category || 'Work'}</div>
                         <div style="display:flex;align-items:center;gap:0.3rem;">
                             ${video.download && video.download[0] && video.download[1] ? `
+                            <span class="video-download-label">${video.download[0]}</span>
                             <a class="video-share-btn video-download-btn" href="${video.download[1]}" download title="Download ${video.download[0]}">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                     <polyline points="7 10 12 15 17 10"/>
                                     <line x1="12" y1="15" x2="12" y2="3"/>
-                                </svg>${video.download[0]}
-                            </a>` : ''}
-                            ${video.link && video.link[0] && video.link[1] ? `
-                            <a class="video-share-btn video-download-btn" href="${video.link[1]}" target="_blank" rel="noopener noreferrer" title="Open ${video.link[0]}" onclick="event.stopPropagation()">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                                    <polyline points="15 3 21 3 21 9"/>
-                                    <line x1="10" y1="14" x2="21" y2="3"/>
-                                </svg>${video.link[0]}
+                                </svg>
                             </a>` : ''}
                             <button class="video-share-btn" onclick="shareVideo('${video.video_url}', this)" title="Copy link">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
@@ -3181,11 +3093,13 @@
                             </button>
                         </div>
                     </div>
+                    <div style="padding:0 1.5rem;">
                     <h3 class="video-card-title">${video.title}</h3>
                     <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;">📅 ${video.updated_time || ''}</div>
                     <div>
                         <p class="video-card-description desc-clamp" id="${descId}">${descText}</p>
                         <button class="desc-more-btn" id="btn-${descId}" onclick="toggleCardDesc('${descId}', this)" style="display:none;">more</button>
+                    </div>
                     </div>
                 </div>
             `;
@@ -3286,18 +3200,16 @@
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
                 var articleShareUrl = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
                 var catColor = getCategoryColor(article.category);
-                var dlBtn = article.download && article.download[0] && article.download[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
-                var lkBtn = article.link && article.link[0] && article.link[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '';
-                var shareBtn = '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
-                return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
+                return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="featured-article-content">'
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
                     + '<div class="featured-article-category" style="color:' + catColor + ';">' + article.category + '</div>'
-                    + '<div style="display:flex;align-items:center;gap:0.3rem;">' + dlBtn + lkBtn + shareBtn + '</div>'
-                    + '</div>'
+                    + '<div style="display:flex;align-items:center;gap:0.3rem;">'
+                    + (article.download && article.download[0] && article.download[1] ? '<span class="video-download-label">' + article.download[0] + '</span><a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>' : '')
+                    + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
+                    + 'Share</button></div></div>'
                     + '<h3 class="featured-article-title">' + article.title + '</h3>'
                     + '<p class="featured-article-description">' + article.description + '</p>'
                     + '<div class="featured-article-meta">'
@@ -3319,24 +3231,22 @@
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
                 var articleShareUrl2 = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
                 var catColor = getCategoryColor(article.category);
-                var dlBtn = article.download && article.download[0] && article.download[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>'
-                    : '';
-                var lkBtn = article.link && article.link[0] && article.link[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>'
-                    : '';
-                var shareBtn = '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
-                return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
+                return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;">'
                     + coverHTML
                     + '<div class="article-card-content">'
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
                     + '<div class="article-card-category" style="color:' + catColor + ';">' + article.category + '</div>'
-                    + '<div style="display:flex;align-items:center;gap:0.3rem;">' + dlBtn + lkBtn + shareBtn + '</div>'
-                    + '</div>'
+                    + '<div style="display:flex;align-items:center;gap:0.3rem;">'
+                    + (article.download && article.download[0] && article.download[1] ? '<span class="video-download-label">' + article.download[0] + '</span><a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>' : '')
+                    + '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
+                    + 'Share</button></div></div>'
                     + '<h3 class="article-card-title">' + article.title + '</h3>'
                     + '<p class="article-card-description">' + article.description + '</p>'
-                    + '<div class="article-card-meta" style="margin-top:0.5rem;"><span>' + metaDate + '</span>' + (metaRead ? '<span>' + metaRead + '</span>' : '') + '</div>'
-                    + '</div></div>';
+                    + '<div class="article-card-meta">'
+                    + '<span>' + metaDate + '</span>'
+                    + (metaRead ? '<span>' + metaRead + '</span>' : '')
+                    + '</div></div></div>';
             }).join('');
         }
         // ───────────────────────────────────────────────────────────────────
