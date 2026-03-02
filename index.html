@@ -3022,6 +3022,15 @@
             videoPage.classList.add('active');
             document.body.style.overflow = 'hidden';
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
+            // Check more buttons after page becomes visible
+            requestAnimationFrame(function() {
+                document.querySelectorAll('#videoGridFull .desc-clamp').forEach(function(descEl) {
+                    const moreBtn = document.getElementById('btn-' + descEl.id);
+                    if (moreBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
+                        moreBtn.style.display = 'inline-block';
+                    }
+                });
+            });
         }
 
         function closeVideoPage() {
