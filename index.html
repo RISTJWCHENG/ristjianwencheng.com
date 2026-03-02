@@ -711,6 +711,8 @@
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
             border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
         }
 
         .video-card-featured:hover {
@@ -786,6 +788,9 @@
 
         .video-card-info {
             padding: 0.7rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .video-category {
@@ -3199,12 +3204,14 @@
                             </button>
                         </div>
                     </div>
-                    <h3 class="video-card-title">${video.title}</h3>
-                    <div class="desc-clamp-wrap">
-                        <p class="video-card-description desc-clamp" id="${descId}">${descText}</p>
-                        <button class="desc-more-btn" id="btn-${descId}" onclick="toggleCardDesc('${descId}', this)" style="display:none;">more</button>
+                    <div style="flex:1;">
+                        <h3 class="video-card-title">${video.title}</h3>
+                        <div class="desc-clamp-wrap">
+                            <p class="video-card-description desc-clamp" id="${descId}">${descText}</p>
+                            <button class="desc-more-btn" id="btn-${descId}" onclick="toggleCardDesc('${descId}', this)" style="display:none;">more</button>
+                        </div>
                     </div>
-                    <div class="article-card-meta">
+                    <div class="article-card-meta" style="margin-top:auto;padding-top:0.5rem;">
                         <span>📅 ${video.updated_time || ''}</span>${video.watchTime ? `<span>⏱️ ${video.watchTime}</span>` : ''}
                     </div>
                 </div>
@@ -3219,13 +3226,17 @@
             return card;
         }
 
-        function renderVideos(videos) {
+        function renderVideos(data) {
+            // Support both array format and {featuredCount, videos:[...]} object format
+            const videos = Array.isArray(data) ? data : (data.videos || []);
+            const featuredCount = Array.isArray(data) ? 3 : (data.featuredCount || 3);
+
             const featuredGrid = document.getElementById('videoGridFeatured');
             const fullGrid = document.getElementById('videoGridFull');
             if (featuredGrid) featuredGrid.innerHTML = '';
             if (fullGrid) fullGrid.innerHTML = '';
             videos.forEach(function(video, index) {
-                if (index < 3 && featuredGrid) {
+                if (index < featuredCount && featuredGrid) {
                     featuredGrid.appendChild(createVideoCard(video));
                 }
                 if (fullGrid) fullGrid.appendChild(createVideoCard(video));
