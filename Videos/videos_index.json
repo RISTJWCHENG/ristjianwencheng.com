@@ -6,8 +6,14 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Search%20And%20BlendShape%20For%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
     "description": "A utility tool designed to quickly search, match, and generate blendShape connections for curve-based systems in Maya. It streamlines repetitive manual operations and ensures consistent deformation relationships across complex curve setups, improving both accuracy and production efficiency.",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "",
+      ""
+    ],
+    "download": [
+      "",
+      ""
+    ]
   },
   {
     "title": "Reset Curves Tool",
@@ -16,18 +22,24 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Reset%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
     "description": "A production-oriented tool for safely resetting curve states in complex scenes. It restores curve transforms and deformation data to predefined defaults while preserving structural integrity, reducing troubleshooting time during iterative CFX workflows.",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [ "IMDb", "https://www.imdb.com/name/nm15024113/?ref_=nv_sr_srsg_0_tt_0_nm_3_in_0_q_rist%20jwcheng" ],
+    "download": [ "Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py" ]
   },
   {
     "title": "N HAIR SETUP Tool",
     "updated_time": "2022",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/N%20HAIR%20SETUP_Tool_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/N%20HAIR%20SETUP_Tool_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "N HAIR SETUP Tool is a technical utility for creating dynamic curve setups in Maya, designed to automate and standardise the creation of dynamic curve simulations in a production environment. It eliminates tedious and error-prone manual node construction, significantly reducing common setup issues in complex workflows.\n\nDuring the creation stage, the tool generates a fully deterministic, pipeline-compliant dynamic curve setup, consistently applying strict naming conventions and structural standards. This improves artist efficiency while enhancing simulation stability and predictability. The resulting setups are reliable, repeatable, and scalable across shots, assets, and large-scale productions, supporting robust CFX pipelines.",
+    "description": "N HAIR SETUP Tool is a technical utility for creating dynamic curve setups in Maya...",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "",
+      ""
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   },
   {
     "title": "2025 Updated CFX SHOWREEL",
@@ -36,68 +48,110 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2025_Updated_CFX%20SHOWREEL_Thumbnail_RISTJIANWENCHENG.png",
     "description": "CFX showreel within production environments.",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "",
+      ""
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   },
   {
     "title": "CFX Setup for Feature Film",
     "updated_time": "2022–2024",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/CFX%20SETUP%20FOR%20FEATURE%20FILM_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/CFX%20SETUP%20FOR%20FEATURE%20FILM_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "A showcase of selected CFX setups contributed to multiple feature film productions. The simulations were built on structured base setups and further optimised for shot-specific requirements, ensuring stability, controllability, and production scalability.",
+    "description": "A showcase of selected CFX setups contributed to multiple feature film productions...",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "IMDb",
+      "https://www.imdb.com/name/nm15024113/?ref_=nv_sr_srsg_0_tt_0_nm_3_in_0_q_rist%20jwcheng"
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   },
   {
     "title": "2022 CFX Showreel | Stromae – Multitude, le film – The Concert",
     "updated_time": "2022",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2022_CFX%20SHOWREEL_Stromae%20-%20Multitude%2C%20le%20film%20-%20The%20concert_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2022_CFX%20SHOWREEL_Stromae%20-%20Multitude%2C%20le%20film%20-%20The%20concert_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "CFX work contributed to 'Stromae – Multitude, le film – The Concert'. This reel highlights simulation development, dynamic systems integration, and shot-based optimisation within a production environment.",
+    "description": "CFX work contributed to 'Stromae – Multitude, le film – The Concert'...",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "IMDb",
+      "https://www.imdb.com/name/nm15024113/?ref_=nv_sr_srsg_0_tt_0_nm_3_in_0_q_rist%20jwcheng"
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   },
   {
     "title": "2015 Updated Rigging Demo Reel",
     "updated_time": "2015",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2015_Updated_Rigging%20Demo%20Reel_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2015_Updated_Rigging%20Demo%20Reel_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "A collection of character rigging work showcasing deformation systems, modular rig architectures, and production-ready control setups developed for animation workflows.",
+    "description": "A collection of character rigging work showcasing deformation systems...",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "IMDb",
+      "https://www.imdb.com/name/nm15024113/?ref_=nv_sr_srsg_0_tt_0_nm_3_in_0_q_rist%20jwcheng"
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   },
   {
     "title": "2015 Updated CFX Showreel",
     "updated_time": "2015",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2015_Updated_CFX%20SHOWREEL_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2015_Updated_CFX%20SHOWREEL_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "CFX showreel demonstrating dynamic simulations, secondary motion systems, and integration between rigging and simulation pipelines within production environments.",
+    "description": "CFX showreel demonstrating dynamic simulations...",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "IMDb",
+      "https://www.imdb.com/name/nm15024113/?ref_=nv_sr_srsg_0_tt_0_nm_3_in_0_q_rist%20jwcheng"
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   },
   {
     "title": "2014 Updated Character Rigging Setup Demo Reel",
     "updated_time": "2014",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2014_Updated_Character%20Rigging%20Setup%20Demo%20Reel_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2014_Updated_Character%20Rigging%20Setup%20Demo%20Reel_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "Character rigging setup reel focusing on structural rig design, deformation logic, and animator-friendly control systems built for stability and scalability.",
+    "description": "Character rigging setup reel focusing on structural rig design...",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "IMDb",
+      "https://www.imdb.com/name/nm15024113/?ref_=nv_sr_srsg_0_tt_0_nm_3_in_0_q_rist%20jwcheng"
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   },
   {
     "title": "N Dynamic Curves Rigging Setup Tool",
     "updated_time": "2013",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2013_N%20DYNAMIC%20CURVES%20RIGGING%20SETUP_%20Tool_RISTJIANWENCHENG.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2013_N%20DYNAMIC%20CURVES%20RIGGING%20SETUP_%20Tool_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "An early technical tool developed to automate dynamic curve rigging setups. It introduced structured node generation and standardised connection logic, laying the foundation for later large-scale dynamic pipeline tools.",
+    "description": "An early technical tool developed to automate dynamic curve rigging setups...",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "IMDb",
+      "https://www.imdb.com/name/nm15024113/?ref_=nv_sr_srsg_0_tt_0_nm_3_in_0_q_rist%20jwcheng"
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   },
   {
     "title": "Animation Showreel | Student Animation Work",
@@ -106,7 +160,13 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2010_Animation%20Showreel_Student%20Animation%20Work_Thumbnail_RISTJIANWENCHENG.png",
     "description": "My 2010 student animation showreel, featuring character performance exercises and foundational animation studies completed during academic training.",
     "category": "Work",
-    "link": "IMDb",
-    "download": "Python Code"
+    "link": [
+      "IMDb",
+      "https://www.imdb.com/name/nm15024113/?ref_=nv_sr_srsg_0_tt_0_nm_3_in_0_q_rist%20jwcheng"
+    ],
+    "download": [
+      "Python Code",
+      "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"
+    ]
   }
 ]
