@@ -897,6 +897,47 @@
         .video-share-btn svg {
             flex-shrink: 0;
         }
+        /* ── Video Pagination ─────────────────────────────────── */
+        #videoPagination {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.3rem;
+            padding: 1.5rem 0 2rem;
+        }
+        .page-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: color 0.2s, background 0.2s, border-color 0.2s;
+        }
+        .page-btn:hover {
+            color: #7c6fcd;
+            border-color: #7c6fcd;
+            background: rgba(124,111,205,0.08);
+        }
+        .page-btn.active {
+            background: #7c6fcd;
+            color: white;
+            border-color: #7c6fcd;
+            font-weight: 600;
+        }
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: default;
+            pointer-events: none;
+        }
+        .page-btn svg { flex-shrink: 0; }
+
         .video-share-toast {
             position: fixed;
             bottom: 2rem;
@@ -2650,6 +2691,7 @@
             <div class="video-grid-featured" id="videoGridFull">
                 <!-- Videos will be loaded from Videos/videos_index.json -->
             </div>
+            <div id="videoPagination" style="display:none;"></div>
         </div>
     </div>
 
@@ -3022,7 +3064,15 @@
             videoPage.classList.add('active');
             document.body.style.overflow = 'hidden';
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
-            // Check more buttons after page becomes visible
+            // Reset filters and re-render from cache
+            _videoCategoryFilter = 'all';
+            _videoSearchQuery = '';
+            if (window._VIDEOS_CACHE) {
+                _allVideos = window._VIDEOS_CACHE.slice();
+                _currentPage = 1;
+                renderVideoPage(1);
+            }
+            // Check more buttons after page is visible
             requestAnimationFrame(function() {
                 document.querySelectorAll('#videoGridFull .desc-clamp').forEach(function(descEl) {
                     const moreBtn = document.getElementById('btn-' + descEl.id);
@@ -3039,34 +3089,33 @@
             document.body.style.overflow = 'auto';
         }
 
-        function filterVideoCategory(category) {
-            document.querySelectorAll('#video-full-page .category-tag').forEach(tag => {
-                tag.classList.remove('active');
-            });
-            event.target.classList.add('active');
+        var _videoCategoryFilter = 'all';
+        var _videoSearchQuery = '';
 
-            const cards = document.querySelectorAll('#videoGridFull .video-card-featured');
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+        function filterVideoCategory(category) {
+            document.querySelectorAll('#video-full-page .category-tag').forEach(tag => tag.classList.remove('active'));
+            event.target.classList.add('active');
+            _videoCategoryFilter = category;
+            _applyVideoFilters();
         }
 
         function searchVideosFull() {
-            const input = document.getElementById('searchInputVideoFull').value.toLowerCase();
-            const cards = document.querySelectorAll('#videoGridFull .video-card-featured');
-            cards.forEach(card => {
-                const title = card.querySelector('.video-card-title') ? card.querySelector('.video-card-title').textContent.toLowerCase() : '';
-                const description = card.querySelector('.video-card-description') ? card.querySelector('.video-card-description').textContent.toLowerCase() : '';
-                if (title.includes(input) || description.includes(input)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+            _videoSearchQuery = document.getElementById('searchInputVideoFull').value.toLowerCase();
+            _applyVideoFilters();
+        }
+
+        function _applyVideoFilters() {
+            const allVideos = window._VIDEOS_CACHE || [];
+            _allVideos = allVideos.filter(function(video) {
+                const matchCat = _videoCategoryFilter === 'all' ||
+                    (video.category || 'Work').toLowerCase() === _videoCategoryFilter.toLowerCase();
+                const title = (video.title || '').toLowerCase();
+                const desc  = (video.description || '').toLowerCase();
+                const matchSearch = !_videoSearchQuery || title.includes(_videoSearchQuery) || desc.includes(_videoSearchQuery);
+                return matchCat && matchSearch;
             });
+            _currentPage = 1;
+            renderVideoPage(1);
         }
 
         function filterCategoryFull(category) {
@@ -3229,34 +3278,97 @@
             return { card, descId };
         }
 
+        // ── Pagination state ──────────────────────────────────────────────────
+        var _allVideos = [];
+        var _currentPage = 1;
+        var _videosPerPage = 12;
+
+        function renderVideoPage(page) {
+            _currentPage = page;
+            const fullGrid = document.getElementById('videoGridFull');
+            if (!fullGrid) return;
+            fullGrid.innerHTML = '';
+
+            const start = (page - 1) * _videosPerPage;
+            const pageVideos = _allVideos.slice(start, start + _videosPerPage);
+            const descIds = [];
+
+            pageVideos.forEach(function(video) {
+                const { card, descId } = createVideoCard(video);
+                fullGrid.appendChild(card);
+                descIds.push(descId);
+            });
+
+            renderPagination();
+
+            const pageEl = document.getElementById('video-full-page');
+            if (pageEl) pageEl.scrollTop = 0;
+
+            requestAnimationFrame(function() {
+                descIds.forEach(function(descId) {
+                    const descEl = document.getElementById(descId);
+                    const moreBtn = document.getElementById('btn-' + descId);
+                    if (descEl && moreBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
+                        moreBtn.style.display = 'inline-block';
+                    }
+                });
+            });
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById('videoPagination');
+            if (!pagination) return;
+            const totalPages = Math.ceil(_allVideos.length / _videosPerPage);
+            if (totalPages <= 1) { pagination.style.display = 'none'; return; }
+            pagination.style.display = 'flex';
+
+            const svgFirst = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>';
+            const svgPrev  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>';
+            const svgNext  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>';
+            const svgLast  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>';
+
+            let html = '';
+            html += `<button class="page-btn" onclick="renderVideoPage(1)" title="First page" ${_currentPage===1?'disabled':''}>${svgFirst}</button>`;
+            html += `<button class="page-btn" onclick="renderVideoPage(${_currentPage-1})" title="Previous" ${_currentPage===1?'disabled':''}>${svgPrev}</button>`;
+
+            const startP = Math.max(1, _currentPage - 2);
+            const endP   = Math.min(totalPages, _currentPage + 2);
+            if (startP > 1) html += `<button class="page-btn" onclick="renderVideoPage(1)">1</button>`;
+            if (startP > 2) html += `<button class="page-btn" style="border:none;cursor:default;pointer-events:none;">…</button>`;
+            for (let p = startP; p <= endP; p++) {
+                html += `<button class="page-btn${p===_currentPage?' active':''}" onclick="renderVideoPage(${p})">${p}</button>`;
+            }
+            if (endP < totalPages - 1) html += `<button class="page-btn" style="border:none;cursor:default;pointer-events:none;">…</button>`;
+            if (endP < totalPages) html += `<button class="page-btn" onclick="renderVideoPage(${totalPages})">${totalPages}</button>`;
+
+            html += `<button class="page-btn" onclick="renderVideoPage(${_currentPage+1})" title="Next" ${_currentPage===totalPages?'disabled':''}>${svgNext}</button>`;
+            html += `<button class="page-btn" onclick="renderVideoPage(${totalPages})" title="Last page" ${_currentPage===totalPages?'disabled':''}>${svgLast}</button>`;
+
+            pagination.innerHTML = html;
+        }
+
         function renderVideos(data) {
-            // Support both array format and {featuredCount, videos:[...]} object format
             const videos = Array.isArray(data) ? data : (data.videos || []);
             const featuredCount = Array.isArray(data) ? 3 : (data.featuredCount || 3);
 
+            _allVideos = videos;
+            _currentPage = 1;
+
+            // Render featured grid (homepage)
             const featuredGrid = document.getElementById('videoGridFeatured');
-            const fullGrid = document.getElementById('videoGridFull');
             if (featuredGrid) featuredGrid.innerHTML = '';
-            if (fullGrid) fullGrid.innerHTML = '';
-
-            const allDescIds = [];
-            videos.forEach(function(video, index) {
-                // Always create for full grid
-                const { card: fullCard, descId: fullDescId } = createVideoCard(video);
-                if (fullGrid) fullGrid.appendChild(fullCard);
-                allDescIds.push(fullDescId);
-
-                // Create separate card for featured grid
-                if (index < featuredCount && featuredGrid) {
-                    const { card: featCard, descId: featDescId } = createVideoCard(video);
-                    featuredGrid.appendChild(featCard);
-                    allDescIds.push(featDescId);
-                }
+            const featDescIds = [];
+            videos.slice(0, featuredCount).forEach(function(video) {
+                const { card, descId } = createVideoCard(video);
+                if (featuredGrid) featuredGrid.appendChild(card);
+                featDescIds.push(descId);
             });
 
-            // Check overflow AFTER all cards are in DOM
+            // Render first page of full grid + pagination
+            renderVideoPage(1);
+
             requestAnimationFrame(function() {
-                allDescIds.forEach(function(descId) {
+                featDescIds.forEach(function(descId) {
                     const descEl = document.getElementById(descId);
                     const moreBtn = document.getElementById('btn-' + descId);
                     if (descEl && moreBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
