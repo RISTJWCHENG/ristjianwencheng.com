@@ -9,7 +9,9 @@
     "description": "A comprehensive technical guide covering the process, workflow, and implementation details of the N Hair Setup Tool.",
     "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_01/H%20HAIR%20SETUP_Tool_Thumbnail.png",
     "featured": true,
-    "type": "html"
+    "type": "html",
+    "link": [],
+    "download": []
   },
   {
     "id": "article_02",
@@ -21,7 +23,9 @@
     "description": "A comprehensive technical guide offers greater flexibility and power, automatically calculating rebuild parameters based on the length of each curve.",
     "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_02/Rest%20Curve_Tool_Thumbnail.png",
     "featured": true,
-    "type": "html"
+    "type": "html",
+    "link": [],
+    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
   },
   {
     "id": "article_03",
@@ -33,7 +37,9 @@
     "description": "A comprehensive technical guide automatically matches curves and creates the BlendShapes.",
     "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_03/Search%20And%20BlendShape%20For%20Curves_Tool_Thumbnail.png",
     "featured": true,
-    "type": "html"
+    "type": "html",
+    "link": [],
+    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"]
   },
   {
     "id": "article_04",
@@ -45,7 +51,9 @@
     "description": "Modern minimalist buildings stand intertwined with classical facades marked by the passage of time, as if past and present whisper and converge here.",
     "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_04/brussels_02.jpg",
     "featured": false,
-    "type": "html"
+    "type": "html",
+    "link": [],
+    "download": []
   },
   {
     "id": "article_05",
@@ -57,6 +65,8 @@
     "description": "Capturing the Mediterranean’s blue shimmer, each moment frozen into eternity.",
     "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_05/nice_01_3.2.1.jpg",
     "featured": false,
-    "type": "html"
+    "type": "html",
+    "link": ["IMDb", "https://vimeo.com/features/video-player"],
+    "download": []
   }
 ]
