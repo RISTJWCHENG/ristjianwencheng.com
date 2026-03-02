@@ -785,7 +785,7 @@
         }
 
         .video-card-info {
-            padding: 0.7rem 0 1.5rem;
+            padding: 0.7rem 1.5rem 1.5rem;
         }
 
         .video-category {
@@ -3154,8 +3154,8 @@
                 </div>
                 <div class="video-card-info">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
-                        <div class="video-category" style="margin-left:0;">${video.category || 'Work'}</div>
-                        <div style="display:flex;align-items:center;gap:0.3rem;margin-right:-0.4rem;">
+                        <div class="video-category">${video.category || 'Work'}</div>
+                        <div style="display:flex;align-items:center;gap:0.3rem;">
                             ${video.download && video.download[0] && video.download[1] ? `
                             <a class="video-share-btn video-download-btn" href="${video.download[1]}" download title="Download ${video.download[0]}">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
@@ -3181,13 +3181,11 @@
                             </button>
                         </div>
                     </div>
-                    <div style="padding:0 1.5rem;">
-                        <h3 class="video-card-title">${video.title}</h3>
-                        <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;">📅 ${video.updated_time || ''}</div>
-                        <div>
-                            <p class="video-card-description desc-clamp" id="${descId}">${descText}</p>
-                            <button class="desc-more-btn" id="btn-${descId}" onclick="toggleCardDesc('${descId}', this)" style="display:none;">more</button>
-                        </div>
+                    <h3 class="video-card-title">${video.title}</h3>
+                    <div style="font-size:0.8rem;color:#6a6a6a;margin-bottom:0.5rem;">📅 ${video.updated_time || ''}</div>
+                    <div>
+                        <p class="video-card-description desc-clamp" id="${descId}">${descText}</p>
+                        <button class="desc-more-btn" id="btn-${descId}" onclick="toggleCardDesc('${descId}', this)" style="display:none;">more</button>
                     </div>
                 </div>
             `;
