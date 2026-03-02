@@ -3157,7 +3157,7 @@
             }
             const thumbUrl = video.thumbnail_url || '';
             const thumbHTML = thumbUrl
-                ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
+                ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.querySelector('.video-thumbnail-bg').style.opacity='1';">`
                 : '';
             const descId = 'desc-' + Math.random().toString(36).substr(2, 8);
             const descText = video.description && video.description.trim() ? video.description : '';
@@ -3217,14 +3217,7 @@
                     </div>
                 </div>
             `;
-            requestAnimationFrame(function() {
-                const descEl = document.getElementById(descId);
-                const moreBtn = document.getElementById('btn-' + descId);
-                if (descEl && moreBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
-                    moreBtn.style.display = 'inline-block';
-                }
-            });
-            return card;
+            return { card, descId };
         }
 
         function renderVideos(data) {
@@ -3236,11 +3229,31 @@
             const fullGrid = document.getElementById('videoGridFull');
             if (featuredGrid) featuredGrid.innerHTML = '';
             if (fullGrid) fullGrid.innerHTML = '';
+
+            const allDescIds = [];
             videos.forEach(function(video, index) {
+                // Always create for full grid
+                const { card: fullCard, descId: fullDescId } = createVideoCard(video);
+                if (fullGrid) fullGrid.appendChild(fullCard);
+                allDescIds.push(fullDescId);
+
+                // Create separate card for featured grid
                 if (index < featuredCount && featuredGrid) {
-                    featuredGrid.appendChild(createVideoCard(video));
+                    const { card: featCard, descId: featDescId } = createVideoCard(video);
+                    featuredGrid.appendChild(featCard);
+                    allDescIds.push(featDescId);
                 }
-                if (fullGrid) fullGrid.appendChild(createVideoCard(video));
+            });
+
+            // Check overflow AFTER all cards are in DOM
+            requestAnimationFrame(function() {
+                allDescIds.forEach(function(descId) {
+                    const descEl = document.getElementById(descId);
+                    const moreBtn = document.getElementById('btn-' + descId);
+                    if (descEl && moreBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
+                        moreBtn.style.display = 'inline-block';
+                    }
+                });
             });
         }
 
