@@ -9,7 +9,7 @@
     "description": "Search And BlendShape For Curves enables fast automatic curve matching. You can define a maximum world-space search radius for the first CV (Base CV) of target curves relative to base curves. The tool uses this threshold to automatically pair curves and generate the corresponding BlendShapes.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
     "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
-    "display": "on"
+    "display": "off"
   },
   {
     "title": "Reset Curves Tool",
