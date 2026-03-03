@@ -3109,7 +3109,7 @@
             _articleCategoryFilter = 'all';
             _articleSearchQuery = '';
             if (window._ARTICLES_CACHE) {
-                _allArticles = window._ARTICLES_CACHE.slice();
+                _allArticles = window._ARTICLES_CACHE.filter(function(a) { return a.display !== 'off'; });
                 _articlePage = 1;
                 renderArticlePage(1);
             }
@@ -3202,7 +3202,7 @@
         }
 
         function _applyArticleFilters() {
-            var cache = window._ARTICLES_CACHE || [];
+            var cache = (window._ARTICLES_CACHE || []).filter(function(a) { return a.display !== 'off'; });
             _allArticles = cache.filter(function(article) {
                 var matchCat = _articleCategoryFilter === 'all' || article.category === _articleCategoryFilter;
                 var title = (article.title || '').toLowerCase();
@@ -3288,7 +3288,8 @@
 
         function renderFullArticles(articles) {
             window._ARTICLES_CACHE = articles;
-            _allArticles = articles.slice();
+            const visible = articles.filter(function(a) { return a.display !== 'off'; });
+            _allArticles = visible.slice();
             _articlePage = 1;
             _articleCategoryFilter = 'all';
             _articleSearchQuery = '';
@@ -3596,7 +3597,7 @@
         function renderFeaturedArticles(articles) {
             var grid = document.getElementById('featuredArticlesGrid');
             if (!grid) return;
-            var featured = articles.filter(function(a) { return a.featured; }).slice(0, 3);
+            var featured = articles.filter(function(a) { return a.featured && a.display !== 'off'; }).slice(0, 3);
             grid.innerHTML = featured.map(function(article) {
                 var coverHTML = article.type === 'pdf'
                     ? makePdfCoverHTML(article)
