@@ -79,7 +79,7 @@
             text-decoration: none;
             font-size: 0.9rem;
             letter-spacing: 1px;
-            transition: color 0.3s;
+            transition: color 0.4s;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -88,6 +88,14 @@
 
         .nav-links a:hover {
             color: var(--accent);
+        }
+
+        /* When nav is over a dark background */
+        nav.nav-dark .nav-links a {
+            color: rgba(255,255,255,0.92);
+        }
+        nav.nav-dark .nav-links a:hover {
+            color: #fff;
         }
 
         .nav-links a svg {
@@ -2927,8 +2935,32 @@
             }
             scrollTimeout = window.requestAnimationFrame(function() {
                 updateMobileNav();
+                updateNavColor();
             });
         });
+
+        function updateNavColor() {
+            const nav = document.querySelector('nav');
+            if (!nav) return;
+            const navMidY = window.scrollY + nav.offsetHeight / 2;
+
+            let isDark = false;
+            document.querySelectorAll('section[id]').forEach(function(s) {
+                const top = s.offsetTop;
+                const bottom = top + s.offsetHeight;
+                if (navMidY >= top && navMidY < bottom) {
+                    const c = window.getComputedStyle(s).backgroundColor;
+                    const m = c && c.match(/\d+/g);
+                    if (m) {
+                        const bright = (parseInt(m[0])*299 + parseInt(m[1])*587 + parseInt(m[2])*114) / 1000;
+                        if (bright < 140) isDark = true;
+                    }
+                }
+            });
+            nav.classList.toggle('nav-dark', isDark);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() { updateNavColor(); });
 
         function filterCategory(category) {
             document.querySelectorAll('.category-tag').forEach(tag => {
