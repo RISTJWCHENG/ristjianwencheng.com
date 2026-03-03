@@ -132,6 +132,18 @@
     "display": "on"
   },
   {
+    "title": "THE BEAUTY OF ARCHITECTURE",
+    "category": "Ideas",
+    "updated_time": "2022",
+    "watchTime": "0.45 min watch",
+    "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/THE%20BEAUTY%20OF%20ARCHITECTURE.mp4",
+    "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/x0.00_00_31_29.Still007.bmp",
+    "description": "Architecture is the carrier of human civilization.",
+    "link": ["Article","https://ristjianwencheng.com/Articles/article_05.html"],
+    "download": [],
+    "display": "on"
+  },
+  {
     "title": "Search And BlendShape For Curves Tool (Duplicate)",
     "category": "Moments",
     "updated_time": "2022",
@@ -151,18 +163,6 @@
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/N%20CLOTH%20SETUP_Demo_Beginning.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/N%20CLOTH%20SETUP_Picture.jpg",
     "description": "In addition, you can select different numbers of Base and Target curves. For example, if you select 5 Base curvesand 10 Target curves, the tool will automatically find, for each Base curve, the closest curve among the 10 Targetcurves as its match. Conversely, it can also handle cases where the number of Base curves exceeds the numberof Target curves, intelligently performing the matching.If the Base and Target curves have inconsistent topology and the BlendShape cannot be created, you can enablethe “Rebuild Curve” topology option to force the tool to reconstruct the target curves, ensuring successfulBlendShape creation. Each created B",
-    "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
-    "display": "on"
-  },
-  {
-    "title": "THE BEAUTY OF ARCHITECTURE",
-    "category": "Ideas",
-    "updated_time": "2022",
-    "watchTime": "0.45 min watch",
-    "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/THE%20BEAUTY%20OF%20ARCHITECTURE.mp4",
-    "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/x0.00_00_31_29.Still007.bmp",
-    "description": "Architecture is the carrier of human civilization.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
     "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
     "display": "on"
