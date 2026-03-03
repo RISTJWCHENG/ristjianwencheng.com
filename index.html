@@ -2950,8 +2950,12 @@
                 const bottom = top + s.offsetHeight;
                 if (navMidY >= top && navMidY < bottom) {
                     const c = window.getComputedStyle(s).backgroundColor;
-                    const m = c && c.match(/\d+/g);
-                    if (m) {
+                    // Skip transparent backgrounds
+                    if (!c || c === 'transparent' || c === 'rgba(0, 0, 0, 0)') return;
+                    const m = c.match(/\d+/g);
+                    if (m && m.length >= 3) {
+                        // Skip if alpha is 0
+                        if (m.length >= 4 && parseFloat(m[3]) === 0) return;
                         const bright = (parseInt(m[0])*299 + parseInt(m[1])*587 + parseInt(m[2])*114) / 1000;
                         if (bright < 140) isDark = true;
                     }
