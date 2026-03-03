@@ -2115,12 +2115,11 @@
                 descEl.classList.remove('expanded');
                 moreBtn.style.display = 'none';
                 moreBtn.textContent = 'more';
-                // Check after paint if text actually overflows 3 lines
-                requestAnimationFrame(function() {
+                setTimeout(function() {
                     if (descEl.scrollHeight > descEl.clientHeight + 2) {
                         moreBtn.style.display = 'inline-block';
                     }
-                });
+                }, 100);
             } else {
                 descEl.textContent = '';
                 moreBtn.style.display = 'none';
@@ -2171,8 +2170,7 @@
             const card = wrapper.closest('.video-card-featured');
             const title = card ? card.querySelector('.video-card-title').textContent : '';
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
-            const timeEl = card ? card.querySelector('[data-time]') : null;
-            const time = timeEl ? timeEl.dataset.time : '';
+            const time = card ? (card.dataset.time || '') : '';
             const download = card && card.dataset.downloadLabel ? [card.dataset.downloadLabel, card.dataset.downloadUrl] : null;
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
             const category = card ? card.dataset.category : 'Work';
@@ -2187,8 +2185,7 @@
             const card = wrapper.closest('.video-card-featured');
             const title = card ? card.querySelector('.video-card-title').textContent : '';
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
-            const timeEl = card ? card.querySelector('[data-time]') : null;
-            const time = timeEl ? timeEl.dataset.time : '';
+            const time = card ? (card.dataset.time || '') : '';
             const download = card && card.dataset.downloadLabel ? [card.dataset.downloadLabel, card.dataset.downloadUrl] : null;
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
             const category = card ? card.dataset.category : 'Work';
@@ -3335,6 +3332,9 @@
             }
             if (video.watchTime) {
                 card.dataset.watchTime = video.watchTime;
+            }
+            if (video.updated_time) {
+                card.dataset.time = video.updated_time;
             }
             const thumbUrl = video.thumbnail_url || '';
             const thumbHTML = thumbUrl
