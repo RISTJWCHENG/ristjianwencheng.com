@@ -1960,36 +1960,6 @@
     </style>
     <script>
         // Critical navigation functions - defined early to avoid ReferenceError
-        function openArticlePage() {
-            const articlePage = document.getElementById('article-full-page');
-            if (articlePage) {
-                articlePage.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
-        }
-        function closeArticlePage() {
-            const articlePage = document.getElementById('article-full-page');
-            if (articlePage) {
-                articlePage.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        }
-        function openVideoPage() {
-            const videoPage = document.getElementById('video-full-page');
-            if (videoPage) {
-                videoPage.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
-        }
-        function closeVideoPage() {
-            const videoPage = document.getElementById('video-full-page');
-            if (videoPage) {
-                videoPage.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        }
         function scrollToSection(sectionId) {
             const section = document.getElementById(sectionId);
             if (section) {
@@ -2010,34 +1980,6 @@
                 fullGalleryPage.classList.remove('active');
                 document.body.style.overflow = 'auto';
             }
-        }
-        function filterVideoCategory(category) {
-            document.querySelectorAll('#video-full-page .category-tag').forEach(tag => {
-                tag.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            const cards = document.querySelectorAll('#videoGridFull .video-card-featured');
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-        function filterCategoryFull(category) {
-            document.querySelectorAll('#article-full-page .category-tag').forEach(tag => {
-                tag.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            const cards = document.querySelectorAll('#articleGridFull .article-card');
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
         }
         function backToGallerySection() {
             const fullGalleryPage = document.getElementById('fullGalleryPage');
