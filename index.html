@@ -898,7 +898,7 @@
             flex-shrink: 0;
         }
         /* ── Video Pagination ─────────────────────────────────── */
-        #videoPagination {
+        #videoPagination, #articlePagination {
             display: flex;
             align-items: center;
             justify-content: flex-end;
@@ -2683,7 +2683,7 @@
                 <div class="category-filters" style="margin-top: 2rem;">
                     <div class="category-tag active" data-category="all" onclick="filterVideoCategory('all')">All</div>
                     <div class="category-tag" data-category="Work" onclick="filterVideoCategory('Work')">Work</div>
-                    <div class="category-tag" data-category="Other" onclick="filterVideoCategory('Other')">Other</div>
+                    <div class="category-tag" data-category="Ideas" onclick="filterVideoCategory('Ideas')">Ideas</div>
                     <div class="category-tag" data-category="Moments" onclick="filterVideoCategory('Moments')">Moments</div>
                 </div>
             </div>
@@ -3283,7 +3283,7 @@
 
         function getVideoCategoryColor(category) {
             var colors = {
-                'Other':   'rgb(155,231,113)',
+                'Ideas':   'rgb(155,231,113)',
                 'Moment':  '#7c6fcd',
                 'Work':    'rgb(255,153,129)'
             };
