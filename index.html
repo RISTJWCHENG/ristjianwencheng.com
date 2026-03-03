@@ -2146,9 +2146,18 @@
 
         function expandVideoFullscreen() {
             const player = document.getElementById('videoModalPlayer');
-            if (player.requestFullscreen) player.requestFullscreen();
-            else if (player.webkitRequestFullscreen) player.webkitRequestFullscreen();
-            else if (player.mozRequestFullScreen) player.mozRequestFullScreen();
+            // iOS Safari: use webkitEnterFullscreen on the video element
+            if (player.webkitEnterFullscreen) {
+                player.webkitEnterFullscreen();
+            } else if (player.requestFullscreen) {
+                player.requestFullscreen();
+            } else if (player.webkitRequestFullscreen) {
+                player.webkitRequestFullscreen();
+            } else if (player.mozRequestFullScreen) {
+                player.mozRequestFullScreen();
+            } else if (player.msRequestFullscreen) {
+                player.msRequestFullscreen();
+            }
         }
 
         function toggleModalDesc() {
