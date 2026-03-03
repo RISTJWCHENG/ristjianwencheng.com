@@ -2722,6 +2722,7 @@
             <div class="article-grid" id="articleGridFull">
                 <!-- Dynamically loaded from Articles/articles_index.json -->
             </div>
+            <div id="articlePagination" style="display:none;"></div>
         </div>
     </div>
 
@@ -3051,6 +3052,14 @@
             articlePage.classList.add('active');
             document.body.style.overflow = 'hidden';
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
+            // Reset filters
+            _articleCategoryFilter = 'all';
+            _articleSearchQuery = '';
+            if (window._ARTICLES_CACHE) {
+                _allArticles = window._ARTICLES_CACHE.slice();
+                _articlePage = 1;
+                renderArticlePage(1);
+            }
         }
 
         function closeArticlePage() {
@@ -3118,36 +3127,119 @@
             renderVideoPage(1);
         }
 
+        // ── Article pagination state ──────────────────────────────────────────
+        var _allArticles = [];
+        var _articlePage = 1;
+        var _articlesPerPage = 12;
+        var _articleCategoryFilter = 'all';
+        var _articleSearchQuery = '';
+
         function filterCategoryFull(category) {
-            document.querySelectorAll('#article-full-page .category-tag').forEach(tag => {
+            document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
                 tag.classList.remove('active');
             });
             event.target.classList.add('active');
-
-            const cards = document.querySelectorAll('#articleGridFull .article-card');
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            _articleCategoryFilter = category;
+            _applyArticleFilters();
         }
 
         function searchArticlesFull() {
-            const input = document.getElementById('searchInputFull').value.toLowerCase();
-            const cards = document.querySelectorAll('#articleGridFull .article-card');
-            
-            cards.forEach(card => {
-                const title = card.querySelector('.article-card-title').textContent.toLowerCase();
-                const description = card.querySelector('.article-card-description').textContent.toLowerCase();
-                
-                if (title.includes(input) || description.includes(input)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+            _articleSearchQuery = document.getElementById('searchInputFull').value.toLowerCase();
+            _applyArticleFilters();
+        }
+
+        function _applyArticleFilters() {
+            var cache = window._ARTICLES_CACHE || [];
+            _allArticles = cache.filter(function(article) {
+                var matchCat = _articleCategoryFilter === 'all' || article.category === _articleCategoryFilter;
+                var title = (article.title || '').toLowerCase();
+                var desc  = (article.description || '').toLowerCase();
+                var matchSearch = !_articleSearchQuery || title.includes(_articleSearchQuery) || desc.includes(_articleSearchQuery);
+                return matchCat && matchSearch;
             });
+            _articlePage = 1;
+            renderArticlePage(1);
+        }
+
+        function renderArticlePage(page) {
+            _articlePage = page;
+            var grid = document.getElementById('articleGridFull');
+            if (!grid) return;
+
+            var start = (page - 1) * _articlesPerPage;
+            var pageArticles = _allArticles.slice(start, start + _articlesPerPage);
+
+            grid.innerHTML = pageArticles.map(function(article) {
+                var coverHTML = article.type === 'pdf'
+                    ? '<div class="article-card-image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#0f3460);"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><rect x="8" y="4" width="32" height="40" rx="3" stroke="#fff" stroke-width="1.5" opacity="0.6"/><text x="24" y="38" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="7" fill="#e8b84b">PDF</text></svg></div>'
+                    : '<img src="' + article.cover + '" alt="' + article.title + '" class="article-card-image" onerror="this.style.background=\'#e5e3df\'">';
+                var metaDate = article.type === 'pdf' ? '📄 PDF' : formatArticleDate(article.date);
+                var metaRead = article.readTime ? '⏱️ ' + article.readTime : '';
+                var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
+                var articleShareUrl2 = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
+                var catColor = getCategoryColor(article.category);
+                var dlBtn = article.download && article.download[0] && article.download[1]
+                    ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
+                var lkBtn = article.link && article.link[0] && article.link[1]
+                    ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '';
+                var shareBtn = '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
+                return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
+                    + coverHTML
+                    + '<div class="article-card-content">'
+                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
+                    + '<div class="article-card-category" style="color:' + catColor + ';">' + article.category + '</div>'
+                    + '<div style="display:flex;align-items:center;gap:0.3rem;">' + dlBtn + lkBtn + shareBtn + '</div>'
+                    + '</div>'
+                    + '<h3 class="article-card-title">' + article.title + '</h3>'
+                    + '<p class="article-card-description">' + article.description + '</p>'
+                    + '<div class="article-card-meta" style="margin-top:0.5rem;"><span>' + metaDate + '</span>' + (metaRead ? '<span>' + metaRead + '</span>' : '') + '</div>'
+                    + '</div></div>';
+            }).join('');
+
+            renderArticlePagination();
+            var pageEl = document.getElementById('article-full-page');
+            if (pageEl) pageEl.scrollTop = 0;
+        }
+
+        function renderArticlePagination() {
+            var pagination = document.getElementById('articlePagination');
+            if (!pagination) return;
+            var totalPages = Math.ceil(_allArticles.length / _articlesPerPage);
+            if (totalPages <= 1) { pagination.style.display = 'none'; return; }
+            pagination.style.display = 'flex';
+
+            var svgFirst = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>';
+            var svgPrev  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>';
+            var svgNext  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>';
+            var svgLast  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>';
+
+            var html = '';
+            html += '<button class="page-btn" onclick="renderArticlePage(1)" title="First page"' + (_articlePage===1?' disabled':'') + '>' + svgFirst + '</button>';
+            html += '<button class="page-btn" onclick="renderArticlePage(' + (_articlePage-1) + ')" title="Previous"' + (_articlePage===1?' disabled':'') + '>' + svgPrev + '</button>';
+
+            var startP = Math.max(1, _articlePage - 2);
+            var endP   = Math.min(totalPages, _articlePage + 2);
+            if (startP > 1) html += '<button class="page-btn" onclick="renderArticlePage(1)">1</button>';
+            if (startP > 2) html += '<button class="page-btn" style="border:none;cursor:default;pointer-events:none;">…</button>';
+            for (var p = startP; p <= endP; p++) {
+                html += '<button class="page-btn' + (p===_articlePage?' active':'') + '" onclick="renderArticlePage(' + p + ')">' + p + '</button>';
+            }
+            if (endP < totalPages - 1) html += '<button class="page-btn" style="border:none;cursor:default;pointer-events:none;">…</button>';
+            if (endP < totalPages) html += '<button class="page-btn" onclick="renderArticlePage(' + totalPages + ')">' + totalPages + '</button>';
+
+            html += '<button class="page-btn" onclick="renderArticlePage(' + (_articlePage+1) + ')" title="Next"' + (_articlePage===totalPages?' disabled':'') + '>' + svgNext + '</button>';
+            html += '<button class="page-btn" onclick="renderArticlePage(' + totalPages + ')" title="Last page"' + (_articlePage===totalPages?' disabled':'') + '>' + svgLast + '</button>';
+
+            pagination.innerHTML = html;
+        }
+
+        function renderFullArticles(articles) {
+            window._ARTICLES_CACHE = articles;
+            _allArticles = articles.slice();
+            _articlePage = 1;
+            _articleCategoryFilter = 'all';
+            _articleSearchQuery = '';
+            renderArticlePage(1);
         }
 
         function filterGallery(category) {
@@ -3473,38 +3565,6 @@
             }).join('');
         }
 
-        function renderFullArticles(articles) {
-            var grid = document.getElementById('articleGridFull');
-            if (!grid) return;
-            grid.innerHTML = articles.map(function(article) {
-                var coverHTML = article.type === 'pdf'
-                    ? '<div class="article-card-image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#0f3460);"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><rect x="8" y="4" width="32" height="40" rx="3" stroke="#fff" stroke-width="1.5" opacity="0.6"/><text x="24" y="38" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="7" fill="#e8b84b">PDF</text></svg></div>'
-                    : '<img src="' + article.cover + '" alt="' + article.title + '" class="article-card-image" onerror="this.style.background=\'#e5e3df\'">';
-                var metaDate = article.type === 'pdf' ? '📄 PDF' : formatArticleDate(article.date);
-                var metaRead = article.readTime ? '⏱️ ' + article.readTime : '';
-                var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
-                var articleShareUrl2 = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
-                var catColor = getCategoryColor(article.category);
-                var dlBtn = article.download && article.download[0] && article.download[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>'
-                    : '';
-                var lkBtn = article.link && article.link[0] && article.link[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>'
-                    : '';
-                var shareBtn = '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
-                return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
-                    + coverHTML
-                    + '<div class="article-card-content">'
-                    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
-                    + '<div class="article-card-category" style="color:' + catColor + ';">' + article.category + '</div>'
-                    + '<div style="display:flex;align-items:center;gap:0.3rem;">' + dlBtn + lkBtn + shareBtn + '</div>'
-                    + '</div>'
-                    + '<h3 class="article-card-title">' + article.title + '</h3>'
-                    + '<p class="article-card-description">' + article.description + '</p>'
-                    + '<div class="article-card-meta" style="margin-top:0.5rem;"><span>' + metaDate + '</span>' + (metaRead ? '<span>' + metaRead + '</span>' : '') + '</div>'
-                    + '</div></div>';
-            }).join('');
-        }
         // ───────────────────────────────────────────────────────────────────
 
         function loadImages() {
