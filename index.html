@@ -2027,7 +2027,7 @@
             setTimeout(() => { scrollToSection('gallery'); }, 300);
         }
         // Open video in modal (medium size), stop any previously playing video
-        function openVideoModal(videoUrl, title, description, time, download, link) {
+        function openVideoModal(videoUrl, title, description, time, download, link, category, watchTime) {
             // Stop all inline card videos
             document.querySelectorAll('.video-thumbnail-bg').forEach(function(v) {
                 v.pause();
@@ -2055,8 +2055,27 @@
             const moreBtn = document.getElementById('videoModalMoreBtn');
             const timeEl = document.getElementById('videoModalTime');
 
-            timeEl.textContent = '📅 ' + (time || '2025');
+            timeEl.textContent = '📅 ' + (time || '');
             descArea.style.display = 'block';
+
+            // Set category label with correct color
+            const catEl = document.getElementById('videoModalCategory');
+            if (catEl) {
+                const catName = category || 'Work';
+                catEl.textContent = catName;
+                catEl.style.color = getVideoCategoryColor(catName);
+            }
+
+            // Set watchTime
+            const watchTimeEl = document.getElementById('videoModalWatchTime');
+            if (watchTimeEl) {
+                if (watchTime) {
+                    watchTimeEl.textContent = '⏱️ ' + watchTime;
+                    watchTimeEl.style.display = '';
+                } else {
+                    watchTimeEl.style.display = 'none';
+                }
+            }
 
             // Wire share button to current video URL
             const shareBtn = document.getElementById('videoModalShareBtn');
@@ -2153,10 +2172,12 @@
             const title = card ? card.querySelector('.video-card-title').textContent : '';
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
             const timeEl = card ? card.querySelector('[data-time]') : null;
-            const time = timeEl ? timeEl.dataset.time : '2025';
+            const time = timeEl ? timeEl.dataset.time : '';
             const download = card && card.dataset.downloadLabel ? [card.dataset.downloadLabel, card.dataset.downloadUrl] : null;
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
-            openVideoModal(source.src, title, desc, time, download, link);
+            const category = card ? card.dataset.category : 'Work';
+            const watchTime = card && card.dataset.watchTime ? card.dataset.watchTime : null;
+            openVideoModal(source.src, title, desc, time, download, link, category, watchTime);
         }
 
         function playVideoWithThumb(overlay) {
@@ -2167,10 +2188,12 @@
             const title = card ? card.querySelector('.video-card-title').textContent : '';
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
             const timeEl = card ? card.querySelector('[data-time]') : null;
-            const time = timeEl ? timeEl.dataset.time : '2025';
+            const time = timeEl ? timeEl.dataset.time : '';
             const download = card && card.dataset.downloadLabel ? [card.dataset.downloadLabel, card.dataset.downloadUrl] : null;
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
-            openVideoModal(source.src, title, desc, time, download, link);
+            const category = card ? card.dataset.category : 'Work';
+            const watchTime = card && card.dataset.watchTime ? card.dataset.watchTime : null;
+            openVideoModal(source.src, title, desc, time, download, link, category, watchTime);
         }
         function filterCategory(category) {
             document.querySelectorAll('.category-tag').forEach(tag => {
@@ -2290,11 +2313,13 @@
                     const time = match ? (match.updated_time || '2025') : '2025';
                     const download = match && match.download && match.download[0] ? match.download : null;
                     const link = match && match.link && match.link[0] ? match.link : null;
+                    const category = match ? (match.category || 'Work') : 'Work';
+                    const watchTime = match ? (match.watchTime || null) : null;
                     // Scroll to video section first
                     const sec = document.getElementById('video');
                     if (sec) sec.scrollIntoView({ behavior: 'smooth' });
                     setTimeout(function() {
-                        openVideoModal(videoUrl, title, desc, time, download, link);
+                        openVideoModal(videoUrl, title, desc, time, download, link, category, watchTime);
                     }, 600);
                 } catch(e) {}
             }
@@ -2829,11 +2854,8 @@
                 <source id="videoModalSource" src="" type="video/mp4">
             </video>
             <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
-                <div class="video-modal-meta">
-                    <div style="display:flex;align-items:center;gap:0.8rem;">
-                        <span class="video-modal-category">WORK</span>
-                        <span class="video-modal-time" id="videoModalTime"></span>
-                    </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
+                    <span id="videoModalCategory" class="video-category">Work</span>
                     <div style="display:flex;align-items:center;gap:0.3rem;">
                         <a id="videoModalDownloadBtn" class="video-share-btn video-download-btn" href="#" style="display:none;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
@@ -2860,8 +2882,14 @@
                         </button>
                     </div>
                 </div>
-                <p class="desc-clamp" id="videoModalDesc"></p>
-                <button class="desc-more-btn" id="videoModalMoreBtn" onclick="toggleModalDesc()" style="display:none;">more</button>
+                <div class="desc-clamp-wrap">
+                    <p class="desc-clamp" id="videoModalDesc"></p>
+                    <button class="desc-more-btn" id="videoModalMoreBtn" onclick="toggleModalDesc()" style="display:none;">more</button>
+                </div>
+                <div class="article-card-meta" style="margin-top:0.4rem;">
+                    <span id="videoModalTime"></span>
+                    <span id="videoModalWatchTime" style="display:none;"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -3304,6 +3332,9 @@
             if (video.link && video.link[0] && video.link[1]) {
                 card.dataset.linkLabel = video.link[0];
                 card.dataset.linkUrl = video.link[1];
+            }
+            if (video.watchTime) {
+                card.dataset.watchTime = video.watchTime;
             }
             const thumbUrl = video.thumbnail_url || '';
             const thumbHTML = thumbUrl
