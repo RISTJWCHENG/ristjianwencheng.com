@@ -3102,7 +3102,7 @@
             _videoCategoryFilter = 'all';
             _videoSearchQuery = '';
             if (window._VIDEOS_CACHE) {
-                _allVideos = window._VIDEOS_CACHE.slice();
+                _allVideos = window._VIDEOS_CACHE.filter(function(v) { return v.display !== 'off'; });
                 _currentPage = 1;
                 renderVideoPage(1);
             }
@@ -3139,7 +3139,7 @@
         }
 
         function _applyVideoFilters() {
-            const allVideos = window._VIDEOS_CACHE || [];
+            const allVideos = (window._VIDEOS_CACHE || []).filter(function(v) { return v.display !== 'off'; });
             _allVideos = allVideos.filter(function(video) {
                 const matchCat = _videoCategoryFilter === 'all' ||
                     (video.category || 'Work').toLowerCase() === _videoCategoryFilter.toLowerCase();
