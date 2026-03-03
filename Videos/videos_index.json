@@ -8,7 +8,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Search%20And%20BlendShape%20For%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Search And BlendShape For Curves enables fast automatic curve matching. You can define a maximum world-space search radius for the first CV (Base CV) of target curves relative to base curves. The tool uses this threshold to automatically pair curves and generate the corresponding BlendShapes.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "Reset Curves Tool",
@@ -19,7 +20,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Reset%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
     "description": "A production-oriented tool for safely resetting curve states in complex scenes.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "N HAIR SETUP Tool",
@@ -30,7 +32,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/N%20HAIR%20SETUP_Tool_Thumbnail_RISTJIANWENCHENG.png",
     "description": "N HAIR SETUP Tool is a technical utility for Maya that automates and standardizes dynamic curve simulations in production. It replaces tedious, error-prone manual node construction with a deterministic, pipeline-compliant setup, enforcing strict naming conventions and predictable node architecture. By ensuring stable connections and eliminating structural inconsistencies, it improves efficiency, simulation stability, and scalability—allowing reliable, repeatable setups across shots, assets, and large-scale productions while enhancing overall CFX workflow quality.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "2025 Updated CFX SHOWREEL",
@@ -41,7 +44,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2025_Updated_CFX%20SHOWREEL_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Latest CFX showreel highlighting production experience.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "CFX Setup for Feature Film",
@@ -52,7 +56,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/CFX%20SETUP%20FOR%20FEATURE%20FILM_Thumbnail_RISTJIANWENCHENG.png",
     "description": "CFX setup workflows developed for feature film production.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "2022 CFX Showreel | Stromae – Multitude, le film – The Concert",
@@ -63,7 +68,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2022_CFX%20SHOWREEL_Stromae%20-%20Multitude%2C%20le%20film%20-%20The%20concert_Thumbnail_RISTJIANWENCHENG.png",
     "description": "CFX work contributed to concert film production.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "2015 Updated Rigging Demo Reel",
@@ -74,7 +80,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2015_Updated_Rigging%20Demo%20Reel_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Character rigging demo reel showcasing setup and deformation systems.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "2015 Updated CFX Showreel",
@@ -85,7 +92,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2015_Updated_CFX%20SHOWREEL_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Earlier CFX work compiled into updated showreel.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "2014 Updated Character Rigging Setup Demo Reel",
@@ -96,7 +104,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2014_Updated_Character%20Rigging%20Setup%20Demo%20Reel_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Character rigging setup demonstration reel.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "N Dynamic Curves Rigging Setup Tool",
@@ -107,7 +116,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2013_N%20DYNAMIC%20CURVES%20RIGGING%20SETUP_%20Tool_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Dynamic curve rigging automation tool for production use.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "Animation Showreel | Student Animation Work",
@@ -118,7 +128,8 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2010_Animation%20Showreel_Student%20Animation%20Work_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Student animation showreel demonstrating foundational animation skills.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "Search And BlendShape For Curves Tool (Duplicate)",
@@ -129,18 +140,20 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Search%20And%20BlendShape%20For%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Search And BlendShape For Curves enables fast automatic curve matching. You can define a maximum world-space search radius for the first CV (Base CV) of target curves relative to base curves. The tool uses this threshold to automatically pair curves and generate the corresponding BlendShapes.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "off"
   },
   {
     "title": "N CLOTH SETUP Demo Beginning",
-    "category": "Ideas",
+    "category": "Moments",
     "updated_time": "2023",
     "watchTime": "2.7 min watch",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/N%20CLOTH%20SETUP_Demo_Beginning.mov",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/N%20CLOTH%20SETUP_Picture.jpg",
     "description": "Demonstration beginning of an N cloth setup.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "title": "THE BEAUTY OF ARCHITECTURE",
@@ -151,6 +164,7 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/x0.00_00_31_29.Still007.bmp",
     "description": "Architecture is the carrier of human civilization.",
     "link": ["IMDb","https://www.imdb.com/name/nm15024113"],
-    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   }
 ]
