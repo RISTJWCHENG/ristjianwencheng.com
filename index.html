@@ -3471,8 +3471,11 @@
         }
 
         function renderVideos(data) {
-            const videos = Array.isArray(data) ? data : (data.videos || []);
+            const rawVideos = Array.isArray(data) ? data : (data.videos || []);
             const featuredCount = Array.isArray(data) ? 3 : (data.featuredCount || 3);
+
+            // Only include videos where display is not explicitly "off"
+            const videos = rawVideos.filter(function(v) { return v.display !== 'off'; });
 
             _allVideos = videos;
             _currentPage = 1;
