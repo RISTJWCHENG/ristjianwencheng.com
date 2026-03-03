@@ -12,7 +12,7 @@
     "type": "html",
     "link": [],
     "download": [],
-    "display": "on"
+    "display": "off"
   },
   {
     "id": "article_02",
@@ -222,6 +222,6 @@
     "type": "html",
     "link": ["IMDb", "https://vimeo.com/features/video-player"],
     "download": [],
-    "display": "on"
+    "display": "off"
   }
 ]
