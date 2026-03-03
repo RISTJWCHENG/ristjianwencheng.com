@@ -11,7 +11,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": []
+    "download": [],
+    "display": "on"
   },
   {
     "id": "article_02",
@@ -25,7 +26,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "id": "article_03",
@@ -39,7 +41,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"]
+    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"],
+    "display": "on"
   },
   {
     "id": "article_04",
@@ -53,7 +56,8 @@
     "featured": false,
     "type": "html",
     "link": [],
-    "download": []
+    "download": [],
+    "display": "on"
   },
   {
     "id": "article_05",
@@ -67,7 +71,8 @@
     "featured": false,
     "type": "html",
     "link": ["IMDb", "https://vimeo.com/features/video-player"],
-    "download": []
+    "download": [],
+    "display": "on"
   },
     {
     "id": "article_06",
@@ -81,7 +86,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": []
+    "download": [],
+    "display": "on"
   },
   {
     "id": "article_07",
@@ -95,7 +101,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "id": "article_08",
@@ -109,7 +116,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"]
+    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"],
+    "display": "on"
   },
   {
     "id": "article_09",
@@ -123,7 +131,8 @@
     "featured": false,
     "type": "html",
     "link": [],
-    "download": []
+    "download": [],
+    "display": "on"
   },
   {
     "id": "article_10",
@@ -137,7 +146,8 @@
     "featured": false,
     "type": "html",
     "link": ["IMDb", "https://vimeo.com/features/video-player"],
-    "download": []
+    "download": [],
+    "display": "on"
   },
     {
     "id": "article_11",
@@ -151,7 +161,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": []
+    "download": [],
+    "display": "on"
   },
   {
     "id": "article_12",
@@ -165,7 +176,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"]
+    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "display": "on"
   },
   {
     "id": "article_13",
@@ -179,7 +191,8 @@
     "featured": true,
     "type": "html",
     "link": [],
-    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"]
+    "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"],
+    "display": "on"
   },
   {
     "id": "article_04",
@@ -193,7 +206,8 @@
     "featured": false,
     "type": "html",
     "link": [],
-    "download": []
+    "download": [],
+    "display": "on"
   },
   {
     "id": "article_05",
@@ -207,6 +221,7 @@
     "featured": false,
     "type": "html",
     "link": ["IMDb", "https://vimeo.com/features/video-player"],
-    "download": []
+    "download": [],
+    "display": "on"
   }
 ]
