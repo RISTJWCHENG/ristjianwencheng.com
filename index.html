@@ -41,6 +41,10 @@
             background: transparent;
             z-index: 1000;
             border-bottom: none;
+            transition: transform 0.35s ease;
+        }
+        nav.nav-hidden {
+            transform: translateY(-100%);
         }
 
         .nav-content {
@@ -2890,6 +2894,7 @@
 
         // Throttle scroll event for performance
         let scrollTimeout;
+        let _lastScrollY = 0;
         window.addEventListener('scroll', function() {
             if (scrollTimeout) {
                 window.cancelAnimationFrame(scrollTimeout);
@@ -2897,8 +2902,29 @@
             scrollTimeout = window.requestAnimationFrame(function() {
                 updateMobileNav();
                 updateNavColor();
+                updateNavVisibility();
+                _lastScrollY = window.scrollY;
             });
         });
+
+        function updateNavVisibility() {
+            // Desktop only — mobile uses dropdown, not the nav bar
+            if (window.innerWidth <= 768) return;
+            const nav = document.querySelector('nav');
+            if (!nav) return;
+            const currentY = window.scrollY;
+            const delta = currentY - _lastScrollY;
+            // Always show nav at very top of page
+            if (currentY < 80) {
+                nav.classList.remove('nav-hidden');
+            } else if (delta > 4) {
+                // Scrolling down — hide
+                nav.classList.add('nav-hidden');
+            } else if (delta < -4) {
+                // Scrolling up — show
+                nav.classList.remove('nav-hidden');
+            }
+        }
 
         function updateNavColor() {
             const nav = document.querySelector('nav');
