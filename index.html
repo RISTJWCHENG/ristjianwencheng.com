@@ -1753,30 +1753,25 @@
 
             .gallery-masonry {
                 grid-template-columns: 1fr;
-                gap: 1rem;
-                grid-auto-rows: 250px;
+                grid-template-rows: unset;
+                grid-auto-rows: unset;
+                gap: 0;
+                aspect-ratio: 16/9;
             }
 
-            .gallery-item-large {
-                grid-row: span 1;
+            .g-left {
+                grid-column: 1;
+                grid-row: 1;
                 border-radius: 12px;
+                height: 100%;
             }
 
-            .gallery-item-small {
-                border-radius: 12px;
-            }
-
-            .gallery-item-small:nth-of-type(2),
-            .gallery-item-small:nth-of-type(3),
-            .gallery-item-small:nth-of-type(4),
-            .gallery-item-small:nth-of-type(5),
-            .gallery-item-small:nth-of-type(6),
-            .gallery-item-small:nth-of-type(7),
-            .gallery-item-small:nth-of-type(8),
-            .gallery-item-small:nth-of-type(9) {
-                grid-column: auto;
-                grid-row: auto;
-                display: block;
+            /* Hide all other gallery items on mobile home page */
+            .g-center,
+            .g-right-1,
+            .g-right-2,
+            .g-right-3 {
+                display: none;
             }
 
             .gallery-grid {
@@ -2272,39 +2267,6 @@
             });
         }
 
-        // On page load, check for ?play= param and auto-open the video
-        (function() {
-            function tryAutoPlay() {
-                const params = new URLSearchParams(window.location.search);
-                const encoded = params.get('play');
-                if (!encoded) return;
-                try {
-                    const videoUrl = decodeURIComponent(atob(encoded));
-                    // Find matching video in loaded videos
-                    const match = (window._VIDEOS_CACHE || [])
-                        .find(function(v) { return v.video_url === videoUrl; });
-                    const title = match ? match.title : '';
-                    const desc = match ? (match.description || '') : '';
-                    const time = match ? (match.updated_time || '2025') : '2025';
-                    const download = match && match.download && match.download[0] ? match.download : null;
-                    const link = match && match.link && match.link[0] ? match.link : null;
-                    const category = match ? (match.category || 'Work') : 'Work';
-                    const watchTime = match ? (match.watchTime || null) : null;
-                    // Scroll to video section first
-                    const sec = document.getElementById('video');
-                    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(function() {
-                        openVideoModal(videoUrl, title, desc, time, download, link, category, watchTime);
-                    }, 600);
-                } catch(e) {}
-            }
-            // Run after DOM + scripts loaded
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', tryAutoPlay);
-            } else {
-                setTimeout(tryAutoPlay, 300);
-            }
-        })();
     </script>
 </head>
 <body>
@@ -3512,8 +3474,36 @@
         function loadVideos() {
             fetch('Videos/videos_index.json')
                 .then(function(res) { if (!res.ok) throw new Error('No videos index'); return res.json(); })
-                .then(function(videos) { window._VIDEOS_CACHE = videos; renderVideos(videos); })
+                .then(function(videos) {
+                    window._VIDEOS_CACHE = videos;
+                    renderVideos(videos);
+                    tryAutoPlayFromUrl(); // try after cache is loaded
+                })
                 .catch(function(err) { console.warn('Could not load Videos/videos_index.json:', err); });
+        }
+
+        function tryAutoPlayFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const encoded = params.get('play');
+            if (!encoded) return;
+            try {
+                const videoUrl = decodeURIComponent(atob(encoded));
+                const match = (window._VIDEOS_CACHE || [])
+                    .find(function(v) { return v.video_url === videoUrl; });
+                if (!match) return;
+                const title = match.title || '';
+                const desc = match.description || '';
+                const time = match.updated_time || '';
+                const download = match.download && match.download[0] ? match.download : null;
+                const link = match.link && match.link[0] ? match.link : null;
+                const category = match.category || 'Work';
+                const watchTime = match.watchTime || null;
+                const sec = document.getElementById('video');
+                if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(function() {
+                    openVideoModal(videoUrl, title, desc, time, download, link, category, watchTime);
+                }, 600);
+            } catch(e) {}
         }
 
         // ── Article loader: reads Articles/articles_index.json ──────────────────────
