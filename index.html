@@ -1752,27 +1752,30 @@
             }
 
             .gallery-masonry {
-                grid-template-columns: 1fr;
-                grid-template-rows: unset;
+                grid-template-columns: 28fr 44fr 28fr;
+                grid-template-rows: repeat(3, calc((100vw - 4rem) * 9 / 16 / 3));
                 grid-auto-rows: unset;
-                gap: 0;
-                aspect-ratio: 16/9;
+                gap: 6px;
+                aspect-ratio: unset;
             }
 
             .g-left {
                 grid-column: 1;
-                grid-row: 1;
+                grid-row: 1 / 4;
                 border-radius: 12px;
-                height: 100%;
+                height: auto;
             }
 
-            /* Hide all other gallery items on mobile home page */
-            .g-center,
-            .g-right-1,
-            .g-right-2,
-            .g-right-3 {
-                display: none;
+            .g-center {
+                display: block;
+                grid-column: 2;
+                grid-row: 1 / 4;
+                border-radius: 12px;
             }
+
+            .g-right-1 { display: block; grid-column: 3; grid-row: 1; border-radius: 8px; }
+            .g-right-2 { display: block; grid-column: 3; grid-row: 2; border-radius: 8px; }
+            .g-right-3 { display: block; grid-column: 3; grid-row: 3; border-radius: 8px; }
 
             .gallery-grid {
                 grid-template-columns: 1fr;
@@ -1971,18 +1974,16 @@
         }
         function openFullGallery() {
             const fullGalleryPage = document.getElementById('fullGalleryPage');
-            if (fullGalleryPage) {
-                fullGalleryPage.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
+            fullGalleryPage.classList.add('active');
+            document.body.style.overflow = 'hidden';
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
         }
+
         function closeFullGallery() {
             const fullGalleryPage = document.getElementById('fullGalleryPage');
-            if (fullGalleryPage) {
-                fullGalleryPage.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
+            fullGalleryPage.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            setTimeout(resumeHeroIfVisible, 100);
         }
         function backToGallerySection() {
             const fullGalleryPage = document.getElementById('fullGalleryPage');
@@ -2355,7 +2356,7 @@
         </p>
     </section>
 
-    <section id="gallery" class="section">
+    <section id="gallery" class="section" style="padding-bottom: 0;">
         <div class="container">
             <div class="gallery-header">
                 <div class="gallery-header-left">
@@ -3014,27 +3015,13 @@
             document.body.style.overflow = 'auto';
         }
 
-        function openFullGallery() {
-            const fullGalleryPage = document.getElementById('fullGalleryPage');
-            fullGalleryPage.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
-        }
-
-        function closeFullGallery() {
-            const fullGalleryPage = document.getElementById('fullGalleryPage');
-            fullGalleryPage.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
         function backToGallerySection() {
             const fullGalleryPage = document.getElementById('fullGalleryPage');
             fullGalleryPage.classList.remove('active');
             document.body.style.overflow = 'auto';
-            
-            // Scroll to gallery section after closing
             setTimeout(() => {
                 scrollToSection('gallery');
+                setTimeout(resumeHeroIfVisible, 400);
             }, 300);
         }
 
@@ -3053,10 +3040,19 @@
             }
         }
 
+        function resumeHeroIfVisible() {
+            const hv = document.getElementById('heroLogoVideo');
+            if (!hv) return;
+            const rect = hv.getBoundingClientRect();
+            const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+            if (inView) hv.play().catch(function(){});
+        }
+
         function closeArticlePage() {
             const articlePage = document.getElementById('article-full-page');
             articlePage.classList.remove('active');
             document.body.style.overflow = 'auto';
+            setTimeout(resumeHeroIfVisible, 100);
         }
 
         function openVideoPage() {
@@ -3087,6 +3083,7 @@
             const videoPage = document.getElementById('video-full-page');
             videoPage.classList.remove('active');
             document.body.style.overflow = 'auto';
+            setTimeout(resumeHeroIfVisible, 100);
         }
 
         var _videoCategoryFilter = 'all';
