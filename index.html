@@ -3044,7 +3044,7 @@
             const hv = document.getElementById('heroLogoVideo');
             if (!hv) return;
             const rect = hv.getBoundingClientRect();
-            const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+            const inView = rect.bottom > 0 && rect.top < window.innerHeight * 0.9;
             if (inView) hv.play().catch(function(){});
         }
 
@@ -3613,18 +3613,12 @@
             // Load articles from Articles/articles_index.json
             loadArticles();
 
-            // Hero video: autoplay, pause when scrolled out of view
+            // Hero video: play only when visible, pause when not
             const heroVideo = document.getElementById('heroLogoVideo');
             if (heroVideo) {
-                // Start playing
-                heroVideo.play().catch(function() {
-                    heroVideo.addEventListener('canplay', function onCan() {
-                        heroVideo.removeEventListener('canplay', onCan);
-                        heroVideo.play().catch(function(){});
-                    });
-                });
+                heroVideo.muted = true;
+                heroVideo.load();
 
-                // IntersectionObserver: pause as soon as video scrolls out of view
                 const videoObs = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
@@ -3635,16 +3629,6 @@
                     });
                 }, { threshold: 0.1 });
                 videoObs.observe(heroVideo);
-
-                // Restore sound on first user interaction
-                function restoreSound() {
-                    heroVideo.muted = false;
-                    heroVideo.volume = 1;
-                    document.removeEventListener('click', restoreSound);
-                    document.removeEventListener('touchstart', restoreSound);
-                }
-                document.addEventListener('click', restoreSound);
-                document.addEventListener('touchstart', restoreSound);
             }
 
             document.querySelectorAll('.filter-tag').forEach(function(tag) {
