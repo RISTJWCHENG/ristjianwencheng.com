@@ -3620,13 +3620,24 @@
 
                 function tryPlay() {
                     heroVideo.play().catch(function() {
-                        // If not ready yet, wait for canplay then try again
                         heroVideo.addEventListener('canplay', function onReady() {
                             heroVideo.removeEventListener('canplay', onReady);
                             heroVideo.play().catch(function(){});
                         });
                     });
                 }
+
+                // Unmute on first user interaction (browser autoplay policy requires muted start)
+                function restoreSound() {
+                    heroVideo.muted = false;
+                    heroVideo.volume = 1;
+                    document.removeEventListener('click', restoreSound);
+                    document.removeEventListener('touchstart', restoreSound);
+                    document.removeEventListener('keydown', restoreSound);
+                }
+                document.addEventListener('click', restoreSound);
+                document.addEventListener('touchstart', restoreSound);
+                document.addEventListener('keydown', restoreSound);
 
                 // IntersectionObserver controls play/pause based on visibility
                 const videoObs = new IntersectionObserver(function(entries) {
