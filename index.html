@@ -3617,18 +3617,31 @@
             const heroVideo = document.getElementById('heroLogoVideo');
             if (heroVideo) {
                 heroVideo.muted = true;
-                heroVideo.load();
 
+                function tryPlay() {
+                    heroVideo.play().catch(function() {
+                        // If not ready yet, wait for canplay then try again
+                        heroVideo.addEventListener('canplay', function onReady() {
+                            heroVideo.removeEventListener('canplay', onReady);
+                            heroVideo.play().catch(function(){});
+                        });
+                    });
+                }
+
+                // IntersectionObserver controls play/pause based on visibility
                 const videoObs = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
-                            heroVideo.play().catch(function(){});
+                            tryPlay();
                         } else {
                             heroVideo.pause();
                         }
                     });
                 }, { threshold: 0.1 });
                 videoObs.observe(heroVideo);
+
+                // Immediate play attempt on page load (video starts in view)
+                tryPlay();
             }
 
             document.querySelectorAll('.filter-tag').forEach(function(tag) {
