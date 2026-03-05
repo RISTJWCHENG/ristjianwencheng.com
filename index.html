@@ -436,6 +436,125 @@
             transform: scale(1.06);
         }
         .gallery-featured-hidden { display: none; }
+        /* ── Image modal: left photo + right info panel ── */
+        .img-modal-content {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            max-width: 92vw;
+            max-height: 88vh;
+            background: #111;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+        .img-modal-left {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 auto;
+            background: #000;
+            min-width: 0;
+        }
+        .img-modal-left img {
+            max-width: 100%;
+            max-height: 88vh;
+            object-fit: contain;
+            display: block;
+        }
+        .img-modal-right {
+            width: 280px;
+            flex-shrink: 0;
+            background: #fff;
+            padding: 2.5rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            overflow-y: auto;
+        }
+        .img-modal-category {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+        .img-modal-title {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.35;
+        }
+        .img-modal-date {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        .img-modal-desc-wrap { flex: 1; }
+        .img-modal-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin: 0 0 0.3rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .img-modal-desc.expanded {
+            display: block;
+            overflow: visible;
+        }
+        .img-modal-more-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.78rem;
+            padding: 0;
+            font-family: inherit;
+        }
+        .img-modal-more-btn:hover { text-decoration: underline; }
+        .img-modal-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+        .img-modal-links:empty { display: none; }
+        .img-modal-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.35rem 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s, border-color 0.2s;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .img-modal-link-btn:hover { color: var(--accent); border-color: var(--accent); }
+        @media (max-width: 640px) {
+            .img-modal-content {
+                flex-direction: column;
+                max-height: 95vh;
+                max-width: 98vw;
+                border-radius: 12px;
+            }
+            .img-modal-right {
+                width: 100%;
+                padding: 1rem 1.2rem;
+                max-height: 40vh;
+            }
+            .img-modal-left img { max-height: 52vw; }
+        }
+
 
         .section-subtitle {
             text-align: center;
@@ -2356,39 +2475,8 @@
                 </div>
                 <a onclick="openFullGallery()" class="view-all-link">View All</a>
             </div>
-            <div class="gallery-masonry">
-                <!-- Left: tall image spanning full height -->
-                <div class="g-left" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/1%20or%202%20%40wolfcubwolfcub%20(1).jpg" alt="Gallery Image 1">
-                    <div class="gallery-info"><h3>Visual Story I</h3><p>Contemporary Art, 2024</p></div>
-                </div>
-                <!-- Right column: 3 stacked small images -->
-                <div class="g-right-1" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="Gallery Image 3">
-                    <div class="gallery-info"><h3>Visual Story III</h3><p>Photography, 2024</p></div>
-                </div>
-                <div class="g-right-1b" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481765748_650136240890917_7887633390541422267_n.jpg" alt="Gallery Image 3b">
-                    <div class="gallery-info"><h3>Visual Story IIIb</h3><p>Photography, 2024</p></div>
-                </div>
-                <div class="g-right-2" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Gallery Image 4">
-                    <div class="gallery-info"><h3>Visual Story IV</h3><p>Digital Art, 2023</p></div>
-                </div>
-
-                <!-- Hidden items — only visible in View All -->
-                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Baroque%20Perspective%20at%20Val-de-Gr%C3%A2ce%20%20%23vanishingpoint%23dome%23straightfacades%23facade%23baroque%23architecture%23perspective%23symmetry%23accidentallywesanderson%23vsco%23france%23paris%23portroya.jpg" alt="Gallery Image 6">
-                    <div class="gallery-info"><h3>Visual Story VI</h3><p>Fine Art, 2023</p></div>
-                </div>
-                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Half%20of%20expression%2CAre%20the%20things%20we%20leave%20unsaid.%20(5).jpg" alt="Gallery Image 7">
-                    <div class="gallery-info"><h3>Visual Story VII</h3><p>Photography, 2024</p></div>
-                </div>
-                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Rest%20Curves_LE_upscale_strong_x4.jpg" alt="Gallery Image 8">
-                    <div class="gallery-info"><h3>Visual Story VIII</h3><p>Technical Art, 2024</p></div>
-                </div>
+            <div class="gallery-masonry" id="featuredGalleryGrid">
+                <!-- Dynamically loaded from Images/images_index.json -->
             </div>
         </div>
     </section>
@@ -2696,43 +2784,26 @@
             </div>
         </div>
         <div class="full-gallery-grid" id="fullGalleryGrid">
-            <div class="full-gallery-item" data-category="urban" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/1%20or%202%20%40wolfcubwolfcub%20(1).jpg" alt="Urban Scene">
-            </div>
-            <div class="full-gallery-item" data-category="urban" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="City View">
-            </div>
-            <div class="full-gallery-item" data-category="urban" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481765748_650136240890917_7887633390541422267_n.jpg" alt="Urban Photography">
-            </div>
-            <div class="full-gallery-item" data-category="nature" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Nature Scene">
-            </div>
-            <div class="full-gallery-item" data-category="architecture" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Baroque%20Perspective%20at%20Val-de-Gr%C3%A2ce%20%20%23vanishingpoint%23dome%23straightfacades%23facade%23baroque%23architecture%23perspective%23symmetry%23accidentallywesanderson%23vsco%23france%23paris%23portroya.jpg" alt="Baroque Architecture">
-            </div>
-            <div class="full-gallery-item" data-category="interior" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Half%20of%20expression%2CAre%20the%20things%20we%20leave%20unsaid.%20(5).jpg" alt="Interior Design">
-            </div>
-            <div class="full-gallery-item" data-category="architecture" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Rest%20Curves_LE_upscale_strong_x4.jpg" alt="Technical Design">
-            </div>
-            <div class="full-gallery-item" data-category="nature" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Scratches%20of%20a%20Croatian%20summer%E2%80%A2%E2%80%A2%E2%80%A2%23croatia%20%23summer%20%23passionpasport%20%23mytinyatlas%20(4).jpg" alt="Croatian Summer">
-            </div>
-            <div class="full-gallery-item" data-category="urban" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/mvi_3043.mp4%5B2024-01-13%2002-48-50.159%5Dj.jpg" alt="Urban Moment">
-            </div>
-            <div class="full-gallery-item" data-category="nature" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/p1.jpg" alt="Natural Beauty">
-            </div>
+            <!-- Dynamically loaded from Images/images_index.json -->
         </div>
     </div>
 
     <div class="modal" id="imageModal" onclick="closeImageModal()">
-        <div class="modal-content">
+        <div class="modal-content img-modal-content" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeImageModal()">×</button>
-            <img id="modalImage" src="" alt="">
+            <div class="img-modal-left">
+                <img id="modalImage" src="" alt="">
+            </div>
+            <div class="img-modal-right" id="imgModalInfo">
+                <div class="img-modal-category" id="imgModalCategory"></div>
+                <h3 class="img-modal-title" id="imgModalTitle"></h3>
+                <div class="img-modal-date" id="imgModalDate"></div>
+                <div class="img-modal-desc-wrap">
+                    <p class="img-modal-desc" id="imgModalDesc"></p>
+                    <button class="img-modal-more-btn" id="imgModalMoreBtn" onclick="toggleImgModalDesc()">more</button>
+                </div>
+                <div class="img-modal-links" id="imgModalLinks"></div>
+            </div>
         </div>
     </div>
 
@@ -2968,13 +3039,61 @@
             });
         }
 
+        window._GALLERY_DATA = {};
+
         function openImageModal(element) {
-            const img = element.querySelector('img');
-            const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImage');
-            
+            var img = element.querySelector('img');
+            if (!img) return;
+            var modal    = document.getElementById('imageModal');
+            var modalImg = document.getElementById('modalImage');
             modalImg.src = img.src;
+
+            var data    = window._GALLERY_DATA[img.src] || {};
+            var cat     = document.getElementById('imgModalCategory');
+            var title   = document.getElementById('imgModalTitle');
+            var date    = document.getElementById('imgModalDate');
+            var desc    = document.getElementById('imgModalDesc');
+            var moreBtn = document.getElementById('imgModalMoreBtn');
+            var links   = document.getElementById('imgModalLinks');
+            var right   = document.getElementById('imgModalInfo');
+
+            if (cat)   cat.textContent   = data.category     || '';
+            if (title) title.textContent = data.title        || '';
+            if (date)  date.textContent  = data.updated_time || '';
+
+            if (desc) {
+                desc.textContent = data.description || '';
+                desc.classList.remove('expanded');
+            }
+            if (moreBtn) {
+                moreBtn.textContent = 'more';
+                moreBtn.style.display = data.description ? 'inline' : 'none';
+            }
+            if (links) {
+                links.innerHTML = '';
+                if (data.link && data.link[0] && data.link[1]) {
+                    var a = document.createElement('a');
+                    a.className = 'img-modal-link-btn';
+                    a.href = data.link[1];
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + data.link[0];
+                    links.appendChild(a);
+                }
+            }
+            if (right) {
+                var hasInfo = data.title || data.description || (data.link && data.link[1]);
+                right.style.display = hasInfo ? 'flex' : 'none';
+            }
             modal.classList.add('active');
+        }
+
+        function toggleImgModalDesc() {
+            var desc = document.getElementById('imgModalDesc');
+            var btn  = document.getElementById('imgModalMoreBtn');
+            if (!desc) return;
+            var expanded = desc.classList.toggle('expanded');
+            if (btn) btn.textContent = expanded ? 'less' : 'more';
         }
 
         function closeImageModal() {
@@ -3264,19 +3383,50 @@
             });
         }
 
-        // Load logo from images.json
-        function loadImages() {
-            fetch('images.json')
-                .then(res => res.json())
-                .then(images => {
-                    if (images && images.length > 0) {
-                        const logo = document.getElementById('navLogo');
-                        if (logo) {
-                            logo.src = images[0].image_url;
-                        }
-                    }
+        // ── Gallery loader: reads Images/images_index.json ──
+        function loadGalleryImages() {
+            fetch('Images/images_index.json')
+                .then(function(res) { return res.json(); })
+                .then(function(images) {
+                    var visible = images.filter(function(img) { return img.display !== 'off'; });
+                    // cache for modal
+                    visible.forEach(function(img) { window._GALLERY_DATA[img.image_url] = img; });
+                    renderFeaturedGallery(visible);
+                    renderFullGallery(visible);
                 })
-                .catch(err => console.warn('Could not load images.json:', err));
+                .catch(function(err) { console.warn('Could not load Images/images_index.json:', err); });
+        }
+
+        function renderFeaturedGallery(images) {
+            var grid = document.getElementById('featuredGalleryGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            var layouts = ['g-left', 'g-right-1', 'g-right-1b', 'g-right-2'];
+            var count = Math.min(images.length, 4);
+            for (var i = 0; i < count; i++) {
+                var item = images[i];
+                var div = document.createElement('div');
+                div.className = layouts[i];
+                div.style.cursor = 'pointer';
+                div.onclick = (function(el) { return function() { openImageModal(el); }; })(div);
+                div.innerHTML = '<img src="' + item.image_url + '" alt="' + item.title + '">'
+                    + '<div class="gallery-info"><h3>' + item.title + '</h3><p>' + item.category + ', ' + item.updated_time + '</p></div>';
+                grid.appendChild(div);
+            }
+        }
+
+        function renderFullGallery(images) {
+            var grid = document.getElementById('fullGalleryGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            images.forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'full-gallery-item';
+                div.dataset.category = (item.category || '').toLowerCase();
+                div.onclick = (function(el) { return function() { openImageModal(el); }; })(div);
+                div.innerHTML = '<img src="' + item.image_url + '" alt="' + item.title + '">';
+                grid.appendChild(div);
+            });
         }
 
         function getVideoCategoryColor(category) {
@@ -3602,22 +3752,11 @@
 
         // ───────────────────────────────────────────────────────────────────
 
-        function loadImages() {
-            fetch('images.json')
-                .then(function(res) { return res.json(); })
-                .then(function(images) {
-                    if (images && images.length > 0) {
-                        const logo = document.getElementById('navLogo');
-                        if (logo) logo.src = images[0].image_url;
-                    }
-                })
-                .catch(function() {});
-        }
         document.addEventListener('DOMContentLoaded', function() {
             // Load videos from Videos/videos_index.json
             loadVideos();
 
-            loadImages();
+            loadGalleryImages();
 
             // Load articles from Articles/articles_index.json
             loadArticles();
