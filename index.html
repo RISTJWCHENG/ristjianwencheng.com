@@ -2356,39 +2356,8 @@
                 </div>
                 <a onclick="openFullGallery()" class="view-all-link">View All</a>
             </div>
-            <div class="gallery-masonry">
-                <!-- Left: tall image spanning full height -->
-                <div class="g-left" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/1%20or%202%20%40wolfcubwolfcub%20(1).jpg" alt="Gallery Image 1">
-                    <div class="gallery-info"><h3>Visual Story I</h3><p>Contemporary Art, 2024</p></div>
-                </div>
-                <!-- Right column: 3 stacked small images -->
-                <div class="g-right-1" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="Gallery Image 3">
-                    <div class="gallery-info"><h3>Visual Story III</h3><p>Photography, 2024</p></div>
-                </div>
-                <div class="g-right-1b" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481765748_650136240890917_7887633390541422267_n.jpg" alt="Gallery Image 3b">
-                    <div class="gallery-info"><h3>Visual Story IIIb</h3><p>Photography, 2024</p></div>
-                </div>
-                <div class="g-right-2" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Gallery Image 4">
-                    <div class="gallery-info"><h3>Visual Story IV</h3><p>Digital Art, 2023</p></div>
-                </div>
-
-                <!-- Hidden items — only visible in View All -->
-                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Baroque%20Perspective%20at%20Val-de-Gr%C3%A2ce%20%20%23vanishingpoint%23dome%23straightfacades%23facade%23baroque%23architecture%23perspective%23symmetry%23accidentallywesanderson%23vsco%23france%23paris%23portroya.jpg" alt="Gallery Image 6">
-                    <div class="gallery-info"><h3>Visual Story VI</h3><p>Fine Art, 2023</p></div>
-                </div>
-                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Half%20of%20expression%2CAre%20the%20things%20we%20leave%20unsaid.%20(5).jpg" alt="Gallery Image 7">
-                    <div class="gallery-info"><h3>Visual Story VII</h3><p>Photography, 2024</p></div>
-                </div>
-                <div class="gallery-featured-hidden" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Rest%20Curves_LE_upscale_strong_x4.jpg" alt="Gallery Image 8">
-                    <div class="gallery-info"><h3>Visual Story VIII</h3><p>Technical Art, 2024</p></div>
-                </div>
+            <div class="gallery-masonry" id="featuredGalleryGrid">
+                <!-- Dynamically loaded from Images/images_index.json -->
             </div>
         </div>
     </section>
@@ -2696,36 +2665,7 @@
             </div>
         </div>
         <div class="full-gallery-grid" id="fullGalleryGrid">
-            <div class="full-gallery-item" data-category="urban" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/1%20or%202%20%40wolfcubwolfcub%20(1).jpg" alt="Urban Scene">
-            </div>
-            <div class="full-gallery-item" data-category="urban" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="City View">
-            </div>
-            <div class="full-gallery-item" data-category="urban" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481765748_650136240890917_7887633390541422267_n.jpg" alt="Urban Photography">
-            </div>
-            <div class="full-gallery-item" data-category="nature" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Nature Scene">
-            </div>
-            <div class="full-gallery-item" data-category="architecture" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Baroque%20Perspective%20at%20Val-de-Gr%C3%A2ce%20%20%23vanishingpoint%23dome%23straightfacades%23facade%23baroque%23architecture%23perspective%23symmetry%23accidentallywesanderson%23vsco%23france%23paris%23portroya.jpg" alt="Baroque Architecture">
-            </div>
-            <div class="full-gallery-item" data-category="interior" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Half%20of%20expression%2CAre%20the%20things%20we%20leave%20unsaid.%20(5).jpg" alt="Interior Design">
-            </div>
-            <div class="full-gallery-item" data-category="architecture" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Rest%20Curves_LE_upscale_strong_x4.jpg" alt="Technical Design">
-            </div>
-            <div class="full-gallery-item" data-category="nature" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Scratches%20of%20a%20Croatian%20summer%E2%80%A2%E2%80%A2%E2%80%A2%23croatia%20%23summer%20%23passionpasport%20%23mytinyatlas%20(4).jpg" alt="Croatian Summer">
-            </div>
-            <div class="full-gallery-item" data-category="urban" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/mvi_3043.mp4%5B2024-01-13%2002-48-50.159%5Dj.jpg" alt="Urban Moment">
-            </div>
-            <div class="full-gallery-item" data-category="nature" onclick="openImageModal(this)">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/p1.jpg" alt="Natural Beauty">
-            </div>
+            <!-- Dynamically loaded from Images/images_index.json -->
         </div>
     </div>
 
@@ -3264,19 +3204,53 @@
             });
         }
 
-        // Load logo from images.json
-        function loadImages() {
-            fetch('images.json')
-                .then(res => res.json())
-                .then(images => {
-                    if (images && images.length > 0) {
-                        const logo = document.getElementById('navLogo');
-                        if (logo) {
-                            logo.src = images[0].image_url;
-                        }
-                    }
+        // ── Gallery loader: reads Images/images_index.json ──────────────────
+        function loadGalleryImages() {
+            fetch('Images/images_index.json')
+                .then(function(res) { if (!res.ok) throw new Error('No images index'); return res.json(); })
+                .then(function(images) {
+                    // filter only display:"on"
+                    var visible = images.filter(function(img) { return img.display === 'on'; });
+                    renderFeaturedGallery(visible);
+                    renderFullGallery(visible);
                 })
-                .catch(err => console.warn('Could not load images.json:', err));
+                .catch(function(err) { console.warn('Could not load Images/images_index.json:', err); });
+        }
+
+        function renderFeaturedGallery(images) {
+            var grid = document.getElementById('featuredGalleryGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            // Layout: image[0]=g-left, image[1]=g-right-1, image[2]=g-right-1b, image[3]=g-right-2
+            // Dynamically assign classes based on position
+            var layouts = ['g-left', 'g-right-1', 'g-right-1b', 'g-right-2'];
+            var count = Math.min(images.length, 4);
+
+            for (var i = 0; i < count; i++) {
+                var img = images[i];
+                var div = document.createElement('div');
+                div.className = layouts[i];
+                div.onclick = (function(el) { return function() { openImageModal(el); }; })(div);
+                div.style.cursor = 'pointer';
+                div.innerHTML = '<img src="' + img.image_url + '" alt="' + img.title + '">'
+                    + '<div class="gallery-info"><h3>' + img.title + '</h3><p>' + img.category + ', ' + img.updated_time + '</p></div>';
+                grid.appendChild(div);
+            }
+        }
+
+        function renderFullGallery(images) {
+            var grid = document.getElementById('fullGalleryGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            images.forEach(function(img) {
+                var div = document.createElement('div');
+                div.className = 'full-gallery-item';
+                div.dataset.category = (img.category || '').toLowerCase();
+                div.onclick = (function(el) { return function() { openImageModal(el); }; })(div);
+                div.innerHTML = '<img src="' + img.image_url + '" alt="' + img.title + '">';
+                grid.appendChild(div);
+            });
         }
 
         function getVideoCategoryColor(category) {
@@ -3617,7 +3591,7 @@
             // Load videos from Videos/videos_index.json
             loadVideos();
 
-            loadImages();
+            loadGalleryImages();
 
             // Load articles from Articles/articles_index.json
             loadArticles();
