@@ -397,26 +397,21 @@
         .gallery-masonry {
             display: grid;
             width: 100%;
-            grid-template-columns: 28fr 44fr 28fr;
+            grid-template-columns: 72fr 14fr 14fr;
             grid-template-rows: repeat(3, 220px);
             gap: 10px;
         }
-        /* Left tall image: spans all 3 rows */
+        /* Left+Center merged: spans columns 1-2, all 3 rows */
         .g-left {
             grid-column: 1;
             grid-row: 1 / 4;
         }
-        /* Center tall image: spans all 3 rows */
-        .g-center {
-            grid-column: 2;
-            grid-row: 1 / 4;
-        }
-        /* Right column: 3 stacked small images */
-        .g-right-1 { grid-column: 3; grid-row: 1; }
-        .g-right-2 { grid-column: 3; grid-row: 2; }
-        .g-right-3 { grid-column: 3; grid-row: 3; }
+        /* Right column: 1 small + 1 merged */
+        .g-right-1  { grid-column: 2; grid-row: 1; }
+        .g-right-1b { grid-column: 3; grid-row: 1; }
+        .g-right-2  { grid-column: 2 / 4; grid-row: 2 / 4; }
 
-        .g-left, .g-center, .g-right-1, .g-right-2, .g-right-3 {
+        .g-left, .g-right-1, .g-right-1b, .g-right-2 {
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -424,20 +419,20 @@
             border-radius: 16px;
             transition: transform 0.35s ease;
         }
-        .g-left img, .g-center img,
-        .g-right-1 img, .g-right-2 img, .g-right-3 img {
+        .g-left img,
+        .g-right-1 img, .g-right-1b img, .g-right-2 img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
             transition: transform 0.5s ease;
         }
-        .g-left:hover, .g-center:hover,
-        .g-right-1:hover, .g-right-2:hover, .g-right-3:hover {
+        .g-left:hover,
+        .g-right-1:hover, .g-right-1b:hover, .g-right-2:hover {
             transform: translateY(-4px);
         }
-        .g-left:hover img, .g-center:hover img,
-        .g-right-1:hover img, .g-right-2:hover img, .g-right-3:hover img {
+        .g-left:hover img,
+        .g-right-1:hover img, .g-right-1b:hover img, .g-right-2:hover img {
             transform: scale(1.06);
         }
         .gallery-featured-hidden { display: none; }
@@ -1756,7 +1751,7 @@
             }
 
             .gallery-masonry {
-                grid-template-columns: 28fr 44fr 28fr;
+                grid-template-columns: 72fr 28fr;
                 grid-template-rows: repeat(3, calc((100vw - 4rem) * 9 / 16 / 3));
                 grid-auto-rows: unset;
                 gap: 6px;
@@ -1770,16 +1765,8 @@
                 height: auto;
             }
 
-            .g-center {
-                display: block;
-                grid-column: 2;
-                grid-row: 1 / 4;
-                border-radius: 12px;
-            }
-
             .g-right-1 { display: block; grid-column: 3; grid-row: 1; border-radius: 8px; }
-            .g-right-2 { display: block; grid-column: 3; grid-row: 2; border-radius: 8px; }
-            .g-right-3 { display: block; grid-column: 3; grid-row: 3; border-radius: 8px; }
+            .g-right-2 { display: block; grid-column: 3; grid-row: 2 / 4; border-radius: 8px; }
 
             .gallery-grid {
                 grid-template-columns: 1fr;
@@ -2375,24 +2362,20 @@
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/1%20or%202%20%40wolfcubwolfcub%20(1).jpg" alt="Gallery Image 1">
                     <div class="gallery-info"><h3>Visual Story I</h3><p>Contemporary Art, 2024</p></div>
                 </div>
-                <!-- Center: tall image spanning full height -->
-                <div class="g-center" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Scratches%20of%20a%20Croatian%20summer%E2%80%A2%E2%80%A2%E2%80%A2%23croatia%20%23summer%20%23passionpasport%20%23mytinyatlas%20(4).jpg" alt="Gallery Image 2">
-                    <div class="gallery-info"><h3>Visual Story II</h3><p>Mixed Media, 2024</p></div>
-                </div>
                 <!-- Right column: 3 stacked small images -->
                 <div class="g-right-1" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481664167_650135954224279_8620037790940010125_n.jpg" alt="Gallery Image 3">
                     <div class="gallery-info"><h3>Visual Story III</h3><p>Photography, 2024</p></div>
                 </div>
+                <div class="g-right-1b" onclick="openImageModal(this)">
+                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481765748_650136240890917_7887633390541422267_n.jpg" alt="Gallery Image 3b">
+                    <div class="gallery-info"><h3>Visual Story IIIb</h3><p>Photography, 2024</p></div>
+                </div>
                 <div class="g-right-2" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/482060541_650137260890815_5853492445526188527_n.jpg" alt="Gallery Image 4">
                     <div class="gallery-info"><h3>Visual Story IV</h3><p>Digital Art, 2023</p></div>
                 </div>
-                <div class="g-right-3" onclick="openImageModal(this)">
-                    <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/481765748_650136240890917_7887633390541422267_n.jpg" alt="Gallery Image 5">
-                    <div class="gallery-info"><h3>Visual Story V</h3><p>Architecture, 2023</p></div>
-                </div>
+
                 <!-- Hidden items — only visible in View All -->
                 <div class="gallery-featured-hidden" onclick="openImageModal(this)">
                     <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Baroque%20Perspective%20at%20Val-de-Gr%C3%A2ce%20%20%23vanishingpoint%23dome%23straightfacades%23facade%23baroque%23architecture%23perspective%23symmetry%23accidentallywesanderson%23vsco%23france%23paris%23portroya.jpg" alt="Gallery Image 6">
