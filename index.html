@@ -670,28 +670,18 @@
             gap: 0.4rem;
             font-size: 0.8rem;
             border: none;
-            background: linear-gradient(90deg,
-                #a78bfa, #f472b6, #fb923c, #facc15,
-                #4ade80, #38bdf8, #a78bfa);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: btn-rainbow 3s linear infinite;
+            background: none;
             cursor: pointer;
             padding: 0;
             font-family: inherit;
+            animation: modalBtnColorCycle 4s ease-in-out infinite;
+            transition: color 0.3s;
         }
         .img-modal-share-btn:hover {
             animation: none;
-            background: var(--modal-cat-color, #a78bfa);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--modal-cat-color, #fff);
+            filter: brightness(1.2);
         }
-        .img-modal-share-btn svg { -webkit-text-fill-color: initial; stroke: #a78bfa; animation: svgHue 3s linear infinite; }
-        .img-modal-share-btn:hover svg { animation: none; stroke: var(--modal-cat-color, #a78bfa); }
-
         .img-modal-link-btn {
             display: inline-flex;
             align-items: center;
@@ -702,25 +692,15 @@
             text-decoration: none;
             font-family: inherit;
             cursor: pointer;
-            background: linear-gradient(90deg,
-                #a78bfa, #f472b6, #fb923c, #facc15,
-                #4ade80, #38bdf8, #a78bfa);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: btn-rainbow 3s linear infinite;
+            animation: modalBtnColorCycle 4s ease-in-out infinite;
             animation-delay: 1s;
+            transition: color 0.3s;
         }
         .img-modal-link-btn:hover {
             animation: none;
-            background: var(--modal-cat-color, #a78bfa);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--modal-cat-color, #fff);
+            filter: brightness(1.2);
         }
-        .img-modal-link-btn svg { -webkit-text-fill-color: initial; stroke: #a78bfa; animation: svgHue 3s linear infinite; animation-delay: 1s; }
-        .img-modal-link-btn:hover svg { animation: none; stroke: var(--modal-cat-color, #a78bfa); }
 
         /* ── Gallery nav arrows (desktop only) ── */
         .img-nav-btn {
