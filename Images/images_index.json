@@ -10,7 +10,7 @@
   },
   {
     "title": "Summer afternoon",
-    "category": "Drawing & Painting",
+    "category": "Drawd",
     "updated_time": "2019",
     "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Images/image_02.jpg",
     "description": "N HAIR SETUP Tool is a technical utility for Maya that automates and standardizes dynamic curve simulations in production.",
@@ -19,7 +19,7 @@
   },
   {
     "title": "Draw from life",
-    "category": "Drawing & Painting",
+    "category": "Sculpture",
     "updated_time": "2013",
     "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Images/image_03.jpg",
     "description": "N HAIR SETUP Tool is a technical utility for Maya that automates and standardizes dynamic curve simulations in production.",
@@ -27,8 +27,8 @@
     "display": "on"
   },
   {
-    "title": "Painting from life",
-    "category": "Drawing & Painting",
+    "title": "Visual Arts",
+    "category": "Visual Arts",
     "updated_time": "2022-2025",
     "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Images/image_04.jpg",
     "description": "N HAIR SETUP Tool is a technical utility for Maya that automates and standardizes dynamic curve simulations in production.",
@@ -36,7 +36,7 @@
     "display": "on"
   },
   {
-    "title": "Paintingsdife",
+    "title": "Sculpture",
     "category": "Drawing & Painting",
     "updated_time": "2022-2025",
     "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Images/image_05.jpg",
@@ -45,8 +45,8 @@
     "display": "on"
   },
   {
-    "title": "Painting fromsd",
-    "category": "Drawing & Painting",
+    "title": "Momentary",
+    "category": "Momentary",
     "updated_time": "2022-2025",
     "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Images/image_06.jpg",
     "description": "N HAIR SETUP Tool is a technical utility for Maya that automates and standardizes dynamic curve simulations in production.",
