@@ -3566,10 +3566,7 @@
 
             document.addEventListener('touchstart', function(e) {
                 if (!modalActive()) return;
-                var imgLeft = document.querySelector('.img-modal-left');
-                if (!imgLeft || !imgLeft.contains(e.target)) return;
-                var list = window._GALLERY_LIST;
-                if (!list || list.length < 2) return;
+                // Always record start position for double-tap detection
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
                 dragging = false;
@@ -3612,27 +3609,29 @@
             }, { passive: true });
 
             document.addEventListener('touchend', function(e) {
-                if (!modalActive() || !dragging) {
-                    // Handle double-tap to close (even if not dragging)
-                    if (modalActive()) {
-                        var imgLeft = document.querySelector('.img-modal-left');
-                        if (imgLeft && imgLeft.contains(e.target)) {
-                            var dx2 = e.changedTouches[0].clientX - touchStartX;
-                            var dy2 = e.changedTouches[0].clientY - touchStartY;
-                            if (Math.abs(dx2) < 10 && Math.abs(dy2) < 10) {
-                                var now = Date.now();
-                                var gap = now - lastTap;
-                                if (gap < 350 && gap > 0) closeImageModal();
-                                lastTap = now;
-                            }
+                if (!modalActive()) return;
+
+                // Always track taps for double-tap detection (when not dragging)
+                if (!dragging) {
+                    var dx2 = e.changedTouches[0].clientX - touchStartX;
+                    var dy2 = e.changedTouches[0].clientY - touchStartY;
+                    // Only count as tap if finger barely moved
+                    if (Math.abs(dx2) < 12 && Math.abs(dy2) < 12) {
+                        var now = Date.now();
+                        var gap = now - lastTap;
+                        if (gap < 400 && gap > 30) {
+                            closeImageModal();
+                            lastTap = 0;
+                            return;
                         }
+                        lastTap = now;
                     }
-                    dragging = false;
                     return;
                 }
 
+                // Was dragging — commit or snap back
                 var dx = e.changedTouches[0].clientX - touchStartX;
-                var threshold = sliderW * 0.3; // 30% of width to commit
+                var threshold = sliderW * 0.3;
 
                 if (Math.abs(dx) > threshold) {
                     cleanupDrag(true, dx < 0 ? 1 : -1);
