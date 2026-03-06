@@ -292,30 +292,28 @@
         }
 
         @media (max-width: 1200px) {
-            .full-gallery-grid { columns: 3; }
+            .full-gallery-grid { grid-template-columns: repeat(9, 1fr); }
         }
         @media (max-width: 900px) {
-            .full-gallery-grid { columns: 2; column-gap: 10px; }
-            .full-gallery-item { margin-bottom: 10px; }
+            .full-gallery-grid { grid-template-columns: repeat(6, 1fr); gap: 8px; grid-auto-rows: 8px; }
         }
 
         .full-gallery-grid {
             max-width: 1400px;
             margin: 0 auto;
-            columns: 4;
-            column-gap: 12px;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-rows: 10px;
+            gap: 10px;
         }
 
         .full-gallery-item {
-            break-inside: avoid;
             position: relative;
             overflow: hidden;
             cursor: pointer;
             background: #e5e3df;
             border-radius: 12px;
-            margin-bottom: 12px;
             transition: transform 0.3s, box-shadow 0.3s;
-            display: block;
         }
 
         .full-gallery-item:hover {
@@ -325,7 +323,7 @@
 
         .full-gallery-item img {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: block;
             object-fit: cover;
             transition: transform 0.5s;
@@ -701,12 +699,12 @@
                 padding: 5rem 1rem 3rem;
             }
             .full-gallery-grid {
-                columns: 2;
-                column-gap: 8px;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+                grid-auto-rows: 6px;
             }
             .full-gallery-item {
                 border-radius: 8px;
-                margin-bottom: 8px;
             }
         }
 
@@ -3922,7 +3920,7 @@
                 const matchCat = category === 'all' || item.dataset.category === category;
                 const altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
                 const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
-                item.style.display = (matchCat && matchSearch) ? 'block' : 'none';
+                item.style.display = (matchCat && matchSearch) ? '' : 'none';
             });
         }
 
@@ -3935,7 +3933,7 @@
                 const matchCat = category === 'all' || item.dataset.category === category;
                 const altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
                 const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
-                item.style.display = (matchCat && matchSearch) ? 'block' : 'none';
+                item.style.display = (matchCat && matchSearch) ? '' : 'none';
             });
         }
 
@@ -4042,13 +4040,60 @@
                 }
             }
 
-            // Render images
+            // Render images with Pinterest-style random masonry layout
+            // Seeded random so layout is consistent per session
+            var _seed = 42;
+            function seededRand() {
+                _seed = (_seed * 1664525 + 1013904223) & 0xffffffff;
+                return ((_seed >>> 0) / 0xffffffff);
+            }
+
+            // Col span patterns that sum to 12 (or multiples) per "row group"
+            // Each image gets a random col span: 3,4,5,6 (out of 12 columns)
+            var spanOptions = [3, 3, 4, 4, 4, 5, 6];
+
             images.forEach(function(item) {
                 var div = document.createElement('div');
                 div.className = 'full-gallery-item';
                 div.dataset.category = (item.category || '').toLowerCase();
                 div.onclick = (function(el) { return function() { openImageModal(el); }; })(div);
-                div.innerHTML = '<img src="' + item.image_url + '" alt="' + item.title + '">';
+
+                // Random column span
+                var colSpan = spanOptions[Math.floor(seededRand() * spanOptions.length)];
+                div.style.gridColumn = 'span ' + colSpan;
+
+                var img = document.createElement('img');
+                img.alt = item.title;
+                img.src = item.image_url;
+
+                // Once image loads, calculate row span based on actual height
+                img.addEventListener('load', function() {
+                    var grid = document.getElementById('fullGalleryGrid');
+                    if (!grid) return;
+                    var rowSize = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows')) || 10;
+                    var gap     = parseInt(window.getComputedStyle(grid).getPropertyValue('gap')) || 10;
+                    var cellW   = div.getBoundingClientRect().width;
+                    if (!cellW) return;
+                    // Natural aspect ratio height for this cell width
+                    var naturalH = img.naturalHeight && img.naturalWidth
+                        ? (img.naturalHeight / img.naturalWidth) * cellW
+                        : cellW * (seededRand() * 0.6 + 0.6); // fallback random ratio
+                    var rowSpan = Math.ceil((naturalH + gap) / (rowSize + gap));
+                    div.style.gridRow = 'span ' + rowSpan;
+                });
+
+                // Fallback if image fails to load — random aspect ratio
+                img.addEventListener('error', function() {
+                    var ratio = seededRand() * 0.7 + 0.6;
+                    var grid = document.getElementById('fullGalleryGrid');
+                    var rowSize = grid ? (parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows')) || 10) : 10;
+                    var gap = grid ? (parseInt(window.getComputedStyle(grid).getPropertyValue('gap')) || 10) : 10;
+                    var cellW = div.getBoundingClientRect().width || 200;
+                    var rowSpan = Math.ceil((cellW * ratio + gap) / (rowSize + gap));
+                    div.style.gridRow = 'span ' + rowSpan;
+                });
+
+                div.appendChild(img);
                 grid.appendChild(div);
             });
         }
