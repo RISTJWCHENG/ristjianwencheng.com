@@ -3189,7 +3189,16 @@
             var links = document.getElementById('imgModalLinks');
             var right = document.getElementById('imgModalInfo');
 
-            if (cat)   cat.textContent   = data.category     || '';
+            if (cat) {
+                cat.textContent = data.category || '';
+                var catColors = {
+                    'drawing & painting': 'rgb(160,135,250)',
+                    'sculpture':          'rgb(197,124,181)',
+                    'visual arts':        'rgb(160,238,76)',
+                    'momentary':          'rgb(115,215,240)'
+                };
+                cat.style.color = catColors[(data.category || '').toLowerCase()] || 'var(--accent)';
+            }
             if (title) title.textContent = data.title        || '';
             if (date)  date.textContent  = data.updated_time || '';
             if (desc)  desc.textContent  = data.description  || '';
