@@ -734,36 +734,57 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.97);
+            background: rgba(0,0,0,0.96);
             z-index: 3500;
-            align-items: center;
-            justify-content: center;
             overflow: hidden;
-            cursor: none; /* custom cursor */
+            cursor: grab;
         }
-        #imgFullscreenOverlay.active { display: flex; }
+        #imgFullscreenOverlay.active { display: block; }
+        #imgFullscreenOverlay.fs-dragging { cursor: grabbing; }
+        #imgFullscreenCanvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
         #imgFullscreenImg {
-            max-width: 98vw;
-            max-height: 98vh;
-            object-fit: contain;
-            border-radius: 4px;
-            transform-origin: center center;
-            transition: transform 0.08s ease-out;
+            position: absolute;
+            transform-origin: 0 0;
             user-select: none;
             -webkit-user-drag: none;
+            pointer-events: none;
             will-change: transform;
+            border-radius: 4px;
         }
-        /* Custom zoom cursor */
-        #fsZoomCursor {
+        /* Zoom indicator pill */
+        #fsZoomBadge {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 0.82rem;
+            letter-spacing: 1px;
+            padding: 0.35rem 1.1rem;
+            border-radius: 20px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s;
+            z-index: 3600;
+            white-space: nowrap;
+        }
+        #fsZoomBadge.visible { opacity: 1; }
+        /* Cursor icon overlay */
+        #fsCursorIcon {
             position: fixed;
             pointer-events: none;
-            z-index: 3600;
-            display: none;
-            width: 36px;
-            height: 36px;
+            z-index: 3700;
+            opacity: 0;
+            transition: opacity 0.2s;
             transform: translate(-50%, -50%);
-            transition: opacity 0.15s;
         }
+        #fsCursorIcon.visible { opacity: 1; }
         #imgFullscreenClose {
             position: fixed;
             top: 1.2rem;
@@ -3101,16 +3122,11 @@
         <button id="imgFullscreenClose" onclick="closeImageFullscreen()">×</button>
         <img id="imgFullscreenImg" src="" alt="">
     </div>
-    <!-- Custom zoom cursor -->
-    <div id="fsZoomCursor">
-        <svg id="fsZoomIcon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="15" cy="15" r="10" stroke="white" stroke-width="2.5"/>
-            <line x1="22.5" y1="22.5" x2="32" y2="32" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- plus/minus bar (horizontal) -->
-            <line id="fsCursorH" x1="10" y1="15" x2="20" y2="15" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <!-- plus vertical bar (only for zoom-in) -->
-            <line id="fsCursorV" x1="15" y1="10" x2="15" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+    <div id="fsZoomBadge"></div>
+    <!-- Zoom cursor SVGs -->
+    <div id="fsCursorIcon">
+        <svg id="fsCursorZoomIn"  width="40" height="40" viewBox="0 0 40 40" style="display:none"><circle cx="17" cy="17" r="11" fill="none" stroke="white" stroke-width="2.5"/><line x1="26" y1="26" x2="36" y2="36" stroke="white" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="17" x2="22" y2="17" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="17" y1="12" x2="17" y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg id="fsCursorZoomOut" width="40" height="40" viewBox="0 0 40 40" style="display:none"><circle cx="17" cy="17" r="11" fill="none" stroke="white" stroke-width="2.5"/><line x1="26" y1="26" x2="36" y2="36" stroke="white" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="17" x2="22" y2="17" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
     </div>
 
     <!-- PDF Viewer Modal (using iframe + Mozilla PDF.js online viewer) -->
@@ -3610,141 +3626,191 @@
             }, dur + 20);
         }
 
-        function openImageFullscreen() {
-            var src = document.getElementById('modalImage').src;
-            var overlay = document.getElementById('imgFullscreenOverlay');
-            var img = document.getElementById('imgFullscreenImg');
-            img.src = src;
-            // Reset state
-            _fsScale = 1; _fsOffX = 0; _fsOffY = 0;
-            _applyFsTransform();
-            overlay.classList.add('active');
-        }
+        // ══════════════════════════════════════════════
+        //  FULLSCREEN VIEWER  —  zoom + pan
+        // ══════════════════════════════════════════════
+        (function () {
+            var overlay  = document.getElementById('imgFullscreenOverlay');
+            var img      = document.getElementById('imgFullscreenImg');
+            var badge    = document.getElementById('fsZoomBadge');
+            var cursor   = document.getElementById('fsCursorIcon');
+            var iconIn   = document.getElementById('fsCursorZoomIn');
+            var iconOut  = document.getElementById('fsCursorZoomOut');
+            var closeBtn = document.getElementById('imgFullscreenClose');
 
-        function closeImageFullscreen() {
-            document.getElementById('imgFullscreenOverlay').classList.remove('active');
-            document.getElementById('fsZoomCursor').style.display = 'none';
-        }
+            if (!overlay || !img) return;
 
-        // ── Fullscreen zoom + pan ──
-        var _fsScale = 1, _fsOffX = 0, _fsOffY = 0;
-        var _fsDragging = false, _fsDragStartX = 0, _fsDragStartY = 0, _fsDragOffX = 0, _fsDragOffY = 0;
-        var _fsCursorHideTimer;
+            /* ── state ── */
+            var scale   = 1;
+            var ox = 0, oy = 0;          // image top-left offset from overlay origin
+            var NW, NH;                  // natural image size in "scale-1" pixels
 
-        function _applyFsTransform() {
-            var img = document.getElementById('imgFullscreenImg');
-            if (img) img.style.transform = 'translate(' + _fsOffX + 'px,' + _fsOffY + 'px) scale(' + _fsScale + ')';
-        }
+            /* drag */
+            var dragging  = false;
+            var dragSX, dragSY, dragOX, dragOY;
 
-        function _clampFsOffset() {
-            var img = document.getElementById('imgFullscreenImg');
-            if (!img) return;
-            var rect = img.getBoundingClientRect();
-            var ow = window.innerWidth, oh = window.innerHeight;
-            var iw = rect.width / _fsScale * _fsScale;
-            var ih = rect.height / _fsScale * _fsScale;
-            var maxX = Math.max(0, (iw - ow) / 2);
-            var maxY = Math.max(0, (ih - oh) / 2);
-            _fsOffX = Math.max(-maxX, Math.min(maxX, _fsOffX));
-            _fsOffY = Math.max(-maxY, Math.min(maxY, _fsOffY));
-        }
+            /* timers */
+            var badgeTimer, cursorTimer;
 
-        (function() {
-            var overlay = document.getElementById('imgFullscreenOverlay');
-            var cursor  = document.getElementById('fsZoomCursor');
-            var vBar    = document.getElementById('fsCursorV');
-            if (!overlay) return;
-
-            // Show/update custom cursor on mousemove
-            overlay.addEventListener('mousemove', function(e) {
-                cursor.style.display = 'block';
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top  = e.clientY + 'px';
-
-                // While dragging show grab cursor icon (hide custom cursor)
-                if (_fsDragging) {
-                    cursor.style.display = 'none';
-                    return;
+            /* ── open / close ── */
+            window.openImageFullscreen = function () {
+                var src = document.getElementById('modalImage').src;
+                img.src = src;
+                img.onload = function () {
+                    NW = img.naturalWidth;
+                    NH = img.naturalHeight;
+                    _reset();
+                    overlay.classList.add('active');
+                };
+                // if already cached, onload may not fire
+                if (img.complete && img.naturalWidth) {
+                    NW = img.naturalWidth; NH = img.naturalHeight;
+                    _reset();
+                    overlay.classList.add('active');
                 }
+            };
 
-                // Show + or - based on scale
-                if (vBar) vBar.style.display = _fsScale < 8 ? '' : 'none';
+            window.closeImageFullscreen = function () {
+                overlay.classList.remove('active');
+                _hideCursor();
+            };
 
-                clearTimeout(_fsCursorHideTimer);
-                _fsCursorHideTimer = setTimeout(function() {
-                    cursor.style.display = 'none';
-                }, 2500);
-            });
+            /* ── reset to fit-screen ── */
+            function _reset() {
+                var vw = overlay.clientWidth  || window.innerWidth;
+                var vh = overlay.clientHeight || window.innerHeight;
+                scale  = Math.min(vw / NW, vh / NH, 1);   // fit, never upscale
+                ox     = (vw - NW * scale) / 2;
+                oy     = (vh - NH * scale) / 2;
+                _draw();
+            }
 
-            overlay.addEventListener('mouseleave', function() {
-                cursor.style.display = 'none';
-            });
+            /* ── apply transform ── */
+            function _draw() {
+                img.style.width  = NW + 'px';
+                img.style.height = NH + 'px';
+                img.style.transform = 'translate(' + ox + 'px,' + oy + 'px) scale(' + scale + ')';
+            }
 
-            // Scroll to zoom
-            overlay.addEventListener('wheel', function(e) {
+            /* ── clamp offset so image stays on screen ── */
+            function _clamp() {
+                var vw = overlay.clientWidth  || window.innerWidth;
+                var vh = overlay.clientHeight || window.innerHeight;
+                var iw = NW * scale, ih = NH * scale;
+                var minX = Math.min(0, vw - iw),  maxX = Math.max(0, vw - iw);
+                var minY = Math.min(0, vh - ih),   maxY = Math.max(0, vh - ih);
+                ox = Math.max(minX, Math.min(maxX, ox));
+                oy = Math.max(minY, Math.min(maxY, oy));
+            }
+
+            /* ── zoom badge ── */
+            function _showBadge() {
+                badge.textContent = Math.round(scale * 100 / Math.min(
+                    (overlay.clientWidth  || window.innerWidth)  / NW,
+                    (overlay.clientHeight || window.innerHeight) / NH
+                )) + '%';
+                badge.classList.add('visible');
+                clearTimeout(badgeTimer);
+                badgeTimer = setTimeout(function () { badge.classList.remove('visible'); }, 1200);
+            }
+
+            /* ── cursor icon ── */
+            function _showCursor(x, y, zoomIn) {
+                cursor.style.left = x + 'px';
+                cursor.style.top  = y + 'px';
+                if (iconIn)  iconIn.style.display  = zoomIn  ? '' : 'none';
+                if (iconOut) iconOut.style.display = !zoomIn ? '' : 'none';
+                cursor.classList.add('visible');
+                clearTimeout(cursorTimer);
+                cursorTimer = setTimeout(_hideCursor, 1400);
+            }
+
+            function _hideCursor() {
+                cursor.classList.remove('visible');
+            }
+
+            /* ── MOUSE WHEEL — zoom ── */
+            overlay.addEventListener('wheel', function (e) {
                 e.preventDefault();
-                var delta = e.deltaY < 0 ? 1 : -1;
-                var newScale = Math.min(8, Math.max(1, _fsScale + delta * 0.35));
+                if (!NW) return;
 
-                // Zoom toward mouse position
-                var rect = overlay.getBoundingClientRect();
-                var mx = e.clientX - rect.left - rect.width  / 2;
-                var my = e.clientY - rect.top  - rect.height / 2;
-                var scaleDiff = newScale / _fsScale;
-                _fsOffX = mx - scaleDiff * (mx - _fsOffX);
-                _fsOffY = my - scaleDiff * (my - _fsOffY);
-                _fsScale = newScale;
+                var vw = overlay.clientWidth  || window.innerWidth;
+                var vh = overlay.clientHeight || window.innerHeight;
+                var fitScale = Math.min(vw / NW, vh / NH, 1);
+                var minScale = fitScale;
+                var maxScale = fitScale * 8;
 
-                if (_fsScale <= 1) { _fsOffX = 0; _fsOffY = 0; }
-                _clampFsOffset();
-                _applyFsTransform();
+                var direction = e.deltaY < 0 ? 1 : -1;
+                var factor    = 1 + direction * 0.12;
+                var newScale  = Math.min(maxScale, Math.max(minScale, scale * factor));
 
-                // Update cursor icon
-                if (vBar) vBar.style.display = _fsScale < 8 ? '' : 'none';
+                /* zoom toward mouse pointer */
+                var mouseX = e.clientX - overlay.getBoundingClientRect().left;
+                var mouseY = e.clientY - overlay.getBoundingClientRect().top;
+                ox = mouseX - (mouseX - ox) * (newScale / scale);
+                oy = mouseY - (mouseY - oy) * (newScale / scale);
+                scale = newScale;
 
-                // Flash cursor
-                cursor.style.display = 'block';
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top  = e.clientY + 'px';
-                clearTimeout(_fsCursorHideTimer);
-                _fsCursorHideTimer = setTimeout(function() { cursor.style.display = 'none'; }, 1200);
+                if (scale <= minScale + 0.001) { _reset(); }
+                else { _clamp(); _draw(); }
+
+                _showBadge();
+                _showCursor(e.clientX, e.clientY, direction > 0);
             }, { passive: false });
 
-            // Drag to pan
-            overlay.addEventListener('mousedown', function(e) {
-                if (e.target.id === 'imgFullscreenClose') return;
-                if (_fsScale <= 1) {
-                    // Single click at scale=1 closes
-                    return;
-                }
+            /* ── MOUSE DOWN — start drag ── */
+            overlay.addEventListener('mousedown', function (e) {
+                if (e.target === closeBtn) return;
                 e.preventDefault();
-                _fsDragging = true;
-                overlay.style.cursor = 'grabbing';
-                cursor.style.display = 'none';
-                _fsDragStartX = e.clientX;
-                _fsDragStartY = e.clientY;
-                _fsDragOffX = _fsOffX;
-                _fsDragOffY = _fsOffY;
+                dragging = true;
+                dragSX = e.clientX; dragSY = e.clientY;
+                dragOX = ox;        dragOY = oy;
+                overlay.classList.add('fs-dragging');
+                _hideCursor();
             });
 
-            window.addEventListener('mousemove', function(e) {
-                if (!_fsDragging) return;
-                _fsOffX = _fsDragOffX + (e.clientX - _fsDragStartX);
-                _fsOffY = _fsDragOffY + (e.clientY - _fsDragStartY);
-                _clampFsOffset();
-                _applyFsTransform();
+            /* ── MOUSE MOVE — drag ── */
+            window.addEventListener('mousemove', function (e) {
+                if (!dragging) return;
+                ox = dragOX + (e.clientX - dragSX);
+                oy = dragOY + (e.clientY - dragSY);
+                _clamp();
+                _draw();
             });
 
-            window.addEventListener('mouseup', function(e) {
-                if (!_fsDragging) return;
-                _fsDragging = false;
-                overlay.style.cursor = 'none';
+            /* ── MOUSE UP — end drag ── */
+            window.addEventListener('mouseup', function () {
+                if (!dragging) return;
+                dragging = false;
+                overlay.classList.remove('fs-dragging');
             });
 
-            // Click to close only at scale=1
-            overlay.addEventListener('click', function(e) {
-                if (e.target.id === 'imgFullscreenClose') return;
-                if (_fsScale <= 1) closeImageFullscreen();
+            /* ── MOUSE MOVE on overlay — show cursor when not dragging ── */
+            overlay.addEventListener('mousemove', function (e) {
+                if (dragging) return;
+                if (!NW) return;
+                var vw = overlay.clientWidth  || window.innerWidth;
+                var vh = overlay.clientHeight || window.innerHeight;
+                var fitScale = Math.min(vw / NW, vh / NH, 1);
+                var maxScale = fitScale * 8;
+                _showCursor(e.clientX, e.clientY, scale < maxScale - 0.01);
+            });
+
+            overlay.addEventListener('mouseleave', _hideCursor);
+
+            /* ── CLICK at fit-size closes ── */
+            overlay.addEventListener('click', function (e) {
+                if (e.target === closeBtn) return;
+                if (Math.abs(e.clientX - dragSX) > 4 || Math.abs(e.clientY - dragSY) > 4) return;
+                var vw = overlay.clientWidth  || window.innerWidth;
+                var vh = overlay.clientHeight || window.innerHeight;
+                var fitScale = Math.min(vw / NW, vh / NH, 1);
+                if (scale <= fitScale + 0.01) closeImageFullscreen();
+            });
+
+            /* ── ESC to close ── */
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && overlay.classList.contains('active')) closeImageFullscreen();
             });
         })();
 
