@@ -465,7 +465,7 @@
         .img-modal-right {
             width: 280px;
             flex-shrink: 0;
-            background: #fff;
+            background: #111;
             padding: 2.5rem 1.5rem 1.5rem;
             display: flex;
             flex-direction: column;
@@ -482,19 +482,19 @@
         .img-modal-title {
             font-size: 1.05rem;
             font-weight: 500;
-            color: var(--text-primary);
+            color: #fff;
             margin: 0;
             line-height: 1.35;
         }
         .img-modal-date {
             font-size: 0.78rem;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.55);
             margin-bottom: 0.5rem;
         }
         .img-modal-desc-wrap { flex: 1; }
         .img-modal-desc {
             font-size: 0.82rem;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.72);
             line-height: 1.65;
             margin: 0 0 0.3rem;
             display: -webkit-box;
@@ -521,7 +521,7 @@
             flex-direction: column;
             gap: 0.5rem;
             padding-top: 0.75rem;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid rgba(255,255,255,0.15);
             margin-top: auto;
         }
         .img-modal-links:empty { display: none; }
@@ -530,8 +530,8 @@
             align-items: center;
             gap: 0.4rem;
             font-size: 0.8rem;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.25);
             border-radius: 20px;
             padding: 0.35rem 0.85rem;
             text-decoration: none;
@@ -539,7 +539,7 @@
             font-family: inherit;
             cursor: pointer;
         }
-        .img-modal-link-btn:hover { color: var(--accent); border-color: var(--accent); }
+        .img-modal-link-btn:hover { color: #fff; border-color: rgba(255,255,255,0.7); }
 
         /* Maximize button on image */
         .img-modal-maximize-btn {
@@ -609,6 +609,7 @@
                 width: 100%;
                 padding: 1rem 1.2rem;
                 max-height: 40vh;
+                background: #111;
             }
             .img-modal-left img { max-height: 52vw; }
         }
@@ -2826,12 +2827,9 @@
                 </svg>
                 <input type="text" placeholder="Search images..." id="searchInputGallery" onkeyup="searchGallery()">
             </div>
-            <div class="gallery-filters">
+            <div class="gallery-filters" id="galleryFilterTags">
                 <div class="filter-tag active" data-filter="all">All</div>
-                <div class="filter-tag" data-filter="drawing">Drawing & Painting</div>
-                <div class="filter-tag" data-filter="sculpture">Sculpture</div>
-                <div class="filter-tag" data-filter="visual">Visual Arts</div>
-                <div class="filter-tag" data-filter="momentary">Momentary</div>
+                <!-- Category tags dynamically added from Images/images_index.json -->
             </div>
         </div>
         <div class="full-gallery-grid" id="fullGalleryGrid">
@@ -3497,6 +3495,47 @@
             var grid = document.getElementById('fullGalleryGrid');
             if (!grid) return;
             grid.innerHTML = '';
+
+            // Build dynamic category filter tags from unique categories in JSON
+            var filterContainer = document.getElementById('galleryFilterTags');
+            if (filterContainer) {
+                // Collect unique categories preserving original case
+                var seen = {};
+                var cats = [];
+                images.forEach(function(item) {
+                    var c = (item.category || '').trim();
+                    if (c && !seen[c.toLowerCase()]) {
+                        seen[c.toLowerCase()] = true;
+                        cats.push(c);
+                    }
+                });
+                // Clear existing tags except "All"
+                var allTag = filterContainer.querySelector('[data-filter="all"]');
+                filterContainer.innerHTML = '';
+                if (allTag) filterContainer.appendChild(allTag);
+                cats.forEach(function(cat) {
+                    var tag = document.createElement('div');
+                    tag.className = 'filter-tag';
+                    tag.dataset.filter = cat.toLowerCase();
+                    tag.textContent = cat;
+                    tag.onclick = function() {
+                        filterContainer.querySelectorAll('.filter-tag').forEach(function(t) { t.classList.remove('active'); });
+                        tag.classList.add('active');
+                        filterGallery(cat.toLowerCase());
+                    };
+                    filterContainer.appendChild(tag);
+                });
+                // Bind "All" tag click
+                if (allTag) {
+                    allTag.onclick = function() {
+                        filterContainer.querySelectorAll('.filter-tag').forEach(function(t) { t.classList.remove('active'); });
+                        allTag.classList.add('active');
+                        filterGallery('all');
+                    };
+                }
+            }
+
+            // Render images
             images.forEach(function(item) {
                 var div = document.createElement('div');
                 div.className = 'full-gallery-item';
