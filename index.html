@@ -623,34 +623,50 @@
             margin-top: auto;
             flex-shrink: 0;
         }
+        @keyframes modalBtnColorCycle {
+            0%   { color: #e8a87c; }
+            25%  { color: #85c1e9; }
+            50%  { color: #a29bfe; }
+            75%  { color: #81ecec; }
+            100% { color: #e8a87c; }
+        }
         .img-modal-share-btn {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.7);
             border: none;
             background: none;
             cursor: pointer;
             padding: 0;
-            transition: color 0.2s;
             font-family: inherit;
+            animation: modalBtnColorCycle 4s ease-in-out infinite;
+            transition: color 0.3s;
         }
-        .img-modal-share-btn:hover { color: #fff; }
+        .img-modal-share-btn:hover {
+            animation: none;
+            color: var(--modal-cat-color, #fff);
+            filter: brightness(1.2);
+        }
         .img-modal-link-btn {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.7);
             border: none;
             padding: 0;
             text-decoration: none;
-            transition: color 0.2s;
             font-family: inherit;
             cursor: pointer;
+            animation: modalBtnColorCycle 4s ease-in-out infinite;
+            animation-delay: 1s;
+            transition: color 0.3s;
         }
-        .img-modal-link-btn:hover { color: #fff; }
+        .img-modal-link-btn:hover {
+            animation: none;
+            color: var(--modal-cat-color, #fff);
+            filter: brightness(1.2);
+        }
 
         /* ── Gallery nav arrows (desktop only) ── */
         .img-nav-btn {
@@ -3333,7 +3349,10 @@
                 var catKey = Object.keys(colors).find(function(k) {
                     return k.toLowerCase() === (data.category || '').toLowerCase();
                 });
-                cat.style.color = catKey ? colors[catKey] : 'var(--accent)';
+                var catColor = catKey ? colors[catKey] : 'var(--accent)';
+                cat.style.color = catColor;
+                // Apply to modal links so buttons use it via CSS variable
+                if (links) links.style.setProperty('--modal-cat-color', catColor);
             }
             if (title) title.textContent = data.title        || '';
             if (date)  date.textContent  = data.updated_time || '';
