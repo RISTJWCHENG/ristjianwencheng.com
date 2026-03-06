@@ -2545,7 +2545,9 @@
             player.pause();
             player.currentTime = 0;
             modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
+            // Only restore scroll if no full-screen page is still open
+            const anyFullPage = document.querySelector('.full-gallery-page.active');
+            document.body.style.overflow = anyFullPage ? 'hidden' : 'auto';
         }
 
         function handleVideoModalBgClick(e) {
