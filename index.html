@@ -334,6 +334,53 @@
             transform: scale(1.03);
         }
 
+        /* Hover overlay buttons — bottom-right corner */
+        .gallery-card-actions {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .full-gallery-item:hover .gallery-card-actions {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .gallery-card-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+            cursor: pointer;
+            border: none;
+            background: rgba(255,255,255,0.92);
+            color: #222;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .gallery-card-btn:hover {
+            background: #222;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .gallery-card-btn svg {
+            flex-shrink: 0;
+        }
+
         .close-gallery-btn {
             position: fixed;
             top: 2rem;
@@ -3311,6 +3358,32 @@
             }
         }
 
+        function shareGalleryCard(imageUrl, category) {
+            var pageBase = window.location.href.split('?')[0];
+            var shareUrl = pageBase + '?img=' + btoa(encodeURIComponent(imageUrl));
+
+            function doToast() {
+                var toast = document.getElementById('imgShareToast');
+                if (!toast) return;
+                var colors = window._GALLERY_COLORS || {};
+                var catKey = Object.keys(colors).find(function(k) {
+                    return k.toLowerCase() === (category || '').toLowerCase();
+                });
+                var catColor = catKey ? colors[catKey] : '#7c6fcd';
+                toast.style.background = catColor;
+                toast.style.color = '#fff';
+                toast.textContent = '🔗 Image link copied!';
+                toast.classList.add('show');
+                setTimeout(function() { toast.classList.remove('show'); }, 2200);
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(shareUrl).then(doToast).catch(function() { fallbackCopy(shareUrl, doToast); });
+            } else {
+                fallbackCopy(shareUrl, doToast);
+            }
+        }
+
         function shareCurrentImage() {
             var imgUrl = document.getElementById('modalImage').src;
             var pageBase = window.location.href.split('?')[0];
@@ -4056,7 +4129,7 @@
                 var div = document.createElement('div');
                 div.className = 'full-gallery-item';
                 div.dataset.category = (item.category || '').toLowerCase();
-                div.onclick = (function(el) { return function() { openImageModal(el); }; })(div);
+                div.dataset.imageUrl = item.image_url;
 
                 // Random column span
                 var colSpan = spanOptions[Math.floor(seededRand() * spanOptions.length)];
@@ -4074,15 +4147,13 @@
                     var gap     = parseInt(window.getComputedStyle(grid).getPropertyValue('gap')) || 10;
                     var cellW   = div.getBoundingClientRect().width;
                     if (!cellW) return;
-                    // Natural aspect ratio height for this cell width
                     var naturalH = img.naturalHeight && img.naturalWidth
                         ? (img.naturalHeight / img.naturalWidth) * cellW
-                        : cellW * (seededRand() * 0.6 + 0.6); // fallback random ratio
+                        : cellW * (seededRand() * 0.6 + 0.6);
                     var rowSpan = Math.ceil((naturalH + gap) / (rowSize + gap));
                     div.style.gridRow = 'span ' + rowSpan;
                 });
 
-                // Fallback if image fails to load — random aspect ratio
                 img.addEventListener('error', function() {
                     var ratio = seededRand() * 0.7 + 0.6;
                     var grid = document.getElementById('fullGalleryGrid');
@@ -4094,6 +4165,43 @@
                 });
 
                 div.appendChild(img);
+
+                // Build hover action buttons
+                var actions = document.createElement('div');
+                actions.className = 'gallery-card-actions';
+
+                // Article/Link button — only if item has a link
+                if (item.link && item.link[0] && item.link[1]) {
+                    var linkBtn = document.createElement('a');
+                    linkBtn.className = 'gallery-card-btn';
+                    linkBtn.href = item.link[1];
+                    linkBtn.target = '_blank';
+                    linkBtn.rel = 'noopener';
+                    linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + item.link[0];
+                    linkBtn.onclick = function(e) { e.stopPropagation(); };
+                    actions.appendChild(linkBtn);
+                }
+
+                // Share button — always shown
+                var shareBtn = document.createElement('button');
+                shareBtn.className = 'gallery-card-btn';
+                shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
+                shareBtn.onclick = (function(imageUrl, category) {
+                    return function(e) {
+                        e.stopPropagation();
+                        shareGalleryCard(imageUrl, category);
+                    };
+                })(item.image_url, item.category || '');
+                actions.appendChild(shareBtn);
+
+                div.appendChild(actions);
+
+                // Click on image area (not buttons) opens modal
+                div.onclick = (function(el) { return function(e) {
+                    if (e.target.closest('.gallery-card-actions')) return;
+                    openImageModal(el);
+                }; })(div);
+
                 grid.appendChild(div);
             });
         }
