@@ -455,7 +455,9 @@
             flex: 1 1 auto;
             background: #000;
             min-width: 0;
+            transition: opacity 0.25s ease;
         }
+        .img-modal-left.fading { opacity: 0; }
         .img-modal-left img {
             max-width: 100%;
             max-height: 88vh;
@@ -3233,7 +3235,6 @@
 
         function shareCurrentImage() {
             var imgUrl = document.getElementById('modalImage').src;
-            // Build shareable page URL: index.html?img=<base64-encoded image url>
             var pageBase = window.location.href.split('?')[0];
             var shareUrl = pageBase + '?img=' + btoa(encodeURIComponent(imgUrl));
 
@@ -3247,19 +3248,25 @@
                 }
             }
 
-            if (navigator.share) {
-                navigator.share({ url: shareUrl }).catch(function(){});
-            } else if (navigator.clipboard) {
+            // Always copy to clipboard directly (no system share sheet)
+            if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(shareUrl).then(showCopied).catch(function() {
-                    // fallback: execCommand
-                    var ta = document.createElement('textarea');
-                    ta.value = shareUrl;
-                    ta.style.position = 'fixed'; ta.style.opacity = '0';
-                    document.body.appendChild(ta); ta.focus(); ta.select();
-                    try { document.execCommand('copy'); showCopied(); } catch(e) {}
-                    document.body.removeChild(ta);
+                    fallbackCopy(shareUrl, showCopied);
                 });
+            } else {
+                fallbackCopy(shareUrl, showCopied);
             }
+        }
+
+        function fallbackCopy(text, callback) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); if (callback) callback(); } catch(e) {}
+            document.body.removeChild(ta);
         }
 
         function openImageModal(element) {
@@ -3276,9 +3283,20 @@
         function navigateImage(dir) {
             var list = window._GALLERY_LIST;
             if (!list || list.length < 2) return;
-            window._GALLERY_INDEX = (window._GALLERY_INDEX + dir + list.length) % list.length;
-            var item = list[window._GALLERY_INDEX];
-            populateModal(item.image_url);
+            var imgLeft = document.querySelector('.img-modal-left');
+            // Fade out
+            if (imgLeft) imgLeft.classList.add('fading');
+            setTimeout(function() {
+                window._GALLERY_INDEX = (window._GALLERY_INDEX + dir + list.length) % list.length;
+                var item = list[window._GALLERY_INDEX];
+                populateModal(item.image_url);
+                // Fade in after new src is set
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        if (imgLeft) imgLeft.classList.remove('fading');
+                    });
+                });
+            }, 250);
         }
 
         function openImageFullscreen() {
