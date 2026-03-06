@@ -338,14 +338,22 @@
             bottom: 10px;
             right: 10px;
             display: flex;
-            gap: 6px;
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-end;
             opacity: 0;
             transform: translateY(6px);
             transition: opacity 0.25s, transform 0.25s;
             pointer-events: none;
             z-index: 10;
         }
-        .full-gallery-item:hover .gallery-card-actions {
+        .full-gallery-item:hover .gallery-card-actions,
+        .g-left:hover .gallery-card-actions,
+        .g-center:hover .gallery-card-actions,
+        .g-right-1:hover .gallery-card-actions,
+        .g-right-1b:hover .gallery-card-actions,
+        .g-right-2:hover .gallery-card-actions,
+        .g-right-3:hover .gallery-card-actions {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
@@ -371,8 +379,8 @@
             white-space: nowrap;
         }
         .gallery-card-btn:hover {
-            background: #222;
-            color: #fff;
+            background: rgba(255,255,255,0.97);
+            color: var(--card-cat-color, #7c6fcd);
             transform: translateY(-2px);
         }
         .gallery-card-btn svg {
@@ -4048,20 +4056,61 @@
             } catch(e) {}
         }
 
+        // ── Shared helper: build hover action buttons for any gallery card ──
+        function buildCardActions(item, catColor) {
+            var actions = document.createElement('div');
+            actions.className = 'gallery-card-actions';
+
+            // Pass category color as CSS variable so :hover can use it
+            actions.style.setProperty('--card-cat-color', catColor || '#7c6fcd');
+
+            if (item.link && item.link[0] && item.link[1]) {
+                var linkBtn = document.createElement('a');
+                linkBtn.className = 'gallery-card-btn';
+                linkBtn.href = item.link[1];
+                linkBtn.target = '_blank';
+                linkBtn.rel = 'noopener';
+                linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Article';
+                linkBtn.onclick = function(e) { e.stopPropagation(); };
+                actions.appendChild(linkBtn);
+            }
+
+            var shareBtn = document.createElement('button');
+            shareBtn.className = 'gallery-card-btn';
+            shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
+            shareBtn.onclick = (function(iu, cat) {
+                return function(e) { e.stopPropagation(); shareGalleryCard(iu, cat); };
+            })(item.image_url, item.category || '');
+            actions.appendChild(shareBtn);
+
+            return actions;
+        }
+
         function renderFeaturedGallery(images) {
             var grid = document.getElementById('featuredGalleryGrid');
             if (!grid) return;
             grid.innerHTML = '';
             var layouts = ['g-left', 'g-right-1', 'g-right-1b', 'g-right-2'];
             var count = Math.min(images.length, 4);
+            var colors = window._GALLERY_COLORS || {};
             for (var i = 0; i < count; i++) {
                 var item = images[i];
+                var catKey = Object.keys(colors).find(function(k) {
+                    return k.toLowerCase() === (item.category || '').toLowerCase();
+                });
+                var catColor = catKey ? colors[catKey] : '#7c6fcd';
+
                 var div = document.createElement('div');
                 div.className = layouts[i];
                 div.style.cursor = 'pointer';
-                div.onclick = (function(el) { return function() { openImageModal(el); }; })(div);
+                div.style.setProperty('--card-cat-color', catColor);
                 div.innerHTML = '<img src="' + item.image_url + '" alt="' + item.title + '">'
                     + '<div class="gallery-info"><h3>' + item.title + '</h3><p>' + item.category + ', ' + item.updated_time + '</p></div>';
+                div.appendChild(buildCardActions(item, catColor));
+                div.onclick = (function(el) { return function(e) {
+                    if (e.target.closest('.gallery-card-actions')) return;
+                    openImageModal(el);
+                }; })(div);
                 grid.appendChild(div);
             }
         }
@@ -4134,6 +4183,14 @@
                 div.dataset.imageUrl = item.image_url;
                 div.dataset.idx = idx;
 
+                // Resolve category color
+                var colors = window._GALLERY_COLORS || {};
+                var catKey = Object.keys(colors).find(function(k) {
+                    return k.toLowerCase() === (item.category || '').toLowerCase();
+                });
+                var catColor = catKey ? colors[catKey] : '#7c6fcd';
+                div.style.setProperty('--card-cat-color', catColor);
+
                 var img = document.createElement('img');
                 img.alt = item.title || '';
                 img.src = item.image_url;
@@ -4146,31 +4203,7 @@
                 });
 
                 div.appendChild(img);
-
-                // Hover action buttons
-                var actions = document.createElement('div');
-                actions.className = 'gallery-card-actions';
-
-                if (item.link && item.link[0] && item.link[1]) {
-                    var linkBtn = document.createElement('a');
-                    linkBtn.className = 'gallery-card-btn';
-                    linkBtn.href = item.link[1];
-                    linkBtn.target = '_blank';
-                    linkBtn.rel = 'noopener';
-                    linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + item.link[0];
-                    linkBtn.onclick = function(e) { e.stopPropagation(); };
-                    actions.appendChild(linkBtn);
-                }
-
-                var shareBtn = document.createElement('button');
-                shareBtn.className = 'gallery-card-btn';
-                shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
-                shareBtn.onclick = (function(iu, cat) {
-                    return function(e) { e.stopPropagation(); shareGalleryCard(iu, cat); };
-                })(item.image_url, item.category || '');
-                actions.appendChild(shareBtn);
-
-                div.appendChild(actions);
+                div.appendChild(buildCardActions(item, catColor));
 
                 div.onclick = (function(el) { return function(e) {
                     if (e.target.closest('.gallery-card-actions')) return;
