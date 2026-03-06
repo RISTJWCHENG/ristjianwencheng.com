@@ -1,12 +1,19 @@
-[
-  {
-    "title": "Website LOGO",
-    "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Website_LOGO.png",
-    "description": "sdfsdfsfsd"
-  },
-  {
-    "title": "Another Image",
-    "image_url": "https://example.com/image2.png",
-    "description": "Second image description"
-  }
-]
+{
+  "assets": [
+    {
+      "title": "website movie",
+      "type": "video",
+      "movie_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/webpage%20movie.mp4"
+    },
+    {
+      "title": "website icon",
+      "type": "image",
+      "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/website_icon.png"
+    },
+    {
+      "title": "profile image",
+      "type": "image",
+      "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/RIST%20JIANWEN%20CHENG_Profile_01.jpg"
+    }
+  ]
+}
