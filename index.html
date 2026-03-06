@@ -1489,6 +1489,36 @@
             background: color-mix(in srgb, var(--modal-cat-color, #7c6fcd) 12%, transparent) !important;
         }
 
+        /* Download & Link buttons in video modal – rainbow → category color on hover */
+        #videoModalDownloadBtn,
+        #videoModalLinkBtn {
+            background: linear-gradient(90deg,
+                #a78bfa, #38bdf8, #86efac, #94a3b8, #4ade80, #38bdf8, #a78bfa);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: btn-rainbow 3s linear infinite;
+        }
+        #videoModalDownloadBtn svg,
+        #videoModalLinkBtn svg {
+            stroke: #a78bfa;
+            animation: svgHue 3s linear infinite;
+        }
+        #videoModalDownloadBtn:hover,
+        #videoModalLinkBtn:hover {
+            animation: none;
+            background: var(--modal-cat-color, #7c6fcd);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #videoModalDownloadBtn:hover svg,
+        #videoModalLinkBtn:hover svg {
+            animation: none;
+            stroke: var(--modal-cat-color, #7c6fcd);
+        }
+
         .featured-articles-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -2473,7 +2503,11 @@
             if (catEl) {
                 const catName = category || 'Work';
                 catEl.textContent = catName;
-                catEl.style.color = getVideoCategoryColor(catName);
+                const catColor = getVideoCategoryColor(catName);
+                catEl.style.color = catColor;
+                // Propagate category color to all modal action buttons via CSS var
+                const descArea = document.getElementById('videoModalDescArea');
+                if (descArea) descArea.style.setProperty('--modal-cat-color', catColor);
             }
 
             // Set watchTime
