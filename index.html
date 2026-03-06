@@ -541,6 +541,35 @@
         }
         .img-modal-link-btn:hover { color: #fff; border-color: rgba(255,255,255,0.7); }
 
+        /* ── Gallery nav arrows (desktop only) ── */
+        .img-nav-btn {
+            display: none;
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            z-index: 2100;
+            transition: background 0.2s, transform 0.2s;
+            backdrop-filter: blur(6px);
+        }
+        .img-nav-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-50%) scale(1.08);
+        }
+        .img-nav-prev { left: 1.5rem; }
+        .img-nav-next { right: 1.5rem; }
+        @media (min-width: 641px) {
+            .img-nav-btn { display: flex; }
+        }
+
         /* Maximize button on image */
         .img-modal-maximize-btn {
             position: absolute;
@@ -2839,6 +2868,9 @@
     </div>
 
     <div class="modal" id="imageModal" onclick="closeImageModal()">
+        <button class="img-nav-btn img-nav-prev" id="imgNavPrev" onclick="event.stopPropagation();navigateImage(-1)" title="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
         <div class="modal-content img-modal-content" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeImageModal()">×</button>
             <div class="img-modal-left">
@@ -2863,6 +2895,9 @@
                 <div class="img-modal-links" id="imgModalLinks"></div>
             </div>
         </div>
+        <button class="img-nav-btn img-nav-next" id="imgNavNext" onclick="event.stopPropagation();navigateImage(1)" title="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
     </div>
 
     <!-- Fullscreen image overlay -->
@@ -3104,15 +3139,34 @@
         }
 
         window._GALLERY_DATA = {};
+        window._GALLERY_LIST = []; // sorted list: same category first, then others
+        window._GALLERY_INDEX = 0; // current index in _GALLERY_LIST
 
-        function openImageModal(element) {
-            var img = element.querySelector('img');
-            if (!img) return;
-            var modal    = document.getElementById('imageModal');
+        // Build sorted list: current image's category first, then remaining categories in order
+        function buildGalleryList(currentUrl) {
+            var all = Object.values(window._GALLERY_DATA);
+            var currentCat = (window._GALLERY_DATA[currentUrl] || {}).category || '';
+            // Group by category preserving insertion order
+            var catOrder = [];
+            var byCategory = {};
+            all.forEach(function(item) {
+                var c = item.category || '';
+                if (!byCategory[c]) { byCategory[c] = []; catOrder.push(c); }
+                byCategory[c].push(item);
+            });
+            // Put current category first
+            var sorted = [];
+            sorted = sorted.concat(byCategory[currentCat] || []);
+            catOrder.forEach(function(c) {
+                if (c !== currentCat) sorted = sorted.concat(byCategory[c]);
+            });
+            return sorted;
+        }
+
+        function populateModal(url) {
             var modalImg = document.getElementById('modalImage');
-            modalImg.src = img.src;
-
-            var data    = window._GALLERY_DATA[img.src] || {};
+            modalImg.src = url;
+            var data    = window._GALLERY_DATA[url] || {};
             var cat     = document.getElementById('imgModalCategory');
             var title   = document.getElementById('imgModalTitle');
             var date    = document.getElementById('imgModalDate');
@@ -3124,15 +3178,8 @@
             if (cat)   cat.textContent   = data.category     || '';
             if (title) title.textContent = data.title        || '';
             if (date)  date.textContent  = data.updated_time || '';
-
-            if (desc) {
-                desc.textContent = data.description || '';
-                desc.classList.remove('expanded');
-            }
-            if (moreBtn) {
-                moreBtn.textContent = 'more';
-                moreBtn.style.display = data.description ? 'inline' : 'none';
-            }
+            if (desc) { desc.textContent = data.description || ''; desc.classList.remove('expanded'); }
+            if (moreBtn) { moreBtn.textContent = 'more'; moreBtn.style.display = data.description ? 'inline' : 'none'; }
             if (links) {
                 links.innerHTML = '';
                 if (data.link && data.link[0] && data.link[1]) {
@@ -3149,7 +3196,25 @@
                 var hasInfo = data.title || data.description || (data.link && data.link[1]);
                 right.style.display = hasInfo ? 'flex' : 'none';
             }
-            modal.classList.add('active');
+        }
+
+        function openImageModal(element) {
+            var img = element.querySelector('img');
+            if (!img) return;
+            var url = img.src;
+            window._GALLERY_LIST  = buildGalleryList(url);
+            window._GALLERY_INDEX = window._GALLERY_LIST.findIndex(function(i) { return i.image_url === url; });
+            if (window._GALLERY_INDEX < 0) window._GALLERY_INDEX = 0;
+            populateModal(url);
+            document.getElementById('imageModal').classList.add('active');
+        }
+
+        function navigateImage(dir) {
+            var list = window._GALLERY_LIST;
+            if (!list || list.length < 2) return;
+            window._GALLERY_INDEX = (window._GALLERY_INDEX + dir + list.length) % list.length;
+            var item = list[window._GALLERY_INDEX];
+            populateModal(item.image_url);
         }
 
         function openImageFullscreen() {
@@ -3202,6 +3267,8 @@
         }
 
         document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') { navigateImage(1); return; }
+            if (e.key === 'ArrowLeft')  { navigateImage(-1); return; }
             if (e.key === 'Escape') {
                 closeImageModal();
                 closeImageFullscreen();
