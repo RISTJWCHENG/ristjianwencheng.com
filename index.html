@@ -291,34 +291,30 @@
             border-color: var(--text-primary);
         }
 
-        @media (max-width: 1200px) {
-            .full-gallery-grid { grid-template-columns: repeat(9, 1fr); }
-        }
         @media (max-width: 900px) {
-            .full-gallery-grid { grid-template-columns: repeat(6, 1fr); gap: 8px; grid-auto-rows: 8px; }
+            .full-gallery-grid { padding: 0 0.5rem; }
         }
 
         .full-gallery-grid {
             max-width: 1400px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-auto-rows: 10px;
-            gap: 10px;
+            position: relative; /* JS absolute positioning */
         }
 
         .full-gallery-item {
-            position: relative;
+            position: absolute;
             overflow: hidden;
             cursor: pointer;
             background: #e5e3df;
             border-radius: 12px;
             transition: transform 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
         }
 
         .full-gallery-item:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 2;
         }
 
         .full-gallery-item img {
@@ -744,11 +740,6 @@
             /* Fix Complete Gallery grid overflowing on mobile */
             .full-gallery-page {
                 padding: 5rem 1rem 3rem;
-            }
-            .full-gallery-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 6px;
-                grid-auto-rows: 6px;
             }
             .full-gallery-item {
                 border-radius: 8px;
@@ -2304,6 +2295,8 @@
             fullGalleryPage.classList.add('active');
             document.body.style.overflow = 'hidden';
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
+            // Layout needs container to have width — run after paint
+            requestAnimationFrame(function() { setTimeout(layoutGallery, 50); });
         }
 
         function closeFullGallery() {
@@ -3995,6 +3988,7 @@
                 const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
                 item.style.display = (matchCat && matchSearch) ? '' : 'none';
             });
+            layoutGallery();
         }
 
         function searchGallery() {
@@ -4008,6 +4002,7 @@
                 const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
                 item.style.display = (matchCat && matchSearch) ? '' : 'none';
             });
+            layoutGallery();
         }
 
         // ── Gallery loader: reads Images/images_index.json ──
@@ -4121,56 +4116,39 @@
                 return ((_seed >>> 0) / 0xffffffff);
             }
 
-            // Col span patterns that sum to 12 (or multiples) per "row group"
-            // Each image gets a random col span: 3,4,5,6 (out of 12 columns)
-            var spanOptions = [3, 3, 4, 4, 4, 5, 6];
+            // ── Pinterest-style left-to-right masonry ──
+            window._GALLERY_ITEMS_ELS = [];
+            window._GALLERY_ITEM_ASPECTS = {};
 
-            images.forEach(function(item) {
+            // Seeded fallback aspects
+            images.forEach(function(item, idx) {
+                window._GALLERY_ITEM_ASPECTS[idx] = 0.75 + seededRand() * 0.8;
+            });
+
+            images.forEach(function(item, idx) {
                 var div = document.createElement('div');
                 div.className = 'full-gallery-item';
                 div.dataset.category = (item.category || '').toLowerCase();
                 div.dataset.imageUrl = item.image_url;
-
-                // Random column span
-                var colSpan = spanOptions[Math.floor(seededRand() * spanOptions.length)];
-                div.style.gridColumn = 'span ' + colSpan;
+                div.dataset.idx = idx;
 
                 var img = document.createElement('img');
-                img.alt = item.title;
+                img.alt = item.title || '';
                 img.src = item.image_url;
 
-                // Once image loads, calculate row span based on actual height
                 img.addEventListener('load', function() {
-                    var grid = document.getElementById('fullGalleryGrid');
-                    if (!grid) return;
-                    var rowSize = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows')) || 10;
-                    var gap     = parseInt(window.getComputedStyle(grid).getPropertyValue('gap')) || 10;
-                    var cellW   = div.getBoundingClientRect().width;
-                    if (!cellW) return;
-                    var naturalH = img.naturalHeight && img.naturalWidth
-                        ? (img.naturalHeight / img.naturalWidth) * cellW
-                        : cellW * (seededRand() * 0.6 + 0.6);
-                    var rowSpan = Math.ceil((naturalH + gap) / (rowSize + gap));
-                    div.style.gridRow = 'span ' + rowSpan;
-                });
-
-                img.addEventListener('error', function() {
-                    var ratio = seededRand() * 0.7 + 0.6;
-                    var grid = document.getElementById('fullGalleryGrid');
-                    var rowSize = grid ? (parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows')) || 10) : 10;
-                    var gap = grid ? (parseInt(window.getComputedStyle(grid).getPropertyValue('gap')) || 10) : 10;
-                    var cellW = div.getBoundingClientRect().width || 200;
-                    var rowSpan = Math.ceil((cellW * ratio + gap) / (rowSize + gap));
-                    div.style.gridRow = 'span ' + rowSpan;
+                    if (img.naturalWidth && img.naturalHeight) {
+                        window._GALLERY_ITEM_ASPECTS[idx] = img.naturalHeight / img.naturalWidth;
+                    }
+                    layoutGallery();
                 });
 
                 div.appendChild(img);
 
-                // Build hover action buttons
+                // Hover action buttons
                 var actions = document.createElement('div');
                 actions.className = 'gallery-card-actions';
 
-                // Article/Link button — only if item has a link
                 if (item.link && item.link[0] && item.link[1]) {
                     var linkBtn = document.createElement('a');
                     linkBtn.className = 'gallery-card-btn';
@@ -4182,28 +4160,113 @@
                     actions.appendChild(linkBtn);
                 }
 
-                // Share button — always shown
                 var shareBtn = document.createElement('button');
                 shareBtn.className = 'gallery-card-btn';
                 shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
-                shareBtn.onclick = (function(imageUrl, category) {
-                    return function(e) {
-                        e.stopPropagation();
-                        shareGalleryCard(imageUrl, category);
-                    };
+                shareBtn.onclick = (function(iu, cat) {
+                    return function(e) { e.stopPropagation(); shareGalleryCard(iu, cat); };
                 })(item.image_url, item.category || '');
                 actions.appendChild(shareBtn);
 
                 div.appendChild(actions);
 
-                // Click on image area (not buttons) opens modal
                 div.onclick = (function(el) { return function(e) {
                     if (e.target.closest('.gallery-card-actions')) return;
                     openImageModal(el);
                 }; })(div);
 
                 grid.appendChild(div);
+                window._GALLERY_ITEMS_ELS.push(div);
             });
+
+            // Initial layout
+            layoutGallery();
+
+            // Re-layout on resize
+            var _layoutTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(_layoutTimer);
+                _layoutTimer = setTimeout(layoutGallery, 100);
+            });
+        }
+
+        function layoutGallery() {
+            var grid = document.getElementById('fullGalleryGrid');
+            if (!grid) return;
+            var items = window._GALLERY_ITEMS_ELS || [];
+            if (!items.length) return;
+
+            // Only layout visible items
+            var visible = items.filter(function(el) { return el.style.display !== 'none'; });
+            if (!visible.length) { grid.style.height = '0'; return; }
+
+            var GAP = 10;
+            var containerW = grid.getBoundingClientRect().width || grid.offsetWidth;
+            if (!containerW) return;
+
+            // Row heights cycle — variety
+            var rowHeightOptions = [170, 200, 220, 190, 240, 180, 210, 230];
+            var rowHIdx = 0;
+
+            // Left-to-right packing:
+            // Fill each row: pick a target height, compute each image's width = height / aspectRatio
+            // Scale widths to fill containerW exactly
+            var curY = 0;
+            var i = 0;
+
+            while (i < visible.length) {
+                var targetH = rowHeightOptions[rowHIdx % rowHeightOptions.length];
+                rowHIdx++;
+
+                // Collect items for this row until width is filled
+                var rowItems = [];
+                var totalW = 0;
+                var j = i;
+                while (j < visible.length) {
+                    var el = visible[j];
+                    var aspect = parseFloat(el.dataset.idx) >= 0 && window._GALLERY_ASPECTS
+                        ? (window._GALLERY_ASPECTS[el.dataset.idx] || 0.75)
+                        : 0.75;
+                    // Use stored aspect from itemAspects array via data-idx
+                    var idxVal = parseInt(el.dataset.idx);
+                    var asp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]) || 0.75;
+                    var w = targetH / asp;
+                    totalW += w;
+                    rowItems.push({ el: el, naturalW: w, asp: asp });
+                    j++;
+                    // Stop if this row would be comfortably filled
+                    if (totalW >= containerW - GAP * (rowItems.length - 1)) break;
+                }
+
+                // Scale to fit container width exactly
+                var totalGap = GAP * (rowItems.length - 1);
+                var scale = (containerW - totalGap) / (totalW || 1);
+                // If last row and not full, don't stretch — keep natural size capped at container
+                var isLastRow = (j >= visible.length);
+                if (isLastRow && totalW < containerW * 0.6) {
+                    scale = Math.min(1, (containerW - totalGap) / (totalW || 1));
+                }
+                var rowH = targetH * scale;
+
+                // Position each item in this row
+                var curX = 0;
+                for (var k = 0; k < rowItems.length; k++) {
+                    var ri = rowItems[k];
+                    var itemW = ri.naturalW * scale;
+                    // Last item fills remaining space to avoid rounding gaps
+                    if (k === rowItems.length - 1) itemW = containerW - curX;
+                    ri.el.style.left   = curX + 'px';
+                    ri.el.style.top    = curY + 'px';
+                    ri.el.style.width  = itemW + 'px';
+                    ri.el.style.height = rowH + 'px';
+                    curX += itemW + GAP;
+                }
+
+                curY += rowH + GAP;
+                i = j;
+            }
+
+            grid.style.height = (curY - GAP) + 'px';
         }
 
         function getVideoCategoryColor(category) {
