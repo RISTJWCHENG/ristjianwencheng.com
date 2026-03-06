@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RIST JIANWEN CHENG</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -469,6 +469,7 @@
             min-width: 0;
             overflow: hidden;
             position: relative;
+            touch-action: none; /* prevent browser double-tap zoom */
         }
         /* Slide wrapper — clips the sliding img */
         .img-modal-slider {
@@ -479,6 +480,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            touch-action: none;
         }
         .img-modal-left img {
             max-width: 100%;
@@ -487,6 +489,9 @@
             display: block;
             position: relative;
             will-change: transform;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
         @keyframes imgSlideInRight {
             from { transform: translateX(100%); }
@@ -3620,11 +3625,13 @@
                         var now = Date.now();
                         var gap = now - lastTap;
                         if (gap < 400 && gap > 30) {
+                            e.preventDefault(); // block browser double-tap zoom
                             closeImageModal();
                             lastTap = 0;
                             return;
                         }
                         lastTap = now;
+                        e.preventDefault(); // block first tap zoom too
                     }
                     return;
                 }
@@ -3638,7 +3645,7 @@
                 } else {
                     cleanupDrag(false, 0);
                 }
-            }, { passive: true });
+            }, { passive: false }); // must be non-passive to call preventDefault
         })();
 
 
