@@ -1233,6 +1233,30 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        /* Image share toast — centered in the modal */
+        .img-share-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.85);
+            padding: 0.65rem 1.6rem;
+            border-radius: 28px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s, transform 0.25s;
+            color: #fff;
+            background: #333;
+            white-space: nowrap;
+        }
+        .img-share-toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
         /* Modal description area */
         .video-modal-desc-area {
             background: #111;
@@ -3055,6 +3079,7 @@
 
     <!-- Share toast notification -->
     <div class="video-share-toast" id="shareToast">🔗 Video link copied!</div>
+    <div class="img-share-toast" id="imgShareToast">🔗 Image link copied!</div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
@@ -3288,12 +3313,21 @@
             var shareUrl = pageBase + '?img=' + btoa(encodeURIComponent(imgUrl));
 
             function doToast() {
-                var toast = document.getElementById('shareToast');
-                if (toast) {
-                    toast.textContent = '🔗 Image link copied!';
-                    toast.classList.add('show');
-                    setTimeout(function() { toast.classList.remove('show'); }, 2200);
-                }
+                var toast = document.getElementById('imgShareToast');
+                if (!toast) return;
+                // Get category color
+                var catEl = document.getElementById('imgModalCategory');
+                var catText = catEl ? catEl.textContent.trim() : '';
+                var colors = window._GALLERY_COLORS || {};
+                var catKey = Object.keys(colors).find(function(k) {
+                    return k.toLowerCase() === catText.toLowerCase();
+                });
+                var catColor = catKey ? colors[catKey] : '#7c6fcd';
+                toast.style.background = catColor;
+                toast.style.color = '#fff';
+                toast.textContent = '🔗 Image link copied!';
+                toast.classList.add('show');
+                setTimeout(function() { toast.classList.remove('show'); }, 2200);
             }
 
             if (navigator.clipboard && window.isSecureContext) {
