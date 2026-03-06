@@ -444,7 +444,7 @@
             max-width: 92vw;
             max-height: 88vh;
             background: #111;
-            border-radius: 16px;
+            border-radius: 0;
             overflow: hidden;
             position: relative;
         }
@@ -491,31 +491,17 @@
             color: rgba(255,255,255,0.55);
             margin-bottom: 0.5rem;
         }
-        .img-modal-desc-wrap { flex: 1; }
+        .img-modal-desc-wrap {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+        }
         .img-modal-desc {
             font-size: 0.82rem;
             color: rgba(255,255,255,0.72);
             line-height: 1.65;
-            margin: 0 0 0.3rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            margin: 0;
         }
-        .img-modal-desc.expanded {
-            display: block;
-            overflow: visible;
-        }
-        .img-modal-more-btn {
-            background: none;
-            border: none;
-            color: var(--accent);
-            cursor: pointer;
-            font-size: 0.78rem;
-            padding: 0;
-            font-family: inherit;
-        }
-        .img-modal-more-btn:hover { text-decoration: underline; }
         .img-modal-links {
             display: flex;
             flex-direction: column;
@@ -523,8 +509,24 @@
             padding-top: 0.75rem;
             border-top: 1px solid rgba(255,255,255,0.15);
             margin-top: auto;
+            flex-shrink: 0;
         }
-        .img-modal-links:empty { display: none; }
+        .img-modal-share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 20px;
+            padding: 0.35rem 0.85rem;
+            background: none;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+            font-family: inherit;
+            width: fit-content;
+        }
+        .img-modal-share-btn:hover { color: #fff; border-color: rgba(255,255,255,0.7); }
         .img-modal-link-btn {
             display: inline-flex;
             align-items: center;
@@ -2901,9 +2903,13 @@
                 <div class="img-modal-date" id="imgModalDate"></div>
                 <div class="img-modal-desc-wrap">
                     <p class="img-modal-desc" id="imgModalDesc"></p>
-                    <button class="img-modal-more-btn" id="imgModalMoreBtn" onclick="toggleImgModalDesc()">more</button>
                 </div>
-                <div class="img-modal-links" id="imgModalLinks"></div>
+                <div class="img-modal-links" id="imgModalLinks">
+                    <button class="img-modal-share-btn" onclick="shareCurrentImage()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Share
+                    </button>
+                </div>
             </div>
         </div>
         <button class="img-nav-btn img-nav-next" id="imgNavNext" onclick="event.stopPropagation();navigateImage(1)" title="Next">
@@ -3177,21 +3183,22 @@
         function populateModal(url) {
             var modalImg = document.getElementById('modalImage');
             modalImg.src = url;
-            var data    = window._GALLERY_DATA[url] || {};
-            var cat     = document.getElementById('imgModalCategory');
-            var title   = document.getElementById('imgModalTitle');
-            var date    = document.getElementById('imgModalDate');
-            var desc    = document.getElementById('imgModalDesc');
-            var moreBtn = document.getElementById('imgModalMoreBtn');
-            var links   = document.getElementById('imgModalLinks');
-            var right   = document.getElementById('imgModalInfo');
+            var data  = window._GALLERY_DATA[url] || {};
+            var cat   = document.getElementById('imgModalCategory');
+            var title = document.getElementById('imgModalTitle');
+            var date  = document.getElementById('imgModalDate');
+            var desc  = document.getElementById('imgModalDesc');
+            var links = document.getElementById('imgModalLinks');
+            var right = document.getElementById('imgModalInfo');
 
             if (cat)   cat.textContent   = data.category     || '';
             if (title) title.textContent = data.title        || '';
             if (date)  date.textContent  = data.updated_time || '';
-            if (desc) { desc.textContent = data.description || ''; desc.classList.remove('expanded'); }
-            if (moreBtn) { moreBtn.textContent = 'more'; moreBtn.style.display = data.description ? 'inline' : 'none'; }
+            if (desc)  desc.textContent  = data.description  || '';
+
             if (links) {
+                // Keep share button, rebuild link buttons before it
+                var shareBtn = links.querySelector('.img-modal-share-btn');
                 links.innerHTML = '';
                 if (data.link && data.link[0] && data.link[1]) {
                     var a = document.createElement('a');
@@ -3202,10 +3209,30 @@
                     a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + data.link[0];
                     links.appendChild(a);
                 }
+                if (shareBtn) links.appendChild(shareBtn);
+                else {
+                    var sb = document.createElement('button');
+                    sb.className = 'img-modal-share-btn';
+                    sb.onclick = shareCurrentImage;
+                    sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share';
+                    links.appendChild(sb);
+                }
             }
             if (right) {
                 var hasInfo = data.title || data.description || (data.link && data.link[1]);
                 right.style.display = hasInfo ? 'flex' : 'none';
+            }
+        }
+
+        function shareCurrentImage() {
+            var url = document.getElementById('modalImage').src;
+            if (navigator.share) {
+                navigator.share({ url: url }).catch(function(){});
+            } else if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(function() {
+                    var btn = document.querySelector('.img-modal-share-btn');
+                    if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share'; }, 2000); }
+                }).catch(function(){});
             }
         }
 
@@ -3289,13 +3316,6 @@
             }, { passive: true });
         })();
 
-        function toggleImgModalDesc() {
-            var desc = document.getElementById('imgModalDesc');
-            var btn  = document.getElementById('imgModalMoreBtn');
-            if (!desc) return;
-            var expanded = desc.classList.toggle('expanded');
-            if (btn) btn.textContent = expanded ? 'less' : 'more';
-        }
 
         function closeImageModal() {
             document.getElementById('imageModal').classList.remove('active');
