@@ -612,6 +612,8 @@
                 background: #111;
             }
             .img-modal-left img { max-height: 52vw; }
+            /* Hide maximize button on mobile — double-tap closes instead */
+            .img-modal-maximize-btn { display: none; }
         }
 
 
@@ -3162,6 +3164,31 @@
         function closeImageFullscreen() {
             document.getElementById('imgFullscreenOverlay').classList.remove('active');
         }
+
+        // ── Mobile: double-tap image area to close modal ──
+        (function() {
+            var lastTap = 0;
+            document.addEventListener('touchend', function(e) {
+                // Only on mobile
+                if (window.innerWidth > 640) return;
+                // Only when modal is open
+                var modal = document.getElementById('imageModal');
+                if (!modal || !modal.classList.contains('active')) return;
+                // Only if tap is on the image area (img-modal-left or its children)
+                var imgLeft = document.querySelector('.img-modal-left');
+                if (!imgLeft) return;
+                var target = e.target;
+                var insideImgArea = imgLeft === target || imgLeft.contains(target);
+                if (!insideImgArea) return;
+                var now = Date.now();
+                var gap = now - lastTap;
+                if (gap < 350 && gap > 0) {
+                    // Double tap — close modal
+                    closeImageModal();
+                }
+                lastTap = now;
+            }, { passive: true });
+        })();
 
         function toggleImgModalDesc() {
             var desc = document.getElementById('imgModalDesc');
