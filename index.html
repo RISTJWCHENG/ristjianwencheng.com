@@ -3367,23 +3367,61 @@
             }
         }
 
-        function shareGalleryCard(imageUrl, category) {
+        function shareGalleryCard(imageUrl, category, cardEl) {
             var pageBase = window.location.href.split('?')[0];
             var shareUrl = pageBase + '?img=' + btoa(encodeURIComponent(imageUrl));
 
             function doToast() {
-                var toast = document.getElementById('imgShareToast');
-                if (!toast) return;
                 var colors = window._GALLERY_COLORS || {};
                 var catKey = Object.keys(colors).find(function(k) {
                     return k.toLowerCase() === (category || '').toLowerCase();
                 });
                 var catColor = catKey ? colors[catKey] : '#7c6fcd';
-                toast.style.background = catColor;
-                toast.style.color = '#fff';
+
+                // Create a toast centered on the card element
+                var toast = document.createElement('div');
                 toast.textContent = '🔗 Image link copied!';
-                toast.classList.add('show');
-                setTimeout(function() { toast.classList.remove('show'); }, 2200);
+                toast.style.cssText = [
+                    'position:absolute',
+                    'top:50%',
+                    'left:50%',
+                    'transform:translate(-50%,-50%) scale(0.85)',
+                    'background:' + catColor,
+                    'color:#fff',
+                    'padding:0.55rem 1.2rem',
+                    'border-radius:24px',
+                    'font-size:0.78rem',
+                    'font-weight:500',
+                    'white-space:nowrap',
+                    'pointer-events:none',
+                    'z-index:999',
+                    'opacity:0',
+                    'transition:opacity 0.25s, transform 0.25s',
+                    'letter-spacing:0.3px'
+                ].join(';');
+
+                // Append to the card so it centers within it
+                var anchor = cardEl || document.body;
+                if (anchor !== document.body) {
+                    anchor.style.position = anchor.style.position || 'relative';
+                }
+                anchor.appendChild(toast);
+
+                // Trigger animation
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        toast.style.opacity = '1';
+                        toast.style.transform = 'translate(-50%,-50%) scale(1)';
+                    });
+                });
+
+                setTimeout(function() {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translate(-50%,-50%) scale(0.85)';
+                    setTimeout(function() {
+                        if (toast.parentNode) toast.parentNode.removeChild(toast);
+                    }, 300);
+                }, 2000);
             }
 
             if (navigator.clipboard && window.isSecureContext) {
@@ -4062,12 +4100,9 @@
             } catch(e) {}
         }
 
-        // ── Shared helper: build hover action buttons for any gallery card ──
-        function buildCardActions(item, catColor) {
+        function buildCardActions(item, catColor, cardEl) {
             var actions = document.createElement('div');
             actions.className = 'gallery-card-actions';
-
-            // Pass category color as CSS variable so :hover can use it
             actions.style.setProperty('--card-cat-color', catColor || '#7c6fcd');
 
             if (item.link && item.link[0] && item.link[1]) {
@@ -4076,17 +4111,17 @@
                 linkBtn.href = item.link[1];
                 linkBtn.target = '_blank';
                 linkBtn.rel = 'noopener';
-                linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Article';
+                linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Article';
                 linkBtn.onclick = function(e) { e.stopPropagation(); };
                 actions.appendChild(linkBtn);
             }
 
             var shareBtn = document.createElement('button');
             shareBtn.className = 'gallery-card-btn';
-            shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
-            shareBtn.onclick = (function(iu, cat) {
-                return function(e) { e.stopPropagation(); shareGalleryCard(iu, cat); };
-            })(item.image_url, item.category || '');
+            shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
+            shareBtn.onclick = (function(iu, cat, el) {
+                return function(e) { e.stopPropagation(); shareGalleryCard(iu, cat, el); };
+            })(item.image_url, item.category || '', cardEl);
             actions.appendChild(shareBtn);
 
             return actions;
@@ -4112,7 +4147,7 @@
                 div.style.setProperty('--card-cat-color', catColor);
                 div.innerHTML = '<img src="' + item.image_url + '" alt="' + item.title + '">'
                     + '<div class="gallery-info"><h3>' + item.title + '</h3><p>' + item.category + ', ' + item.updated_time + '</p></div>';
-                div.appendChild(buildCardActions(item, catColor));
+                div.appendChild(buildCardActions(item, catColor, div));
                 div.onclick = (function(el) { return function(e) {
                     if (e.target.closest('.gallery-card-actions')) return;
                     openImageModal(el);
@@ -4209,7 +4244,7 @@
                 });
 
                 div.appendChild(img);
-                div.appendChild(buildCardActions(item, catColor));
+                div.appendChild(buildCardActions(item, catColor, div));
 
                 div.onclick = (function(el) { return function(e) {
                     if (e.target.closest('.gallery-card-actions')) return;
