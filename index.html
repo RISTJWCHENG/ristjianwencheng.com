@@ -540,6 +540,64 @@
             cursor: pointer;
         }
         .img-modal-link-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+        /* Maximize button on image */
+        .img-modal-maximize-btn {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.18);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .img-modal-maximize-btn:hover { background: rgba(255,255,255,0.32); }
+
+        /* Fullscreen image overlay */
+        #imgFullscreenOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.97);
+            z-index: 3500;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        #imgFullscreenOverlay.active { display: flex; }
+        #imgFullscreenOverlay img {
+            max-width: 98vw;
+            max-height: 98vh;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        #imgFullscreenClose {
+            position: fixed;
+            top: 1.2rem;
+            right: 1.2rem;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            font-size: 1.8rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s;
+        }
+        #imgFullscreenClose:hover { background: rgba(255,255,255,0.28); }
         @media (max-width: 640px) {
             .img-modal-content {
                 flex-direction: column;
@@ -2786,6 +2844,14 @@
             <button class="modal-close" onclick="closeImageModal()">×</button>
             <div class="img-modal-left">
                 <img id="modalImage" src="" alt="">
+                <button class="img-modal-maximize-btn" onclick="openImageFullscreen()" title="Maximize">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <polyline points="15 3 21 3 21 9"/>
+                        <polyline points="9 21 3 21 3 15"/>
+                        <line x1="21" y1="3" x2="14" y2="10"/>
+                        <line x1="3" y1="21" x2="10" y2="14"/>
+                    </svg>
+                </button>
             </div>
             <div class="img-modal-right" id="imgModalInfo">
                 <div class="img-modal-category" id="imgModalCategory"></div>
@@ -2798,6 +2864,12 @@
                 <div class="img-modal-links" id="imgModalLinks"></div>
             </div>
         </div>
+    </div>
+
+    <!-- Fullscreen image overlay -->
+    <div id="imgFullscreenOverlay" onclick="closeImageFullscreen()">
+        <button id="imgFullscreenClose" onclick="closeImageFullscreen()">×</button>
+        <img id="imgFullscreenImg" src="" alt="">
     </div>
 
     <!-- PDF Viewer Modal (using iframe + Mozilla PDF.js online viewer) -->
@@ -3081,6 +3153,18 @@
             modal.classList.add('active');
         }
 
+        function openImageFullscreen() {
+            var src = document.getElementById('modalImage').src;
+            var overlay = document.getElementById('imgFullscreenOverlay');
+            var img = document.getElementById('imgFullscreenImg');
+            img.src = src;
+            overlay.classList.add('active');
+        }
+
+        function closeImageFullscreen() {
+            document.getElementById('imgFullscreenOverlay').classList.remove('active');
+        }
+
         function toggleImgModalDesc() {
             var desc = document.getElementById('imgModalDesc');
             var btn  = document.getElementById('imgModalMoreBtn');
@@ -3096,6 +3180,7 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeImageModal();
+                closeImageFullscreen();
                 closeVideoModal();
                 if (typeof closeDocument === 'function') closeDocument();
             }
