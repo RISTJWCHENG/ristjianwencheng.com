@@ -358,6 +358,13 @@
             transform: translateY(0);
             pointer-events: auto;
         }
+        @keyframes cardBtnColorCycle {
+            0%   { color: #e8a87c; border-color: #e8a87c; }
+            25%  { color: #85c1e9; border-color: #85c1e9; }
+            50%  { color: #a29bfe; border-color: #a29bfe; }
+            75%  { color: #81ecec; border-color: #81ecec; }
+            100% { color: #e8a87c; border-color: #e8a87c; }
+        }
         .gallery-card-btn {
             display: inline-flex;
             align-items: center;
@@ -370,20 +377,25 @@
             font-weight: 500;
             letter-spacing: 0.3px;
             cursor: pointer;
-            border: 1.5px solid var(--card-cat-color, #7c6fcd);
+            border: 1.5px solid;
             background: rgba(255,255,255,0.88);
-            color: var(--card-cat-color, #7c6fcd);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             box-shadow: 0 1px 6px rgba(0,0,0,0.15);
-            transition: background 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s;
             text-decoration: none;
             white-space: nowrap;
             box-sizing: border-box;
+            animation: cardBtnColorCycle 4s ease-in-out infinite;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+        .gallery-card-btn:nth-child(2) {
+            animation-delay: 1s;
         }
         .gallery-card-btn:hover {
-            background: var(--card-cat-color, #7c6fcd);
-            color: #fff;
+            animation: none;
+            color: var(--card-cat-color, #7c6fcd);
+            border-color: var(--card-cat-color, #7c6fcd);
+            background: rgba(255,255,255,0.97);
             transform: translateY(-2px);
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
