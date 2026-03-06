@@ -233,6 +233,28 @@
             }
         }
 
+        /* ── Rainbow shimmer for action buttons (download / link / share) ── */
+        @keyframes btn-rainbow {
+            0%   { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        .btn-rainbow-text {
+            background: linear-gradient(90deg,
+                #a78bfa, #f472b6, #fb923c, #facc15,
+                #4ade80, #38bdf8, #a78bfa);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: btn-rainbow 3s linear infinite;
+        }
+        /* Apply to svg strokes via filter trick – handled by wrapping span */
+        .btn-rainbow-text svg {
+            -webkit-text-fill-color: initial;
+            filter: hue-rotate(0deg);
+            animation: none;
+        }
+
         /* Full Gallery Page */
         .full-gallery-page {
             display: none;
@@ -648,18 +670,21 @@
             gap: 0.4rem;
             font-size: 0.8rem;
             border: none;
-            background: none;
+            background: linear-gradient(90deg,
+                #a78bfa, #f472b6, #fb923c, #facc15,
+                #4ade80, #38bdf8, #a78bfa);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: btn-rainbow 3s linear infinite;
             cursor: pointer;
             padding: 0;
             font-family: inherit;
-            animation: modalBtnColorCycle 4s ease-in-out infinite;
-            transition: color 0.3s;
         }
-        .img-modal-share-btn:hover {
-            animation: none;
-            color: var(--modal-cat-color, #fff);
-            filter: brightness(1.2);
-        }
+        .img-modal-share-btn:hover { animation-duration: 1.2s; filter: brightness(1.3); }
+        .img-modal-share-btn svg { -webkit-text-fill-color: initial; stroke: #a78bfa; animation: svgHue 3s linear infinite; }
+
         .img-modal-link-btn {
             display: inline-flex;
             align-items: center;
@@ -670,15 +695,18 @@
             text-decoration: none;
             font-family: inherit;
             cursor: pointer;
-            animation: modalBtnColorCycle 4s ease-in-out infinite;
+            background: linear-gradient(90deg,
+                #a78bfa, #f472b6, #fb923c, #facc15,
+                #4ade80, #38bdf8, #a78bfa);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: btn-rainbow 3s linear infinite;
             animation-delay: 1s;
-            transition: color 0.3s;
         }
-        .img-modal-link-btn:hover {
-            animation: none;
-            color: var(--modal-cat-color, #fff);
-            filter: brightness(1.2);
-        }
+        .img-modal-link-btn:hover { animation-duration: 1.2s; filter: brightness(1.3); }
+        .img-modal-link-btn svg { -webkit-text-fill-color: initial; stroke: #a78bfa; animation: svgHue 3s linear infinite; animation-delay: 1s; }
 
         /* ── Gallery nav arrows (desktop only) ── */
         .img-nav-btn {
@@ -1268,23 +1296,43 @@
             line-height: 1;
             gap: 0.3rem;
             font-size: 0.75rem;
-            color: var(--text-secondary);
             padding: 0.15rem 0.4rem;
             border-radius: 6px;
-            transition: color 0.2s, background 0.2s;
             font-family: inherit;
             white-space: nowrap;
+            /* rainbow text */
+            background: linear-gradient(90deg,
+                #a78bfa, #f472b6, #fb923c, #facc15,
+                #4ade80, #38bdf8, #a78bfa);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: btn-rainbow 3s linear infinite;
+            transition: background-size 0.3s, filter 0.2s;
         }
         .video-share-btn:hover {
-            color: var(--cat-color, #7c6fcd);
-            background: color-mix(in srgb, var(--cat-color, #7c6fcd) 12%, transparent);
+            animation-duration: 1.2s;
+            filter: brightness(1.25);
         }
-        /* When btn is hovered, also highlight adjacent label */
         .video-share-btn:hover ~ .video-download-label {
             color: var(--cat-color, #7c6fcd);
         }
         .video-share-btn svg {
             flex-shrink: 0;
+            /* SVG doesn't inherit background-clip text, give it a fixed accent color */
+            -webkit-text-fill-color: initial;
+            stroke: #a78bfa;
+            animation: svgHue 3s linear infinite;
+        }
+        @keyframes svgHue {
+            0%   { stroke: #a78bfa; }
+            16%  { stroke: #f472b6; }
+            33%  { stroke: #fb923c; }
+            50%  { stroke: #4ade80; }
+            66%  { stroke: #38bdf8; }
+            83%  { stroke: #f472b6; }
+            100% { stroke: #a78bfa; }
         }
         /* ── Video Pagination ─────────────────────────────────── */
         #videoPagination, #articlePagination {
@@ -1410,30 +1458,30 @@
         }
         /* Modal share button - gradient on hover */
         #videoModalShareBtn {
-            color: #888;
             background: none;
         }
         #videoModalShareBtn span {
-            transition: all 0.3s;
-        }
-        #videoModalShareBtn svg {
-            transition: opacity 0.3s;
-            stroke: #888;
-        }
-        #videoModalShareBtn:hover span {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #667eea 100%);
+            background: linear-gradient(90deg,
+                #a78bfa, #f472b6, #fb923c, #facc15,
+                #4ade80, #38bdf8, #a78bfa);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: gradient-flow 2s linear infinite;
+            animation: btn-rainbow 3s linear infinite;
+        }
+        #videoModalShareBtn svg {
+            stroke: #a78bfa;
+            animation: svgHue 3s linear infinite;
+        }
+        #videoModalShareBtn:hover span {
+            animation-duration: 1.2s;
         }
         #videoModalShareBtn:hover svg {
-            stroke: #764ba2;
-            opacity: 1;
+            filter: brightness(1.3);
         }
         #videoModalShareBtn:hover {
-            background: rgba(118,75,162,0.1) !important;
+            background: rgba(167,139,250,0.1) !important;
         }
 
         .featured-articles-grid {
