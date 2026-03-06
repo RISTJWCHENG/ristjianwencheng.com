@@ -1277,7 +1277,7 @@
 
         /* Image share toast — centered in the modal */
         .img-share-toast {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.85);
@@ -3005,6 +3005,7 @@
                 <div class="img-modal-slider" id="imgModalSlider">
                     <img id="modalImage" src="" alt="">
                 </div>
+                <div class="img-share-toast" id="imgShareToast">🔗 Image link copied!</div>
                 <button class="img-modal-maximize-btn" onclick="openImageFullscreen()" title="Maximize">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                         <polyline points="15 3 21 3 21 9"/>
@@ -3123,7 +3124,6 @@
 
     <!-- Share toast notification -->
     <div class="video-share-toast" id="shareToast">🔗 Video link copied!</div>
-    <div class="img-share-toast" id="imgShareToast">🔗 Image link copied!</div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
