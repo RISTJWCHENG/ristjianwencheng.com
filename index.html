@@ -3154,6 +3154,7 @@
         }
 
         window._GALLERY_DATA = {};
+        window._GALLERY_COLORS = {};
         window._GALLERY_LIST = []; // sorted list: same category first, then others
         window._GALLERY_INDEX = 0; // current index in _GALLERY_LIST
 
@@ -3191,13 +3192,12 @@
 
             if (cat) {
                 cat.textContent = data.category || '';
-                var catColors = {
-                    'drawing & painting': 'rgb(160,135,250)',
-                    'sculpture':          'rgb(197,124,181)',
-                    'visual arts':        'rgb(160,238,76)',
-                    'momentary':          'rgb(115,215,240)'
-                };
-                cat.style.color = catColors[(data.category || '').toLowerCase()] || 'var(--accent)';
+                // Look up color from JSON category_colors (case-insensitive match)
+                var colors = window._GALLERY_COLORS || {};
+                var catKey = Object.keys(colors).find(function(k) {
+                    return k.toLowerCase() === (data.category || '').toLowerCase();
+                });
+                cat.style.color = catKey ? colors[catKey] : 'var(--accent)';
             }
             if (title) title.textContent = data.title        || '';
             if (date)  date.textContent  = data.updated_time || '';
@@ -3232,14 +3232,33 @@
         }
 
         function shareCurrentImage() {
-            var url = document.getElementById('modalImage').src;
+            var imgUrl = document.getElementById('modalImage').src;
+            // Build shareable page URL: index.html?img=<base64-encoded image url>
+            var pageBase = window.location.href.split('?')[0];
+            var shareUrl = pageBase + '?img=' + btoa(encodeURIComponent(imgUrl));
+
+            var svgIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+
+            function showCopied() {
+                var btn = document.querySelector('.img-modal-share-btn');
+                if (btn) {
+                    btn.innerHTML = svgIcon + ' Copied!';
+                    setTimeout(function() { btn.innerHTML = svgIcon + ' Share'; }, 2000);
+                }
+            }
+
             if (navigator.share) {
-                navigator.share({ url: url }).catch(function(){});
+                navigator.share({ url: shareUrl }).catch(function(){});
             } else if (navigator.clipboard) {
-                navigator.clipboard.writeText(url).then(function() {
-                    var btn = document.querySelector('.img-modal-share-btn');
-                    if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share'; }, 2000); }
-                }).catch(function(){});
+                navigator.clipboard.writeText(shareUrl).then(showCopied).catch(function() {
+                    // fallback: execCommand
+                    var ta = document.createElement('textarea');
+                    ta.value = shareUrl;
+                    ta.style.position = 'fixed'; ta.style.opacity = '0';
+                    document.body.appendChild(ta); ta.focus(); ta.select();
+                    try { document.execCommand('copy'); showCopied(); } catch(e) {}
+                    document.body.removeChild(ta);
+                });
             }
         }
 
@@ -3618,14 +3637,41 @@
         function loadGalleryImages() {
             fetch('Images/images_index.json')
                 .then(function(res) { return res.json(); })
-                .then(function(images) {
-                    var visible = images.filter(function(img) { return img.display !== 'off'; });
-                    // cache for modal
+                .then(function(json) {
+                    // Support both formats:
+                    // New: { category_colors: {...}, items: [...] }
+                    // Old: [...] (plain array)
+                    var items = Array.isArray(json) ? json : (json.items || []);
+                    var colors = (!Array.isArray(json) && json.category_colors) ? json.category_colors : {};
+                    window._GALLERY_COLORS = colors;
+                    var visible = items.filter(function(img) { return img.display !== 'off'; });
                     visible.forEach(function(img) { window._GALLERY_DATA[img.image_url] = img; });
                     renderFeaturedGallery(visible);
                     renderFullGallery(visible);
+                    tryAutoOpenImageFromUrl();
                 })
                 .catch(function(err) { console.warn('Could not load Images/images_index.json:', err); });
+        }
+
+        function tryAutoOpenImageFromUrl() {
+            var params = new URLSearchParams(window.location.search);
+            var encoded = params.get('img');
+            if (!encoded) return;
+            try {
+                var imgUrl = decodeURIComponent(atob(encoded));
+                if (!window._GALLERY_DATA[imgUrl]) return;
+                // Scroll to gallery section
+                var sec = document.getElementById('gallery');
+                if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+                // Open modal after brief delay so page has settled
+                setTimeout(function() {
+                    window._GALLERY_LIST  = buildGalleryList(imgUrl);
+                    window._GALLERY_INDEX = window._GALLERY_LIST.findIndex(function(i) { return i.image_url === imgUrl; });
+                    if (window._GALLERY_INDEX < 0) window._GALLERY_INDEX = 0;
+                    populateModal(imgUrl);
+                    document.getElementById('imageModal').classList.add('active');
+                }, 400);
+            } catch(e) {}
         }
 
         function renderFeaturedGallery(images) {
