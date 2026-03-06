@@ -4602,77 +4602,74 @@
             var items = window._GALLERY_ITEMS_ELS || [];
             if (!items.length) return;
 
-            // Only layout visible items
             var visible = items.filter(function(el) { return el.style.display !== 'none'; });
             if (!visible.length) { grid.style.height = '0'; return; }
 
-            var GAP = 10;
+            var GAP = 12;
             var containerW = grid.getBoundingClientRect().width || grid.offsetWidth;
             if (!containerW) return;
 
-            // Row heights cycle — variety
-            var rowHeightOptions = [170, 200, 220, 190, 240, 180, 210, 230];
-            var rowHIdx = 0;
+            // Responsive column count
+            var COLS = containerW < 480 ? 2
+                     : containerW < 768 ? 3
+                     : containerW < 1100 ? 4
+                     : 5;
 
-            // Left-to-right packing:
-            // Fill each row: pick a target height, compute each image's width = height / aspectRatio
-            // Scale widths to fill containerW exactly
-            var curY = 0;
-            var i = 0;
+            var colW = (containerW - GAP * (COLS - 1)) / COLS;
 
-            while (i < visible.length) {
-                var targetH = rowHeightOptions[rowHIdx % rowHeightOptions.length];
-                rowHIdx++;
+            // Column height trackers
+            var colHeights = [];
+            for (var c = 0; c < COLS; c++) colHeights.push(0);
 
-                // Collect items for this row until width is filled
-                var rowItems = [];
-                var totalW = 0;
-                var j = i;
-                while (j < visible.length) {
-                    var el = visible[j];
-                    var aspect = parseFloat(el.dataset.idx) >= 0 && window._GALLERY_ASPECTS
-                        ? (window._GALLERY_ASPECTS[el.dataset.idx] || 0.75)
-                        : 0.75;
-                    // Use stored aspect from itemAspects array via data-idx
-                    var idxVal = parseInt(el.dataset.idx);
-                    var asp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]) || 0.75;
-                    var w = targetH / asp;
-                    totalW += w;
-                    rowItems.push({ el: el, naturalW: w, asp: asp });
-                    j++;
-                    // Stop if this row would be comfortably filled
-                    if (totalW >= containerW - GAP * (rowItems.length - 1)) break;
-                }
-
-                // Scale to fit container width exactly
-                var totalGap = GAP * (rowItems.length - 1);
-                var scale = (containerW - totalGap) / (totalW || 1);
-                // If last row and not full, don't stretch — keep natural size capped at container
-                var isLastRow = (j >= visible.length);
-                if (isLastRow && totalW < containerW * 0.6) {
-                    scale = Math.min(1, (containerW - totalGap) / (totalW || 1));
-                }
-                var rowH = targetH * scale;
-
-                // Position each item in this row
-                var curX = 0;
-                for (var k = 0; k < rowItems.length; k++) {
-                    var ri = rowItems[k];
-                    var itemW = ri.naturalW * scale;
-                    // Last item fills remaining space to avoid rounding gaps
-                    if (k === rowItems.length - 1) itemW = containerW - curX;
-                    ri.el.style.left   = curX + 'px';
-                    ri.el.style.top    = curY + 'px';
-                    ri.el.style.width  = itemW + 'px';
-                    ri.el.style.height = rowH + 'px';
-                    curX += itemW + GAP;
-                }
-
-                curY += rowH + GAP;
-                i = j;
+            // Seeded random for consistent layout per session
+            var _seed = 7;
+            function sr() {
+                _seed = (_seed * 1664525 + 1013904223) & 0xffffffff;
+                return (_seed >>> 0) / 0xffffffff;
             }
 
-            grid.style.height = (curY - GAP) + 'px';
+            visible.forEach(function(el) {
+                var idxVal = parseInt(el.dataset.idx);
+                var asp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]);
+
+                // If real aspect not loaded yet, use seeded random (portrait-biased like Pinterest)
+                if (!asp || asp <= 0) asp = 0.9 + sr() * 0.9; // height/width ratio 0.9–1.8
+
+                // Occasionally give an item double width (25% chance, only if not last col)
+                var useDouble = (sr() < 0.22) && (COLS >= 3);
+
+                // Find shortest column
+                var shortestCol = 0;
+                for (var c2 = 1; c2 < COLS; c2++) {
+                    if (colHeights[c2] < colHeights[shortestCol]) shortestCol = c2;
+                }
+
+                // Double-wide only if it fits without overflowing
+                if (useDouble && shortestCol < COLS - 1) {
+                    var itemW = colW * 2 + GAP;
+                    var itemH = itemW * asp;
+                    var x = shortestCol * (colW + GAP);
+                    var y = Math.max(colHeights[shortestCol], colHeights[shortestCol + 1]);
+                    el.style.left   = x + 'px';
+                    el.style.top    = y + 'px';
+                    el.style.width  = itemW + 'px';
+                    el.style.height = itemH + 'px';
+                    colHeights[shortestCol]     = y + itemH + GAP;
+                    colHeights[shortestCol + 1] = y + itemH + GAP;
+                } else {
+                    var itemW2 = colW;
+                    var itemH2 = itemW2 * asp;
+                    var x2 = shortestCol * (colW + GAP);
+                    var y2 = colHeights[shortestCol];
+                    el.style.left   = x2 + 'px';
+                    el.style.top    = y2 + 'px';
+                    el.style.width  = itemW2 + 'px';
+                    el.style.height = itemH2 + 'px';
+                    colHeights[shortestCol] = y2 + itemH2 + GAP;
+                }
+            });
+
+            grid.style.height = (Math.max.apply(null, colHeights) - GAP) + 'px';
         }
 
         function getVideoCategoryColor(category) {
