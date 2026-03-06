@@ -2852,7 +2852,7 @@
         <div class="container">
             <h2 class="section-title">Information</h2>
             <div style="text-align: center; margin: 0 auto 4rem; max-width: 400px;">
-                <img src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/p1.jpg" alt="RIST JIANWEN CHENG" style="width: 100%; max-width: 300px; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <img id="profileImage" src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/p1.jpg" alt="RIST JIANWEN CHENG" style="width: 100%; max-width: 300px; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
             </div>
             <div class="info-content">
                 <div class="info-section">
@@ -4925,7 +4925,38 @@
 
         // ───────────────────────────────────────────────────────────────────
 
+        // ── Load site config from index.json ──
+        function loadSiteConfig() {
+            fetch('index.json')
+                .then(function(res) { return res.json(); })
+                .then(function(cfg) {
+                    var assets = cfg.assets || [];
+                    assets.forEach(function(asset) {
+                        var t = (asset.title || '').toLowerCase();
+                        if (t === 'website movie' && asset.type === 'video' && asset.movie_url) {
+                            var src = document.querySelector('#heroLogoVideo source');
+                            if (src) {
+                                src.src = asset.movie_url;
+                                document.getElementById('heroLogoVideo').load();
+                            }
+                        } else if (t === 'website icon' && asset.type === 'image' && asset.image_url) {
+                            var favicon = document.querySelector('link[rel="icon"]');
+                            var appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+                            if (favicon) favicon.href = asset.image_url;
+                            if (appleIcon) appleIcon.href = asset.image_url;
+                        } else if (t === 'profile image' && asset.type === 'image' && asset.image_url) {
+                            var profileImg = document.getElementById('profileImage');
+                            if (profileImg) profileImg.src = asset.image_url;
+                        }
+                    });
+                })
+                .catch(function(err) { console.warn('Could not load index.json:', err); });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Load site config (hero video, icon, profile image) from index.json
+            loadSiteConfig();
+
             // Load videos from Videos/videos_index.json
             loadVideos();
 
