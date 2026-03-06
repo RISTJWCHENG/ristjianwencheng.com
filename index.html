@@ -3274,23 +3274,21 @@
             var pageBase = window.location.href.split('?')[0];
             var shareUrl = pageBase + '?img=' + btoa(encodeURIComponent(imgUrl));
 
-            var svgIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
-
-            function showCopied() {
-                var btn = document.querySelector('.img-modal-share-btn');
-                if (btn) {
-                    btn.innerHTML = svgIcon + ' Copied!';
-                    setTimeout(function() { btn.innerHTML = svgIcon + ' Share'; }, 2000);
+            function doToast() {
+                var toast = document.getElementById('shareToast');
+                if (toast) {
+                    toast.textContent = '🔗 Image link copied!';
+                    toast.classList.add('show');
+                    setTimeout(function() { toast.classList.remove('show'); }, 2200);
                 }
             }
 
-            // Always copy to clipboard directly (no system share sheet)
             if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(shareUrl).then(showCopied).catch(function() {
-                    fallbackCopy(shareUrl, showCopied);
+                navigator.clipboard.writeText(shareUrl).then(doToast).catch(function() {
+                    fallbackCopy(shareUrl, doToast);
                 });
             } else {
-                fallbackCopy(shareUrl, showCopied);
+                fallbackCopy(shareUrl, doToast);
             }
         }
 
