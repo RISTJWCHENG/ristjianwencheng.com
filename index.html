@@ -291,37 +291,49 @@
             border-color: var(--text-primary);
         }
 
+        @media (max-width: 1200px) {
+            .full-gallery-grid { columns: 3; }
+        }
+        @media (max-width: 900px) {
+            .full-gallery-grid { columns: 2; column-gap: 10px; }
+            .full-gallery-item { margin-bottom: 10px; }
+        }
+
         .full-gallery-grid {
             max-width: 1400px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
+            columns: 4;
+            column-gap: 12px;
         }
 
         .full-gallery-item {
-            aspect-ratio: 4/5;
+            break-inside: avoid;
             position: relative;
             overflow: hidden;
             cursor: pointer;
             background: #e5e3df;
-            border-radius: 16px;
-            transition: transform 0.4s;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: block;
         }
 
         .full-gallery-item:hover {
-            transform: translateY(-8px);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
 
         .full-gallery-item img {
             width: 100%;
-            height: 100%;
+            height: auto;
+            display: block;
             object-fit: cover;
-            transition: transform 0.6s;
+            transition: transform 0.5s;
+            border-radius: 12px;
         }
 
         .full-gallery-item:hover img {
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
         .close-gallery-btn {
@@ -683,11 +695,12 @@
                 padding: 5rem 1rem 3rem;
             }
             .full-gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 0.75rem;
+                columns: 2;
+                column-gap: 8px;
             }
             .full-gallery-item {
-                border-radius: 10px;
+                border-radius: 8px;
+                margin-bottom: 8px;
             }
         }
 
