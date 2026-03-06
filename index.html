@@ -738,14 +738,31 @@
             z-index: 3500;
             align-items: center;
             justify-content: center;
-            cursor: zoom-out;
+            overflow: hidden;
+            cursor: none; /* custom cursor */
         }
         #imgFullscreenOverlay.active { display: flex; }
-        #imgFullscreenOverlay img {
+        #imgFullscreenImg {
             max-width: 98vw;
             max-height: 98vh;
             object-fit: contain;
             border-radius: 4px;
+            transform-origin: center center;
+            transition: transform 0.08s ease-out;
+            user-select: none;
+            -webkit-user-drag: none;
+            will-change: transform;
+        }
+        /* Custom zoom cursor */
+        #fsZoomCursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 3600;
+            display: none;
+            width: 36px;
+            height: 36px;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.15s;
         }
         #imgFullscreenClose {
             position: fixed;
@@ -3080,9 +3097,20 @@
     </div>
 
     <!-- Fullscreen image overlay -->
-    <div id="imgFullscreenOverlay" onclick="closeImageFullscreen()">
+    <div id="imgFullscreenOverlay">
         <button id="imgFullscreenClose" onclick="closeImageFullscreen()">×</button>
         <img id="imgFullscreenImg" src="" alt="">
+    </div>
+    <!-- Custom zoom cursor -->
+    <div id="fsZoomCursor">
+        <svg id="fsZoomIcon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="15" cy="15" r="10" stroke="white" stroke-width="2.5"/>
+            <line x1="22.5" y1="22.5" x2="32" y2="32" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- plus/minus bar (horizontal) -->
+            <line id="fsCursorH" x1="10" y1="15" x2="20" y2="15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <!-- plus vertical bar (only for zoom-in) -->
+            <line id="fsCursorV" x1="15" y1="10" x2="15" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
     </div>
 
     <!-- PDF Viewer Modal (using iframe + Mozilla PDF.js online viewer) -->
@@ -3409,13 +3437,18 @@
                 });
                 var catColor = catKey ? colors[catKey] : '#7c6fcd';
 
-                // Create a toast centered on the card element
                 var toast = document.createElement('div');
                 toast.textContent = '🔗 Image link copied!';
+
+                // Use fixed positioning relative to viewport — never touch cardEl.style.position
+                var rect = cardEl ? cardEl.getBoundingClientRect() : null;
+                var cx = rect ? (rect.left + rect.width  / 2) : window.innerWidth  / 2;
+                var cy = rect ? (rect.top  + rect.height / 2) : window.innerHeight / 2;
+
                 toast.style.cssText = [
-                    'position:absolute',
-                    'top:50%',
-                    'left:50%',
+                    'position:fixed',
+                    'left:' + cx + 'px',
+                    'top:'  + cy + 'px',
                     'transform:translate(-50%,-50%) scale(0.85)',
                     'background:' + catColor,
                     'color:#fff',
@@ -3425,20 +3458,14 @@
                     'font-weight:500',
                     'white-space:nowrap',
                     'pointer-events:none',
-                    'z-index:999',
+                    'z-index:9999',
                     'opacity:0',
                     'transition:opacity 0.25s, transform 0.25s',
                     'letter-spacing:0.3px'
                 ].join(';');
 
-                // Append to the card so it centers within it
-                var anchor = cardEl || document.body;
-                if (anchor !== document.body) {
-                    anchor.style.position = anchor.style.position || 'relative';
-                }
-                anchor.appendChild(toast);
+                document.body.appendChild(toast);
 
-                // Trigger animation
                 requestAnimationFrame(function() {
                     requestAnimationFrame(function() {
                         toast.style.opacity = '1';
@@ -3588,12 +3615,138 @@
             var overlay = document.getElementById('imgFullscreenOverlay');
             var img = document.getElementById('imgFullscreenImg');
             img.src = src;
+            // Reset state
+            _fsScale = 1; _fsOffX = 0; _fsOffY = 0;
+            _applyFsTransform();
             overlay.classList.add('active');
         }
 
         function closeImageFullscreen() {
             document.getElementById('imgFullscreenOverlay').classList.remove('active');
+            document.getElementById('fsZoomCursor').style.display = 'none';
         }
+
+        // ── Fullscreen zoom + pan ──
+        var _fsScale = 1, _fsOffX = 0, _fsOffY = 0;
+        var _fsDragging = false, _fsDragStartX = 0, _fsDragStartY = 0, _fsDragOffX = 0, _fsDragOffY = 0;
+        var _fsCursorHideTimer;
+
+        function _applyFsTransform() {
+            var img = document.getElementById('imgFullscreenImg');
+            if (img) img.style.transform = 'translate(' + _fsOffX + 'px,' + _fsOffY + 'px) scale(' + _fsScale + ')';
+        }
+
+        function _clampFsOffset() {
+            var img = document.getElementById('imgFullscreenImg');
+            if (!img) return;
+            var rect = img.getBoundingClientRect();
+            var ow = window.innerWidth, oh = window.innerHeight;
+            var iw = rect.width / _fsScale * _fsScale;
+            var ih = rect.height / _fsScale * _fsScale;
+            var maxX = Math.max(0, (iw - ow) / 2);
+            var maxY = Math.max(0, (ih - oh) / 2);
+            _fsOffX = Math.max(-maxX, Math.min(maxX, _fsOffX));
+            _fsOffY = Math.max(-maxY, Math.min(maxY, _fsOffY));
+        }
+
+        (function() {
+            var overlay = document.getElementById('imgFullscreenOverlay');
+            var cursor  = document.getElementById('fsZoomCursor');
+            var vBar    = document.getElementById('fsCursorV');
+            if (!overlay) return;
+
+            // Show/update custom cursor on mousemove
+            overlay.addEventListener('mousemove', function(e) {
+                cursor.style.display = 'block';
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top  = e.clientY + 'px';
+
+                // While dragging show grab cursor icon (hide custom cursor)
+                if (_fsDragging) {
+                    cursor.style.display = 'none';
+                    return;
+                }
+
+                // Show + or - based on scale
+                if (vBar) vBar.style.display = _fsScale < 8 ? '' : 'none';
+
+                clearTimeout(_fsCursorHideTimer);
+                _fsCursorHideTimer = setTimeout(function() {
+                    cursor.style.display = 'none';
+                }, 2500);
+            });
+
+            overlay.addEventListener('mouseleave', function() {
+                cursor.style.display = 'none';
+            });
+
+            // Scroll to zoom
+            overlay.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                var delta = e.deltaY < 0 ? 1 : -1;
+                var newScale = Math.min(8, Math.max(1, _fsScale + delta * 0.35));
+
+                // Zoom toward mouse position
+                var rect = overlay.getBoundingClientRect();
+                var mx = e.clientX - rect.left - rect.width  / 2;
+                var my = e.clientY - rect.top  - rect.height / 2;
+                var scaleDiff = newScale / _fsScale;
+                _fsOffX = mx - scaleDiff * (mx - _fsOffX);
+                _fsOffY = my - scaleDiff * (my - _fsOffY);
+                _fsScale = newScale;
+
+                if (_fsScale <= 1) { _fsOffX = 0; _fsOffY = 0; }
+                _clampFsOffset();
+                _applyFsTransform();
+
+                // Update cursor icon
+                if (vBar) vBar.style.display = _fsScale < 8 ? '' : 'none';
+
+                // Flash cursor
+                cursor.style.display = 'block';
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top  = e.clientY + 'px';
+                clearTimeout(_fsCursorHideTimer);
+                _fsCursorHideTimer = setTimeout(function() { cursor.style.display = 'none'; }, 1200);
+            }, { passive: false });
+
+            // Drag to pan
+            overlay.addEventListener('mousedown', function(e) {
+                if (e.target.id === 'imgFullscreenClose') return;
+                if (_fsScale <= 1) {
+                    // Single click at scale=1 closes
+                    return;
+                }
+                e.preventDefault();
+                _fsDragging = true;
+                overlay.style.cursor = 'grabbing';
+                cursor.style.display = 'none';
+                _fsDragStartX = e.clientX;
+                _fsDragStartY = e.clientY;
+                _fsDragOffX = _fsOffX;
+                _fsDragOffY = _fsOffY;
+            });
+
+            window.addEventListener('mousemove', function(e) {
+                if (!_fsDragging) return;
+                _fsOffX = _fsDragOffX + (e.clientX - _fsDragStartX);
+                _fsOffY = _fsDragOffY + (e.clientY - _fsDragStartY);
+                _clampFsOffset();
+                _applyFsTransform();
+            });
+
+            window.addEventListener('mouseup', function(e) {
+                if (!_fsDragging) return;
+                _fsDragging = false;
+                overlay.style.cursor = 'none';
+            });
+
+            // Click to close only at scale=1
+            overlay.addEventListener('click', function(e) {
+                if (e.target.id === 'imgFullscreenClose') return;
+                if (_fsScale <= 1) closeImageFullscreen();
+            });
+        })();
 
         // ── Mobile: follow-finger swipe to navigate images ──
         (function() {
