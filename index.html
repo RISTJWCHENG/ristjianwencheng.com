@@ -1704,7 +1704,7 @@
         }
         .profile-image-wrap img {
             display: block !important;
-            width: auto !important;
+            width: 50% !important;
             height: auto !important;
             max-width: 100%;
         }
@@ -1842,6 +1842,9 @@
             background: none;
             border: none;
         }
+
+        /* Disable download button on ALL videos */
+        video::-webkit-media-controls-download-button { display: none !important; }
 
         /* Hero logo video - no browser controls or hover UI */
         #heroLogoVideo {
@@ -2517,6 +2520,11 @@
             const player = document.getElementById('videoModalPlayer');
             const source = document.getElementById('videoModalSource');
             const titleEl = document.getElementById('videoModalTitle');
+
+            // Always enforce no-download on the player
+            player.setAttribute('controlslist', 'nodownload noremoteplayback');
+            player.setAttribute('disablepictureinpicture', '');
+            player.oncontextmenu = function() { return false; };
 
             titleEl.textContent = title || '';
             source.src = videoUrl;
@@ -3283,7 +3291,7 @@
                     <button class="video-modal-btn" onclick="closeVideoModal()" title="关闭">×</button>
                 </div>
             </div>
-            <video id="videoModalPlayer" controls playsinline style="flex:1;">
+            <video id="videoModalPlayer" controls playsinline controlslist="nodownload noremoteplayback" disablepictureinpicture oncontextmenu="return false;" style="flex:1;">
                 <source id="videoModalSource" src="" type="video/mp4">
             </video>
             <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
