@@ -3309,7 +3309,7 @@
                     <img id="modalImage" src="" alt="">
                 </div>
                 <div class="img-share-toast" id="imgShareToast">🔗 Image link copied!</div>
-                <button class="img-modal-maximize-btn" onclick="openImageFullscreen()" title="Maximize">
+                <button class="img-modal-maximize-btn" onclick="event.stopPropagation();openImageFullscreen()" ontouchend="event.stopPropagation();event.preventDefault();openImageFullscreen();" title="Maximize">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                         <polyline points="15 3 21 3 21 9"/>
                         <polyline points="9 21 3 21 3 15"/>
@@ -4114,7 +4114,25 @@
                 maxBtn.className = 'img-modal-maximize-btn';
                 maxBtn.title = 'Maximize';
                 maxBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
-                if (isCurrent) maxBtn.onclick = function() { openImageFullscreen(); };
+                (function(capturedImg) {
+                    maxBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // Use captured img src directly — avoids getElementById ambiguity on mobile
+                        if (window.openImageFullscreen) {
+                            // Temporarily ensure modalImage src is correct
+                            var mi = document.getElementById('modalImage');
+                            if (mi) mi.src = capturedImg.src;
+                            openImageFullscreen();
+                        }
+                    });
+                    maxBtn.addEventListener('touchend', function(e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        var mi = document.getElementById('modalImage');
+                        if (mi) mi.src = capturedImg.src;
+                        if (window.openImageFullscreen) openImageFullscreen();
+                    });
+                })(img);
                 left.appendChild(maxBtn);
                 card.appendChild(left);
 
