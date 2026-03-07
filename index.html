@@ -2480,55 +2480,59 @@
             }
         }
 
-        /* ── Mobile performance: disable GPU-heavy effects ── */
+        /* ══════════════════════════════════════════════════
+           MOBILE PERFORMANCE — disable all GPU-heavy effects
+           ══════════════════════════════════════════════════ */
         @media (max-width: 768px) {
-            /* Kill all infinite CSS animations — biggest CPU/GPU drain on mobile */
-            .view-all-link,
-            .view-all-link:hover,
-            .close-gallery-btn,
-            .close-gallery-btn:hover,
-            .back-to-gallery-btn,
-            .back-to-gallery-btn:hover,
+
+            /* 1. Kill every infinite CSS animation */
+            .view-all-link, .view-all-link:hover,
+            .close-gallery-btn, .close-gallery-btn:hover,
+            .back-to-gallery-btn, .back-to-gallery-btn:hover,
             .btn-rainbow-text,
-            .gallery-card-btn,
-            .gallery-card-btn:nth-child(2),
-            .img-modal-share-btn,
-            .img-modal-link-btn {
+            .gallery-card-btn, .gallery-card-btn:nth-child(2),
+            .img-modal-share-btn, .img-modal-link-btn,
+            .video-share-btn, .video-share-btn svg,
+            #videoModalShareBtn span, #videoModalShareBtn svg,
+            #videoModalDownloadBtn, #videoModalDownloadBtn svg,
+            #videoModalLinkBtn, #videoModalLinkBtn svg {
                 animation: none !important;
             }
 
-            /* Replace animated gradient text with static color */
-            .view-all-link,
-            .close-gallery-btn,
-            .back-to-gallery-btn,
-            .btn-rainbow-text {
+            /* 2. Replace animated gradient text with static color */
+            .view-all-link, .close-gallery-btn, .back-to-gallery-btn,
+            .btn-rainbow-text, .video-share-btn,
+            #videoModalShareBtn span,
+            #videoModalDownloadBtn, #videoModalLinkBtn {
                 background: none !important;
                 -webkit-text-fill-color: var(--text-primary, #2c2c2c) !important;
                 color: var(--text-primary, #2c2c2c) !important;
             }
 
-            /* Remove backdrop-filter blur — very expensive on mobile GPU */
-            .gallery-card-btn,
-            nav,
-            .img-modal-links,
-            .video-modal-box,
-            .full-gallery-page {
+            /* 3. Fix SVG strokes to static color instead of animating */
+            .video-share-btn svg,
+            #videoModalShareBtn svg,
+            #videoModalDownloadBtn svg,
+            #videoModalLinkBtn svg {
+                stroke: #7c6fcd !important;
+            }
+
+            /* 4. Remove all backdrop-filter blur */
+            * {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
             }
 
-            /* Disable hover transitions on gallery cards — no hover on mobile */
-            .full-gallery-item,
-            .full-gallery-item img,
-            .gallery-card,
-            .video-card-featured,
-            .article-card {
+            /* 5. Remove all transitions (no hover on mobile anyway) */
+            *, *::before, *::after {
                 transition: none !important;
             }
 
-            /* Disable box-shadow transitions */
+            /* 6. Disable hover transform/shadow on cards */
             .full-gallery-item:hover,
-            .gallery-card:hover {
+            .gallery-card:hover,
+            .video-card-featured:hover,
+            .article-card:hover {
                 transform: none !important;
                 box-shadow: none !important;
             }
