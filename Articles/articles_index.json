@@ -212,7 +212,7 @@
   {
     "id": "article_05",
     "file": "Articles/NCLOTHSETUP_Document.html",
-    "title": "WWWWWWWW-Gemstone-Blue Waters of the French Riviera",
+    "title": "TEST",
     "category": "Travel",
     "date": "2022-07-23",
     "readTime": "3 min read",
@@ -222,6 +222,6 @@
     "type": "html",
     "link": ["IMDb", "https://vimeo.com/features/video-player"],
     "download": [],
-    "display": "off"
+    "display": "on"
   }
 ]
