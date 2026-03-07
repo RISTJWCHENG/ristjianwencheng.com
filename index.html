@@ -344,7 +344,8 @@
             width: 100%;
             height: 100%;
             display: block;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center;
             transition: transform 0.5s;
             border-radius: 12px;
         }
@@ -3298,13 +3299,9 @@
                     <button class="video-modal-btn" onclick="closeVideoModal()" title="关闭">×</button>
                 </div>
             </div>
-        <div style="position:relative; flex:1; display:flex; flex-direction:column;">
-            <!-- Transparent overlay blocks Chrome's native download/cast buttons in top-left corner -->
-            <div style="position:absolute; top:0; left:0; width:120px; height:60px; z-index:10; background:transparent;"></div>
-            <video id="videoModalPlayer" controls playsinline controlslist="nodownload noremoteplayback" disablepictureinpicture oncontextmenu="return false;" style="flex:1; width:100%;">
+            <video id="videoModalPlayer" controls playsinline controlslist="nodownload noremoteplayback" disablepictureinpicture oncontextmenu="return false;" style="flex:1;">
                 <source id="videoModalSource" src="" type="video/mp4">
             </video>
-        </div>
             <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
                     <span id="videoModalCategory" class="video-category">Work</span>
@@ -4652,17 +4649,28 @@
                 return (_seed >>> 0) / 0xffffffff;
             }
 
+            // Max aspect ratio limits (height/width):
+            // min 0.45 (very wide landscape), max 1.6 (portrait)
+            var ASP_MIN = 0.45;
+            var ASP_MAX = 1.6;
+
             visible.forEach(function(el) {
                 var idxVal = parseInt(el.dataset.idx);
-                var asp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]);
+                var rawAsp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]);
 
-                // If real aspect not loaded yet, use seeded random (portrait-biased like Pinterest)
-                if (!asp || asp <= 0) asp = 0.7 + sr() * 0.6; // height/width ratio 0.7–1.3
-                // Cap: never taller than 1.5× column width
-                if (asp > 1.5) asp = 1.5;
+                // If real aspect not loaded yet, use seeded random (portrait-biased)
+                if (!rawAsp || rawAsp <= 0) rawAsp = 0.7 + sr() * 0.6;
 
-                // Occasionally give an item double width (25% chance, only if not last col)
-                var useDouble = (sr() < 0.22) && (COLS >= 3);
+                // ── Proportional scale-down for extreme aspect ratios ──
+                // If image is too tall (asp > ASP_MAX): keep width = colW, height = colW * ASP_MAX
+                // If image is too wide (asp < ASP_MIN): keep height = colW * ASP_MIN, width stays colW
+                // In both cases the image is displayed proportionally inside the card via object-fit:cover
+                var asp = rawAsp;
+                if (asp > ASP_MAX) asp = ASP_MAX;
+                if (asp < ASP_MIN) asp = ASP_MIN;
+
+                // Occasionally give an item double width (22% chance, desktop only)
+                var useDouble = (sr() < 0.22) && (COLS >= 4);
 
                 // Find shortest column
                 var shortestCol = 0;
@@ -4673,7 +4681,11 @@
                 // Double-wide only if it fits without overflowing
                 if (useDouble && shortestCol < COLS - 1) {
                     var itemW = colW * 2 + GAP;
-                    var itemH = itemW * asp;
+                    // For double-wide, also clamp aspect ratio
+                    var dAsp = rawAsp;
+                    if (dAsp > 0.8) dAsp = 0.8;  // double-wide shouldn't be too tall
+                    if (dAsp < 0.3) dAsp = 0.3;
+                    var itemH = itemW * dAsp;
                     var x = shortestCol * (colW + GAP);
                     var y = Math.max(colHeights[shortestCol], colHeights[shortestCol + 1]);
                     el.style.left   = x + 'px';
