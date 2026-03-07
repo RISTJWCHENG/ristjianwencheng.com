@@ -2592,6 +2592,7 @@
 
             titleEl.textContent = title || '';
             source.src = videoUrl;
+            player.preload = 'auto';
             player.load();
             player.play().catch(function(){});
 
@@ -3355,7 +3356,7 @@
                     <button class="video-modal-btn" onclick="closeVideoModal()" title="关闭">×</button>
                 </div>
             </div>
-            <video id="videoModalPlayer" controls playsinline controlslist="nodownload noremoteplayback" disablepictureinpicture oncontextmenu="return false;" style="flex:1;">
+            <video id="videoModalPlayer" controls playsinline preload="auto" controlslist="nodownload noremoteplayback" disablepictureinpicture oncontextmenu="return false;" style="flex:1;">
                 <source id="videoModalSource" src="" type="video/mp4">
             </video>
             <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
@@ -4839,7 +4840,7 @@
             card.innerHTML = `
                 <div class="video-thumbnail-wrapper">
                     ${thumbHTML}
-                    <video class="video-thumbnail-bg" preload="metadata" style="${thumbUrl ? 'opacity:0;' : ''}">
+                    <video class="video-thumbnail-bg" preload="none" style="${thumbUrl ? 'opacity:0;' : ''}">
                         <source src="${video.video_url}" type="video/mp4">
                         <source src="${video.video_url}" type="video/quicktime">
                     </video>
@@ -4914,6 +4915,22 @@
                 const { card, descId } = createVideoCard(video);
                 fullGrid.appendChild(card);
                 descIds.push(descId);
+
+                // Preload video on hover so it starts faster when clicked
+                var bgVid = card.querySelector('.video-thumbnail-bg');
+                if (bgVid) {
+                    card.addEventListener('mouseenter', function() {
+                        if (bgVid.preload === 'none') {
+                            bgVid.preload = 'metadata';
+                        }
+                    }, { once: true, passive: true });
+                    // On mobile: preload on touchstart
+                    card.addEventListener('touchstart', function() {
+                        if (bgVid.preload === 'none') {
+                            bgVid.preload = 'metadata';
+                        }
+                    }, { once: true, passive: true });
+                }
             });
 
             renderPagination();
