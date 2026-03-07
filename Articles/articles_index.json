@@ -15,7 +15,6 @@
   },
   {
     "id": "article_02",
-    "file": "Articles/article_02.html",
     "title": "Reset Curve(s) Tool — Technical Documentation",
     "category": "Technical",
     "date": "2016-2025",
@@ -24,13 +23,12 @@
     "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_02/Rest%20Curve_Tool_Thumbnail.png",
     "featured": true,
     "type": "html",
-    "link": [],
+    "link": ["PDF", "https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Reset%20Curves_Document.pdf"],
     "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
     "display": "on"
   },
   {
     "id": "article_03",
-    "file": "Articles/article_03.html",
     "title": "Search And BlendShape For Curves Tool — Technical Documentation",
     "category": "Technical",
     "date": "2017-2023",
@@ -39,7 +37,7 @@
     "cover": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Articles/article_03/Search%20And%20BlendShape%20For%20Curves_Tool_Thumbnail.png",
     "featured": true,
     "type": "html",
-    "link": [],
+    "link": ["PDF", "https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Search%20And%20BlendShape%20For%20Curves_Document.pdf"],
     "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"],
     "display": "on"
   },
