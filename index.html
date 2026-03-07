@@ -1704,9 +1704,9 @@
         }
         .profile-image-wrap img {
             display: block !important;
-            width: 50% !important;
+            width: auto !important;
+            max-width: 300px !important;
             height: auto !important;
-            max-width: 100%;
         }
 
         .info-section {
@@ -1843,8 +1843,15 @@
             border: none;
         }
 
-        /* Disable download button on ALL videos */
-        video::-webkit-media-controls-download-button { display: none !important; }
+        /* Hide ALL native video overlay buttons (download, cast, pip) globally */
+        video::-webkit-media-controls-download-button      { display: none !important; }
+        video::-webkit-media-controls-cast-button          { display: none !important; }
+        video::-webkit-media-controls-overlay-cast-button  { display: none !important; }
+        video::-internal-media-controls-download-button    { display: none !important; }
+        video::-webkit-media-controls-overflow-button      { display: none !important; }
+        video::-webkit-media-controls-picture-in-picture-button { display: none !important; }
+        /* Overlay enclosure that contains the top-left cast/download button */
+        video::-webkit-media-controls-overlay-enclosure    { display: none !important; }
 
         /* Hero logo video - no browser controls or hover UI */
         #heroLogoVideo {
@@ -1854,7 +1861,7 @@
         #heroLogoVideo::-webkit-media-controls { display: none !important; }
         #heroLogoVideo::-webkit-media-controls-enclosure { display: none !important; }
         #heroLogoVideo::-webkit-media-controls-overlay-cast-button { display: none !important; }
-        #heroLogoVideo::--webkit-media-controls-download-button { display: none !important; }
+        #heroLogoVideo::-webkit-media-controls-download-button { display: none !important; }
 
 
         .video-modal {
@@ -3291,9 +3298,13 @@
                     <button class="video-modal-btn" onclick="closeVideoModal()" title="关闭">×</button>
                 </div>
             </div>
-            <video id="videoModalPlayer" controls playsinline controlslist="nodownload noremoteplayback" disablepictureinpicture oncontextmenu="return false;" style="flex:1;">
+        <div style="position:relative; flex:1; display:flex; flex-direction:column;">
+            <!-- Transparent overlay blocks Chrome's native download/cast buttons in top-left corner -->
+            <div style="position:absolute; top:0; left:0; width:120px; height:60px; z-index:10; background:transparent;"></div>
+            <video id="videoModalPlayer" controls playsinline controlslist="nodownload noremoteplayback" disablepictureinpicture oncontextmenu="return false;" style="flex:1; width:100%;">
                 <source id="videoModalSource" src="" type="video/mp4">
             </video>
+        </div>
             <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
                     <span id="videoModalCategory" class="video-category">Work</span>
