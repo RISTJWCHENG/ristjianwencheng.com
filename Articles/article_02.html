@@ -1,5 +1,47 @@
-<iframe 
-    src="https://mozilla.github.io/pdf.js/web/viewer.html?file=https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Search%20And%20BlendShape%20For%20Curves_Document.pdf" 
-    style="width:100%; height:100%;" 
-    frameborder="0">
-</iframe>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search And BlendShape For Curves</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #000;
+    }
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    body > p {
+        text-align: center;
+        color: #fff;
+        padding-top: 20px;
+    }
+</style>
+<script>
+window.onload = function() {
+    var pdfUrl = "https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Search%20And%20BlendShape%20For%20Curves_Document.pdf";
+
+    // 检测手机设备
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        // 手机端直接打开 PDF
+        window.location.href = pdfUrl;
+    } else {
+        // PC 端嵌入 PDF.js 阅读器
+        var iframe = document.createElement('iframe');
+        iframe.src = "https://mozilla.github.io/pdf.js/web/viewer.html?file=" + encodeURIComponent(pdfUrl);
+        document.body.appendChild(iframe);
+    }
+};
+</script>
+</head>
+<body>
+<p>如果页面未自动显示 PDF，请 <a href="https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Search%20And%20BlendShape%20For%20Curves_Document.pdf" style="color:#0af;">点击这里打开 PDF</a></p>
+</body>
+</html>
