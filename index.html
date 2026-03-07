@@ -579,7 +579,6 @@
             object-fit: contain;
             display: block;
             position: relative;
-            will-change: transform;
             touch-action: none;
             user-select: none;
             -webkit-user-select: none;
@@ -774,7 +773,6 @@
             user-select: none;
             -webkit-user-drag: none;
             pointer-events: none;
-            will-change: transform;
             border-radius: 4px;
         }
         /* Zoom indicator pill */
@@ -2517,6 +2515,22 @@
             .full-gallery-page {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
+            }
+
+            /* Disable hover transitions on gallery cards — no hover on mobile */
+            .full-gallery-item,
+            .full-gallery-item img,
+            .gallery-card,
+            .video-card-featured,
+            .article-card {
+                transition: none !important;
+            }
+
+            /* Disable box-shadow transitions */
+            .full-gallery-item:hover,
+            .gallery-card:hover {
+                transform: none !important;
+                box-shadow: none !important;
             }
         }
     </style>
@@ -4563,7 +4577,7 @@
                 div.className = layouts[i];
                 div.style.cursor = 'pointer';
                 div.style.setProperty('--card-cat-color', catColor);
-                div.innerHTML = '<img src="' + item.image_url + '" alt="' + item.title + '">'
+                div.innerHTML = '<img src="' + item.image_url + '" alt="' + item.title + '" loading="lazy" decoding="async">'
                     + '<div class="gallery-info"><h3>' + item.title + '</h3><p>' + item.category + ', ' + item.updated_time + '</p></div>';
                 div.appendChild(buildCardActions(item, catColor, div));
                 div.onclick = (function(el) { return function(e) {
@@ -4653,6 +4667,8 @@
 
                 var img = document.createElement('img');
                 img.alt = item.title || '';
+                img.loading = 'lazy';
+                img.decoding = 'async';
                 img.src = item.image_url;
 
                 img.addEventListener('load', function() {
