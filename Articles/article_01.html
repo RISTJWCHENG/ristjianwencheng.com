@@ -13,19 +13,26 @@
   var DW = 794;
   function scale(){
     var body = document.body;
+    var html = document.documentElement;
     var sw = window.innerWidth;
     if(sw < DW){
       var z = sw / DW;
-      body.style.zoom = z;
-      body.style.width = DW + 'px';
+      body.style.zoom     = z;
+      body.style.width    = DW + 'px';
       body.style.maxWidth = DW + 'px';
-      body.style.margin = '0';
-      body.style.transform = '';
+      body.style.margin   = '0 auto';
+      /* center the zoomed body inside html */
+      html.style.display        = 'flex';
+      html.style.justifyContent = 'center';
+      html.style.overflow       = 'hidden';
     } else {
-      body.style.zoom = '';
-      body.style.width = '';
+      body.style.zoom     = '';
+      body.style.width    = '';
       body.style.maxWidth = '';
-      body.style.margin = '0 auto';
+      body.style.margin   = '0 auto';
+      html.style.display        = '';
+      html.style.justifyContent = '';
+      html.style.overflow       = '';
     }
   }
   document.addEventListener('DOMContentLoaded', scale);
