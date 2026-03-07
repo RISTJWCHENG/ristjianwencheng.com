@@ -1,30 +1,22 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>Search And BlendShape For Curves Document</title>
-
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background: #000;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<script>
+window.onload = function() {
+    // 检测手机
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var pdfUrl = "https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Search%20And%20BlendShape%20For%20Curves_Document.pdf";
+    
+    if (isMobile) {
+        window.location.href = pdfUrl; // 直接打开 PDF
+    }
+};
+</script>
 </head>
-
 <body>
-
-<iframe 
-    src="https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Search%20And%20BlendShape%20For%20Curves_Document.pdf">
-</iframe>
-
+<p>如果没有自动打开，请 <a href="https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Search%20And%20BlendShape%20For%20Curves_Document.pdf">点击这里</a> 打开 PDF。</p>
 </body>
 </html>
