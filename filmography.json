@@ -1,0 +1,85 @@
+{
+  "films": [
+    {
+      "release_date": "June 12, 2025",
+      "title": "Chickenhare and the Secret of the Groundhog",
+      "type": "Feature Film",
+      "location": "Brussels, Belgium / Paris, France",
+      "description": "The film was produced by Belgium's nWave Digital and France's Octopolis, in association with Sony Pictures Releasing. World Premiere at Annecy International Film Festival.",
+      "distribution": "SND (France) / Sony Pictures (International)",
+      "imdb": "www:"
+    },
+    {
+      "release_date": "June 15, 2023",
+      "title": "The Inseparables",
+      "type": "Feature Film",
+      "location": "Brussels, Belgium / Paris, France / Madrid, Spain",
+      "description": "The film was produced by Belgium's nWave Digital and France's Octopolis, in association with Spain's A Contracorriente Films. World Premiere at Annecy International Film Festival.",
+      "distribution": "KMBO (France)",
+      "imdb": "https://www.imdb.com/name/nm15024113/"
+    },
+    {
+      "release_date": "February 3, 2022",
+      "title": "Hopper et le hamster des ténèbres",
+      "type": "Feature Film",
+      "location": "Brussels, Belgium / Paris, France",
+      "description": "The film was produced by Belgium's nWave Digital and France's Octopolis. World premiere in Russia.",
+      "distribution": "Belga Films (Benelux) / Sony Pictures Releasing / Netflix (International) / Lionsgate (USA)",
+      "imdb": "www:"
+    },
+    {
+      "release_date": "August 5, 2020",
+      "title": "Bigfoot Family",
+      "type": "Feature Film",
+      "location": "Brussels, Belgium / Paris, France",
+      "description": "The film was produced by Belgium's nWave Digital and France's Octopolis. World Premiere at Annecy International Film Festival.",
+      "distribution": "Belga Films (Benelux) / Apollo Films / TF1 Studio (France) / Netflix (International)",
+      "imdb": "www:"
+    },
+    {
+      "release_date": "April 3, 2019",
+      "title": "The Queen's Corgi",
+      "type": "Feature Film",
+      "location": "Brussels, Belgium",
+      "description": "The film was produced by nWave Pictures (Brussels, Belgium). World Premiere at L'Alpe d'Huez International Comedy Film Festival.",
+      "distribution": "Belga Films",
+      "imdb": "www:"
+    },
+    {
+      "release_date": "July 26, 2017",
+      "title": "The Son of Bigfoot",
+      "type": "Feature Film",
+      "location": "Paris, France / Brussels, Belgium",
+      "description": "The film was produced by Belgium's nWave Digital and France's StudioCanal. World Premiere at Annecy International Film Festival.",
+      "distribution": "Belga Films (Benelux) / StudioCanal (France)",
+      "imdb url": "https://www.imdb.com/name/nm15024113/"
+    },
+    {
+      "release_date": "January 23, 2016",
+      "title": "Kung Fu Panda 3",
+      "type": "Feature Film",
+      "location": "California, USA / Shanghai, China",
+      "description": "The film was co-produced by the Hollywood studio DreamWorks and Oriental DreamWorks, a Shanghai-based joint venture between DreamWorks and Chinese partners. It marked the first time a U.S.-led feature film was co-produced with China, and the film held its world premiere in China.",
+      "distribution": "20th Century Fox",
+      "imdb": "https://www.imdb.com/name/nm15024113/"
+    },
+    {
+      "release_date": "November 11, 2014",
+      "title": "How to Train Your Dragon: Dragons - Dawn of the Dragon Racers",
+      "type": "TV Series",
+      "location": "California, USA / Shanghai, China",
+      "description": "The series was produced by DreamWorks in collaboration with Oriental DreamWorks.",
+      "distribution": "Netflix",
+      "imdb": "https://www.imdb.com/name/nm15024113/"
+    },
+    {
+      "release_date": "September 19, 2013",
+      "title": "How to Train Your Dragon: Dragons – Defenders of Berk",
+      "type": "TV Series",
+      "location": "California, USA / Shanghai, China",
+      "description": "The series was produced by DreamWorks in collaboration with Oriental DreamWorks.",
+      "distribution": "Netflix",
+      "imdb": "https://www.imdb.com/name/nm15024113/"
+    }
+  ]
+}
