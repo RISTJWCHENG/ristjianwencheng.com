@@ -2481,6 +2481,44 @@
                 grid-template-columns: repeat(4, 1fr);
             }
         }
+
+        /* ── Mobile performance: disable GPU-heavy effects ── */
+        @media (max-width: 768px) {
+            /* Kill all infinite CSS animations — biggest CPU/GPU drain on mobile */
+            .view-all-link,
+            .view-all-link:hover,
+            .close-gallery-btn,
+            .close-gallery-btn:hover,
+            .back-to-gallery-btn,
+            .back-to-gallery-btn:hover,
+            .btn-rainbow-text,
+            .gallery-card-btn,
+            .gallery-card-btn:nth-child(2),
+            .img-modal-share-btn,
+            .img-modal-link-btn {
+                animation: none !important;
+            }
+
+            /* Replace animated gradient text with static color */
+            .view-all-link,
+            .close-gallery-btn,
+            .back-to-gallery-btn,
+            .btn-rainbow-text {
+                background: none !important;
+                -webkit-text-fill-color: var(--text-primary, #2c2c2c) !important;
+                color: var(--text-primary, #2c2c2c) !important;
+            }
+
+            /* Remove backdrop-filter blur — very expensive on mobile GPU */
+            .gallery-card-btn,
+            nav,
+            .img-modal-links,
+            .video-modal-box,
+            .full-gallery-page {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+        }
     </style>
     <script>
         // Critical navigation functions - defined early to avoid ReferenceError
