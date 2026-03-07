@@ -4533,8 +4533,8 @@
 
             // Seeded fallback aspects
             images.forEach(function(item, idx) {
-                var rawAsp = 0.7 + seededRand() * 0.6;
-                window._GALLERY_ITEM_ASPECTS[idx] = Math.min(rawAsp, 1.5);
+                var rawAsp = 0.6 + seededRand() * 0.8;  // 0.6–1.4 range
+                window._GALLERY_ITEM_ASPECTS[idx] = Math.min(1.4, Math.max(0.5, rawAsp));
             });
 
             images.forEach(function(item, idx) {
@@ -4620,14 +4620,18 @@
 
             visible.forEach(function(el) {
                 var idxVal = parseInt(el.dataset.idx);
-                var asp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]);
+                var rawAsp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]);
 
-                // If real aspect not loaded yet, use seeded random (portrait-biased like Pinterest)
-                if (!asp || asp <= 0) asp = 0.7 + sr() * 0.6; // height/width ratio 0.7–1.3
-                // Cap: never taller than 1.5× column width
-                if (asp > 1.5) asp = 1.5;
+                // Fallback if not loaded
+                if (!rawAsp || rawAsp <= 0) rawAsp = 0.75 + sr() * 0.5;
 
-                // Occasionally give an item double width (25% chance, only if not last col)
+                // ── Proportional clamping ──
+                // asp = height/width ratio
+                // Too tall (portrait extreme): cap at 1.4  → shows at most 140% of column width as height
+                // Too wide (landscape extreme): floor at 0.5 → shows at least 50% of column width as height
+                var asp = Math.min(1.4, Math.max(0.5, rawAsp));
+
+                // Occasionally double-wide (22% chance, desktop only)
                 var useDouble = (sr() < 0.22) && (COLS >= 3);
 
                 // Find shortest column
@@ -4636,10 +4640,12 @@
                     if (colHeights[c2] < colHeights[shortestCol]) shortestCol = c2;
                 }
 
-                // Double-wide only if it fits without overflowing
+                // Double-wide: use recalculated aspect with double width
                 if (useDouble && shortestCol < COLS - 1) {
                     var itemW = colW * 2 + GAP;
-                    var itemH = itemW * asp;
+                    // For double-wide, recompute asp using the wider width so very wide images still clamp
+                    var aspD = Math.min(0.8, Math.max(0.35, rawAsp));
+                    var itemH = itemW * aspD;
                     var x = shortestCol * (colW + GAP);
                     var y = Math.max(colHeights[shortestCol], colHeights[shortestCol + 1]);
                     el.style.left   = x + 'px';
