@@ -4591,7 +4591,9 @@
                     if (img.naturalWidth && img.naturalHeight) {
                         window._GALLERY_ITEM_ASPECTS[idx] = img.naturalHeight / img.naturalWidth;
                     }
-                    layoutGallery();
+                    // Debounce: only re-layout 150ms after last image loads
+                    clearTimeout(window._layoutDebounce);
+                    window._layoutDebounce = setTimeout(layoutGallery, 150);
                 });
 
                 div.appendChild(img);
@@ -5146,6 +5148,15 @@
                     _heroVisible = rect.height > 0 && (visibleH / rect.height) >= 0.5;
                     tryPlay();
                 })();
+
+                // Pause video when tab/app goes to background (saves battery on mobile)
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        heroVideo.pause();
+                    } else if (_heroVisible) {
+                        tryPlay();
+                    }
+                });
             }
 
             document.querySelectorAll('.filter-tag').forEach(function(tag) {
