@@ -10,31 +10,22 @@
 </style>
 <script>
 (function(){
-  var DW = 794; /* total body width: 601.73px content + 96px*2 padding */
+  var DW = 794;
   function scale(){
     var body = document.body;
     var sw = window.innerWidth;
     if(sw < DW){
-      var s = sw / DW;
-      /* Fix body to exact document width so text never reflows */
-      body.style.width        = DW + 'px';
-      body.style.maxWidth     = DW + 'px';
-      body.style.margin       = '0';
-      /* Scale from top-left, then shift right to center */
-      var offset = (sw - DW * s) / 2;
-      body.style.transformOrigin = '0 0';
-      body.style.transform    = 'translateX(' + offset + 'px) scale(' + s + ')';
-      /* Collapse the extra vertical space the scaled body leaves */
-      document.documentElement.style.height = Math.ceil(body.scrollHeight * s) + 'px';
-      document.documentElement.style.overflow = 'hidden';
+      var z = sw / DW;
+      body.style.zoom = z;
+      body.style.width = DW + 'px';
+      body.style.maxWidth = DW + 'px';
+      body.style.margin = '0';
+      body.style.transform = '';
     } else {
-      body.style.width        = '';
-      body.style.maxWidth     = '';
-      body.style.margin       = '0 auto';
-      body.style.transform    = '';
-      body.style.transformOrigin = '';
-      document.documentElement.style.height   = '';
-      document.documentElement.style.overflow = '';
+      body.style.zoom = '';
+      body.style.width = '';
+      body.style.maxWidth = '';
+      body.style.margin = '0 auto';
     }
   }
   document.addEventListener('DOMContentLoaded', scale);
