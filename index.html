@@ -3970,6 +3970,10 @@
 
             window.closeImageFullscreen = function () {
                 overlay.classList.remove('active');
+                // Exit immersive — safe call (setImmersive defined later in same IIFE scope)
+                setTimeout(function() {
+                    if (typeof setImmersive === 'function' && fsImmersive) setImmersive(false);
+                }, 0);
             };
 
             /* ── reset to fit-screen ── */
@@ -4199,7 +4203,38 @@
                 }
             }, { passive: false });
 
-            var fsTapTime = 0;
+            var fsTapTime   = 0;
+            var fsImmersive = false; // single-tap immersive mode state
+
+            /* ── Enter / exit immersive mode (hide browser chrome) ── */
+            function setImmersive(on) {
+                fsImmersive = on;
+                if (on) {
+                    // Android: native fullscreen API
+                    var el = document.documentElement;
+                    if (el.requestFullscreen)            el.requestFullscreen({ navigationUI: 'hide' });
+                    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+                    // iOS Safari: no fullscreen API — scroll address bar away
+                    // Temporarily make page taller so scrollTo can fire
+                    document.body.style.height = (window.innerHeight + 100) + 'px';
+                    setTimeout(function() { window.scrollTo(0, 1); }, 50);
+                    setTimeout(function() { document.body.style.height = ''; }, 400);
+                } else {
+                    // Exit fullscreen (Android)
+                    if (document.exitFullscreen)            document.exitFullscreen();
+                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                    // iOS: scroll back to top restores address bar
+                    window.scrollTo(0, 0);
+                }
+            }
+
+            /* Restore immersive state when fullscreen closes externally */
+            document.addEventListener('fullscreenchange', function() {
+                if (!document.fullscreenElement) fsImmersive = false;
+            });
+            document.addEventListener('webkitfullscreenchange', function() {
+                if (!document.webkitFullscreenElement) fsImmersive = false;
+            });
 
             overlay.addEventListener('touchend', function (e) {
                 if (!fsOverlayActive()) return;
@@ -4216,20 +4251,29 @@
                     }
                 }
                 if (e.touches.length === 0) {
-                    // Double-tap detection — close fullscreen
-                    var t = e.changedTouches[0];
-                    var dx = tDragOX !== undefined ? Math.abs(ox - tDragOX) : 0;
-                    var dy = tDragOY !== undefined ? Math.abs(oy - tDragOY) : 0;
+                    var t     = e.changedTouches[0];
                     var moved = (Math.abs(t.clientX - tDragSX) > 10 || Math.abs(t.clientY - tDragSY) > 10);
+
                     if (!moved && !pinching) {
                         var now = Date.now();
                         var gap = now - fsTapTime;
+
                         if (gap < 350 && gap > 30) {
+                            // ── Double-tap: exit fullscreen view ──
                             e.preventDefault();
+                            if (fsImmersive) setImmersive(false);
                             closeImageFullscreen();
                             fsTapTime = 0;
                         } else {
+                            // ── Single-tap: toggle immersive mode ──
                             fsTapTime = now;
+                            // Use a short delay so we can cancel if double-tap follows
+                            setTimeout(function() {
+                                if (Date.now() - fsTapTime >= 340) {
+                                    // No second tap arrived — confirmed single tap
+                                    if (fsOverlayActive()) setImmersive(!fsImmersive);
+                                }
+                            }, 360);
                         }
                     }
                     tDragging = false;
