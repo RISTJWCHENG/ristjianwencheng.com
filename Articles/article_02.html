@@ -5,16 +5,34 @@
     background-color: #f0f0f0;
     margin: 0;
     padding: 0;
+    /* Allow horizontal scroll so user can slide right */
+    overflow-x: auto;
   }
   body {
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
     margin: 0 auto;
+    /* Black background visible when scrolled beyond content */
+    background-color: #ffffff;
+  }
+  html::after {
+    content: '';
+    display: block;
+    /* Extend page width so black area is visible on the right */
+    min-width: 100%;
   }
   @media (max-width: 794px) {
+    html {
+      background-color: #000000;
+      overflow-x: scroll;
+    }
     body {
-      max-width: 100% !important;
-      padding: 16px !important;
+      /* Keep original desktop width — don't collapse to screen */
+      min-width: 794px;
+      max-width: 794px !important;
+      padding: 72pt 72pt 72pt 72pt !important;
       box-sizing: border-box !important;
+      background-color: #ffffff;
+      margin: 0 auto;
     }
     img {
       max-width: 100% !important;
@@ -31,7 +49,7 @@
     h1                  { font-size: 11.2pt !important; }
     h2                  { font-size: 9.1pt !important; }
     h3                  { font-size: 8.4pt !important; }
-    h4, h5, h6         { font-size: 7.7pt !important; }
+    h4, h5, h6          { font-size: 7.7pt !important; }
     .title              { font-size: 21pt !important; }
     .subtitle           { font-size: 9.8pt !important; }
     .c0                 { font-size: 5.6pt !important; }
@@ -41,7 +59,6 @@
     .c5                 { font-size: 16.8pt !important; }
     .c8                 { font-size: 6.3pt !important; }
     .c21                { font-size: 12.6pt !important; }
-    /* Catch-all for inline font sizes via spans */
     span                { font-size: inherit; }
   }
 </style>
