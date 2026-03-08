@@ -825,15 +825,7 @@
         #imgFullscreenClose:hover { background: rgba(60,60,60,0.85); border-color: rgba(255,255,255,0.35); }
         @media (max-width: 640px) {
             #imgFullscreenClose {
-                /* position is controlled by JS _positionCloseBtn() on mobile */
-                width: 52px;
-                height: 52px;
-                background: rgba(30,30,30,0.75);
-                border: 1.5px solid rgba(255,255,255,0.22);
-            }
-            #imgFullscreenClose svg {
-                width: 24px;
-                height: 24px;
+                display: none !important;
             }
         }
         @media (max-width: 640px) {
@@ -4202,6 +4194,8 @@
                 }
             }, { passive: false });
 
+            var fsTapTime = 0;
+
             overlay.addEventListener('touchend', function (e) {
                 if (!fsOverlayActive()) return;
                 if (e.target === closeBtn) return;
@@ -4217,9 +4211,25 @@
                     }
                 }
                 if (e.touches.length === 0) {
+                    // Double-tap detection — close fullscreen
+                    var t = e.changedTouches[0];
+                    var dx = tDragOX !== undefined ? Math.abs(ox - tDragOX) : 0;
+                    var dy = tDragOY !== undefined ? Math.abs(oy - tDragOY) : 0;
+                    var moved = (Math.abs(t.clientX - tDragSX) > 10 || Math.abs(t.clientY - tDragSY) > 10);
+                    if (!moved && !pinching) {
+                        var now = Date.now();
+                        var gap = now - fsTapTime;
+                        if (gap < 350 && gap > 30) {
+                            e.preventDefault();
+                            closeImageFullscreen();
+                            fsTapTime = 0;
+                        } else {
+                            fsTapTime = now;
+                        }
+                    }
                     tDragging = false;
                 }
-            }, { passive: true });
+            }, { passive: false });
 
         })();
 
