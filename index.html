@@ -796,6 +796,7 @@
         }
         #fsZoomBadge.visible { opacity: 1; }
         #imgFullscreenClose {
+            touch-action: manipulation; /* removes 300ms tap delay */
             position: fixed;
             top: 1.2rem;
             right: 1.2rem;
@@ -838,6 +839,7 @@
                 overflow: hidden;
                 width: 100vw;
                 position: relative;
+                touch-action: pan-x; /* allow only horizontal swipe, block vertical page scroll */
             }
             .img-card-track {
                 display: flex;
@@ -845,6 +847,7 @@
                 width: 300vw;
                 transform: translateX(-100vw);
                 will-change: transform;
+                touch-action: pan-x;
             }
             .img-card-track .img-modal-content {
                 flex: 0 0 100vw;
@@ -3340,7 +3343,7 @@
 
     <!-- Fullscreen image overlay -->
     <div id="imgFullscreenOverlay">
-        <button id="imgFullscreenClose" onclick="closeImageFullscreen()">×</button>
+        <button id="imgFullscreenClose" onclick="closeImageFullscreen()" ontouchend="event.stopPropagation();event.preventDefault();closeImageFullscreen();">×</button>
         <img id="imgFullscreenImg" src="" alt="">
     </div>
     <div id="fsZoomBadge"></div>
@@ -4259,13 +4262,16 @@
                 }
                 if (!swiping) return;
 
+                // Confirmed horizontal swipe — block page scroll
+                e.preventDefault();
+
                 var modal = document.getElementById('imageModal');
                 var track = modal.querySelector('.img-card-track');
                 if (!track) return;
                 track.style.transition = 'none';
                 track.style.transform  = 'translateX(calc(-100vw + ' + dx + 'px))';
 
-            }, { passive: true });
+            }, { passive: false });
 
             document.addEventListener('touchend', function(e) {
                 if (!modalActive()) return;
