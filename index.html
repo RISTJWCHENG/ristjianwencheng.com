@@ -262,9 +262,12 @@
             left: 0;
             width: 100%;
             height: 100%;
+            height: 100dvh;
             background: var(--primary-bg);
             z-index: 1500;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
+            overscroll-behavior-y: auto;       /* allow natural scroll so address bar can hide */
             padding: 8rem 2rem 4rem;
         }
 
@@ -877,6 +880,8 @@
             /* Fix Complete Gallery grid overflowing on mobile */
             .full-gallery-page {
                 padding: 5rem 1rem 3rem;
+                /* Use --vh so height tracks real viewport (not browser-chrome-inclusive 100%) */
+                height: calc(var(--vh, 1vh) * 100);
             }
             .full-gallery-item {
                 border-radius: 8px;
