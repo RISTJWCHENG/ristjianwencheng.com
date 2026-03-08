@@ -4506,7 +4506,7 @@
                 var metaDate = article.type === 'pdf' ? '📄 PDF' : formatArticleDate(article.date);
                 var metaRead = article.readTime ? '⏱️ ' + article.readTime : '';
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
-                var articleShareUrl2 = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
+                var articleShareUrl2 = article.type === 'pdf' ? (article.pdfUrl || getArticlePath(article)) : getArticlePath(article);
                 var catColor = getCategoryColor(article.category);
                 var dlBtn = article.download && article.download[0] && article.download[1]
                     ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
@@ -5164,13 +5164,22 @@
                 .catch(function(err) { console.warn('Could not load Articles/articles_index.json:', err); });
         }
 
+        // Build article path from id (fallback to file for legacy)
+        function getArticlePath(article) {
+            if (article.file) return article.file;
+            if (!article.id)  return '';
+            if (article.type === 'pdf') return 'Articles/' + article.id + '.pdf';
+            return 'Articles/' + article.id + '.html';
+        }
+
         function openArticleFile(article) {
             if (article.type === 'pdf') {
-                openPdfModal(article.title, article.pdfUrl);
+                var pdfSrc = article.pdfUrl || getArticlePath(article);
+                openPdfModal(article.title, pdfSrc);
             } else {
                 var modal = document.getElementById('documentModal');
                 document.getElementById('documentTitle').textContent = article.title;
-                document.getElementById('documentFrame').src = article.file;
+                document.getElementById('documentFrame').src = getArticlePath(article);
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
@@ -5218,7 +5227,7 @@
                 var metaDate = article.type === 'pdf' ? '📄 PDF Document' : formatArticleDate(article.date);
                 var metaRead = article.type === 'pdf' ? '🖱️ Click to read' : (article.readTime ? '⏱️ ' + article.readTime : '');
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
-                var articleShareUrl = article.type === 'pdf' ? (article.pdfUrl || article.file || '') : (article.file || '');
+                var articleShareUrl = article.type === 'pdf' ? (article.pdfUrl || getArticlePath(article)) : getArticlePath(article);
                 var catColor = getCategoryColor(article.category);
                 var dlBtn = article.download && article.download[0] && article.download[1]
                     ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
