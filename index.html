@@ -825,11 +825,7 @@
         #imgFullscreenClose:hover { background: rgba(60,60,60,0.85); border-color: rgba(255,255,255,0.35); }
         @media (max-width: 640px) {
             #imgFullscreenClose {
-                top: auto;
-                right: auto;
-                bottom: 2.8rem;
-                left: 50%;
-                transform: translateX(-50%);
+                /* position is controlled by JS _positionCloseBtn() on mobile */
                 width: 52px;
                 height: 52px;
                 background: rgba(30,30,30,0.75);
@@ -3971,6 +3967,7 @@
                     NW = img.naturalWidth; NH = img.naturalHeight;
                     _reset();
                     overlay.classList.add('active');
+                    _positionCloseBtn();
                 }
             };
 
@@ -3993,6 +3990,34 @@
                 img.style.width  = NW + 'px';
                 img.style.height = NH + 'px';
                 img.style.transform = 'translate(' + ox + 'px,' + oy + 'px) scale(' + scale + ')';
+                _positionCloseBtn();
+            }
+
+            /* ── position close button at bottom-center of image ── */
+            function _positionCloseBtn() {
+                if (!closeBtn || !('ontouchstart' in window)) return;
+                var vw      = overlay.clientWidth  || window.innerWidth;
+                var vh      = overlay.clientHeight || window.innerHeight;
+                var imgW    = NW * scale;
+                var imgH    = NH * scale;
+                // Image bottom edge in overlay coordinates
+                var imgBottom = oy + imgH;
+                var imgCenterX = ox + imgW / 2;
+                var btnSize = 52;
+                var GAP     = 20; // gap below image bottom edge
+
+                // Preferred: just below the image
+                var preferredTop = imgBottom + GAP;
+                // If image bottom is off-screen or too close to edge, clamp inside viewport
+                var top  = Math.min(Math.max(preferredTop, GAP), vh - btnSize - GAP);
+                var left = Math.min(Math.max(imgCenterX - btnSize / 2, GAP), vw - btnSize - GAP);
+
+                closeBtn.style.position = 'fixed';
+                closeBtn.style.top      = top  + 'px';
+                closeBtn.style.left     = left + 'px';
+                closeBtn.style.bottom   = 'auto';
+                closeBtn.style.right    = 'auto';
+                closeBtn.style.transform = 'none';
             }
 
             /* ── clamp offset so image stays on screen ── */
