@@ -3804,6 +3804,18 @@
             if (window._GALLERY_INDEX < 0) window._GALLERY_INDEX = 0;
             populateModal(url);
             document.getElementById('imageModal').classList.add('active');
+            // On mobile: build card track immediately so the modal isn't blank on first open
+            if (window.innerWidth <= 640) {
+                // Small delay to let the modal become visible first
+                setTimeout(function() {
+                    var modal = document.getElementById('imageModal');
+                    if (modal && typeof window.buildCardTrack === 'function') {
+                        var oldWrap = modal.querySelector('.img-card-track-wrap');
+                        if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
+                        buildCardTrack();
+                    }
+                }, 0);
+            }
         }
 
         var _navLocked = false;
@@ -4010,9 +4022,11 @@
                 overlay.classList.remove('fs-dragging');
             });
 
-            /* ── CLICK at fit-size closes ── */
+            /* ── CLICK at fit-size closes (desktop only) ── */
             overlay.addEventListener('click', function (e) {
                 if (e.target === closeBtn) return;
+                // On mobile, only the close button can close fullscreen (avoid accidental dismiss)
+                if ('ontouchstart' in window) return;
                 if (Math.abs(e.clientX - dragSX) > 4 || Math.abs(e.clientY - dragSY) > 4) return;
                 var vw = overlay.clientWidth  || window.innerWidth;
                 var vh = overlay.clientHeight || window.innerHeight;
@@ -4042,7 +4056,7 @@
             }
 
             // ── Build the 3-card track: prev | current | next ──
-            function buildCardTrack() {
+            window.buildCardTrack = function buildCardTrack() {
                 var modal = document.getElementById('imageModal');
                 var list  = window._GALLERY_LIST;
                 if (!list || !list.length) return;
@@ -4283,6 +4297,12 @@
                         var now = Date.now();
                         var gap = now - lastTap;
                         if (gap < 400 && gap > 30) {
+                            // Do NOT close modal if fullscreen overlay is active
+                            var fsOverlay = document.getElementById('imgFullscreenOverlay');
+                            if (fsOverlay && fsOverlay.classList.contains('active')) {
+                                lastTap = 0;
+                                return;
+                            }
                             e.preventDefault();
                             closeImageModal();
                             lastTap = 0;
