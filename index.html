@@ -796,7 +796,7 @@
         }
         #fsZoomBadge.visible { opacity: 1; }
         #imgFullscreenClose {
-            touch-action: manipulation; /* removes 300ms tap delay */
+            touch-action: manipulation;
             position: fixed;
             top: 1.2rem;
             right: 1.2rem;
@@ -815,6 +815,19 @@
             transition: background 0.2s;
         }
         #imgFullscreenClose:hover { background: rgba(255,255,255,0.28); }
+        @media (max-width: 640px) {
+            #imgFullscreenClose {
+                top: auto;
+                right: auto;
+                bottom: 2.5rem;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 56px;
+                height: 56px;
+                font-size: 2rem;
+                background: rgba(255,255,255,0.2);
+            }
+        }
         @media (max-width: 640px) {
             .img-modal-content {
                 flex-direction: column;
