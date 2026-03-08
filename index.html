@@ -606,6 +606,7 @@
             animation: imgSlideInLeft 0.35s cubic-bezier(0.4,0,0.2,1) forwards;
         }
         .img-modal-right {
+            overscroll-behavior: contain;
             width: 280px;
             flex-shrink: 0;
             background: #111;
@@ -1859,6 +1860,8 @@
 
         .modal.active {
             display: flex;
+            touch-action: none; /* block all touch scroll bleeding to background */
+            overscroll-behavior: contain;
         }
 
         .modal-content {
@@ -3817,6 +3820,7 @@
             if (window._GALLERY_INDEX < 0) window._GALLERY_INDEX = 0;
             populateModal(url);
             document.getElementById('imageModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
             // On mobile: build card track immediately so the modal isn't blank on first open
             if (window.innerWidth <= 640) {
                 // Small delay to let the modal become visible first
@@ -4344,6 +4348,8 @@
 
         function closeImageModal() {
             document.getElementById('imageModal').classList.remove('active');
+            var anyFullPage = document.querySelector('.full-gallery-page.active');
+            document.body.style.overflow = anyFullPage ? 'hidden' : 'auto';
         }
 
         document.addEventListener('keydown', function(e) {
