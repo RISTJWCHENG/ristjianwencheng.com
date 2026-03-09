@@ -839,12 +839,18 @@
                 max-width: 98vw;
                 border-radius: 12px;
             }
-            /* Image area: add horizontal padding so image aligns with text below */
+            /* Image area: padding so image aligns with text, rounded to clip image corners */
             .img-modal-left {
                 padding: 0.75rem 0.75rem 0 0.75rem;
-                background: #111;          /* match card bg so padding area blends */
+                background: #111;
+                border-radius: 10px 10px 0 0; /* top corners of card */
+                overflow: visible;             /* let child's own border-radius show */
             }
-            /* Image itself: rounded corners + full width of padded area */
+            .img-modal-slider {
+                border-radius: 10px;
+                overflow: hidden;              /* clip image to rounded slider */
+            }
+            /* Image itself: fill the slider, corners clipped by slider */
             .img-modal-left img {
                 max-height: 52vw;
                 width: 100%;
@@ -3931,6 +3937,7 @@
                 newImg.style.position   = '';
                 newImg.style.top = ''; newImg.style.left = '';
                 newImg.style.width = ''; newImg.style.height = '';
+                newImg.style.borderRadius = '10px';  /* keep corners after style reset */
                 // Remove old img
                 if (oldImg.parentNode) oldImg.parentNode.removeChild(oldImg);
                 // Reset slider
