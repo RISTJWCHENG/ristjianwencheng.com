@@ -3977,6 +3977,7 @@
                     NH = img.naturalHeight;
                     _reset();
                     overlay.classList.add('active');
+                    _triggerImmersive();
                 };
                 // if already cached, onload may not fire
                 if (img.complete && img.naturalWidth) {
@@ -3984,8 +3985,38 @@
                     _reset();
                     overlay.classList.add('active');
                     _positionCloseBtn();
+                    _triggerImmersive();
                 }
             };
+
+            /* ── Auto-hide address bar when entering fullscreen view ── */
+            function _triggerImmersive() {
+                if (!('ontouchstart' in window)) return; // mobile only
+                // Android: native fullscreen API hides all browser chrome
+                var el = document.documentElement;
+                if (el.requestFullscreen) {
+                    el.requestFullscreen({ navigationUI: 'hide' }).catch(function(){});
+                    return;
+                }
+                if (el.webkitRequestFullscreen) {
+                    el.webkitRequestFullscreen();
+                    return;
+                }
+                // iOS Safari: no fullscreen API — use scroll trick to hide address bar
+                _iosHideBar();
+            }
+
+            function _iosHideBar() {
+                // Briefly extend body height, scroll 1px, then restore
+                var prev = document.body.style.height;
+                document.body.style.height = (window.innerHeight + 60) + 'px';
+                setTimeout(function() {
+                    window.scrollTo(0, 1);
+                    setTimeout(function() {
+                        document.body.style.height = prev;
+                    }, 300);
+                }, 30);
+            }
 
             window.closeImageFullscreen = function () {
                 overlay.classList.remove('active');
@@ -4164,6 +4195,10 @@
                 if (!fsOverlayActive()) return;
                 if (e.target === closeBtn) return;
                 e.preventDefault();
+                // iOS: re-hide address bar if it reappeared
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    _iosHideBar();
+                }
 
                 if (e.touches.length === 2) {
                     // Start pinch
