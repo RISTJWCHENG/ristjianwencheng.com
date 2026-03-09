@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>RIST JIANWEN CHENG</title>
     <link rel="icon" type="image/png" href="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/website_icon.png">
     <link rel="apple-touch-icon" href="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/website_icon.png">
@@ -28,7 +28,11 @@
             scroll-behavior: smooth;
         }
 
+        html {
+            touch-action: pan-x pan-y; /* allow scroll, block pinch-zoom on page */
+        }
         body {
+            touch-action: pan-x pan-y;
             font-family: 'Helvetica Neue', Arial, sans-serif;
             background: var(--primary-bg);
             color: var(--text-primary);
@@ -3870,6 +3874,20 @@
             }
         }
 
+
+        // ── Block pinch-zoom on the page (iOS Safari gesture events) ──
+        document.addEventListener('gesturestart',  function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('gestureend',    function(e) { e.preventDefault(); }, { passive: false });
+        // Block multi-touch pinch via touchmove with 2+ fingers on body
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) {
+                // Allow pinch only inside fullscreen overlay
+                var fsOverlay = document.getElementById('imgFullscreenOverlay');
+                if (fsOverlay && fsOverlay.classList.contains('active')) return;
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         // ── Dynamic viewport height fix for mobile browser address bar ──
         (function() {
