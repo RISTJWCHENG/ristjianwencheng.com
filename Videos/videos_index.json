@@ -108,7 +108,7 @@
     "display": "on"
   },
   {
-    "title": "N Dynamic Curves Rigging Setup Tool",
+    "title": "Classic nDynamic Curve Rigging Setup",
     "category": "Work",
     "updated_time": "2013",
     "watchTime": "3.20 min watch",
@@ -116,7 +116,7 @@
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2013_N%20DYNAMIC%20CURVES%20RIGGING%20SETUP_%20Tool_Thumbnail_RISTJIANWENCHENG.png",
     "description": "Dynamic curve rigging automation tool for production use.",
     "link": ["LinkedIn","www.linkedin.com/in/rist-jw-cheng"],
-    "download": ["MEL Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
+    "download": ["MEL Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Classic_nDynamic_Curve_Rigging_Setup/Classic_nDynamic_Curve_Rigging_Setup.mel"],
     "display": "on"
   },
   {
