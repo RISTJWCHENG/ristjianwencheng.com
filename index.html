@@ -839,14 +839,26 @@
                 max-width: 98vw;
                 border-radius: 12px;
             }
+            /* Image area: add horizontal padding so image aligns with text below */
+            .img-modal-left {
+                padding: 0.75rem 0.75rem 0 0.75rem;
+                background: #111;          /* match card bg so padding area blends */
+            }
+            /* Image itself: rounded corners + full width of padded area */
+            .img-modal-left img {
+                max-height: 52vw;
+                width: 100%;
+                border-radius: 10px;
+                object-fit: cover;
+            }
+            /* Info panel: same horizontal padding as image area for alignment */
             .img-modal-right {
                 width: 100%;
-                padding: 1rem 1.2rem;
+                padding: 0.75rem 0.75rem 1rem 0.75rem;
                 max-height: 40vh;
                 max-height: calc(var(--vh, 1vh) * 40);
                 background: #111;
             }
-            .img-modal-left img { max-height: 52vw; }
 
             /* ── Full-card swipe track (mobile only) ── */
             /* Hide the original static card when track is active */
