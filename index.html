@@ -848,7 +848,7 @@
             .img-modal-left img {
                 max-height: 52vw;
                 width: 100%;
-                border-radius: 10px;
+                border-radius: 10px !important;
                 object-fit: cover;
             }
             /* Info panel: same horizontal padding as image area for alignment */
@@ -3345,7 +3345,7 @@
             <button class="modal-close" onclick="closeImageModal()">×</button>
             <div class="img-modal-left">
                 <div class="img-modal-slider" id="imgModalSlider">
-                    <img id="modalImage" src="" alt="">
+                    <img id="modalImage" src="" alt="" class="modal-img-rounded">
                 </div>
                 <div class="img-share-toast" id="imgShareToast">🔗 Image link copied!</div>
                 <button class="img-modal-maximize-btn" onclick="event.stopPropagation();openImageFullscreen()" ontouchend="event.stopPropagation();event.preventDefault();openImageFullscreen();" title="Maximize">
@@ -3893,7 +3893,7 @@
             // Create new img that slides in
             var newImg = document.createElement('img');
             newImg.src = item.image_url;
-            newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;max-width:100%;max-height:88vh;object-fit:contain;';
+            newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;max-width:100%;max-height:88vh;object-fit:cover;border-radius:10px;';
 
             var dur = 320; // ms — match animation duration
             var enterClass = dir > 0 ? 'slide-enter-right' : 'slide-enter-left';
