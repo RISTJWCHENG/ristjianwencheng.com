@@ -2603,16 +2603,16 @@
             #videoModalShareBtn span,
             #videoModalDownloadBtn, #videoModalLinkBtn {
                 background: none !important;
-                -webkit-text-fill-color: var(--text-primary, #2c2c2c) !important;
-                color: var(--text-primary, #2c2c2c) !important;
+                -webkit-text-fill-color: #999 !important;
+                color: #999 !important;
             }
 
-            /* 3. Fix SVG strokes to static color instead of animating */
+            /* 3. Fix SVG strokes to visible medium gray */
             .video-share-btn svg,
             #videoModalShareBtn svg,
             #videoModalDownloadBtn svg,
             #videoModalLinkBtn svg {
-                stroke: #7c6fcd !important;
+                stroke: #999 !important;
             }
 
             /* 4. Remove all backdrop-filter blur */
@@ -2776,6 +2776,51 @@
 
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            // Mobile: flash buttons with category color on touch, then restore
+            (function() {
+                if (window.innerWidth > 768) return;
+                var descArea = document.getElementById('videoModalDescArea');
+                var catColor = descArea
+                    ? (descArea.style.getPropertyValue('--modal-cat-color') || '#7c6fcd')
+                    : '#7c6fcd';
+
+                var btns = [
+                    document.getElementById('videoModalDownloadBtn'),
+                    document.getElementById('videoModalLinkBtn'),
+                    document.getElementById('videoModalShareBtn')
+                ].filter(Boolean);
+
+                btns.forEach(function(btn) {
+                    // Remove previous listener by cloning
+                    var fresh = btn.cloneNode(true);
+                    btn.parentNode.replaceChild(fresh, btn);
+                    fresh.addEventListener('touchstart', function() {
+                        fresh.style.setProperty('color', catColor, 'important');
+                        fresh.style.setProperty('-webkit-text-fill-color', catColor, 'important');
+                        var svg = fresh.querySelector('svg');
+                        var span = fresh.querySelector('span');
+                        if (svg) svg.style.setProperty('stroke', catColor, 'important');
+                        if (span) {
+                            span.style.setProperty('-webkit-text-fill-color', catColor, 'important');
+                            span.style.setProperty('color', catColor, 'important');
+                        }
+                        setTimeout(function() {
+                            fresh.style.removeProperty('color');
+                            fresh.style.removeProperty('-webkit-text-fill-color');
+                            if (svg) svg.style.removeProperty('stroke');
+                            if (span) {
+                                span.style.removeProperty('-webkit-text-fill-color');
+                                span.style.removeProperty('color');
+                            }
+                        }, 400);
+                    }, { passive: true });
+                });
+
+                // Re-wire share button after clone
+                var shareClone = document.getElementById('videoModalShareBtn');
+                if (shareClone) shareClone.onclick = function() { shareVideo(videoUrl, this); };
+            })();
         }
 
         function closeVideoModal() {
