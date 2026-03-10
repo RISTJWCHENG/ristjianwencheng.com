@@ -844,36 +844,35 @@
                 background: #111;
             }
             .img-modal-left {
-                padding: 0.9rem 0.9rem 0 0.9rem; /* top+sides padding creates image margins */
+                padding: 0.9rem 0.9rem 0 0.9rem;
                 background: #111;
-                border-radius: 0;
                 overflow: visible;
                 flex-shrink: 0;
                 width: 100%;
                 box-sizing: border-box;
             }
-            /* Slider: the visible image frame — all 4 corners rounded */
+            /* Slider: wraps image naturally — height follows image aspect ratio */
             .img-modal-slider {
                 border-radius: 10px;
-                overflow: hidden;
-                height: 56vw;
+                overflow: hidden;          /* clips image corners */
                 width: 100%;
+                /* NO fixed height — let image determine height */
                 display: block;
-                position: relative;
-                box-sizing: border-box;
+                position: static;
+                line-height: 0;            /* remove inline gap below img */
             }
-            /* Image fills the slider exactly — slider clips to round corners */
+            /* Image: full width, natural height, rounded via slider overflow */
             .img-modal-left img {
                 display: block;
-                position: absolute;
-                top: 0; left: 0;
-                width: 100%;
-                height: 100%;
-                border-radius: 0 !important;
-                object-fit: cover;
-                object-position: center;
+                position: static !important; /* override any inline absolute */
+                width: 100% !important;
+                height: auto !important;     /* natural aspect ratio */
+                max-height: none !important;
+                border-radius: 0 !important; /* slider handles clipping */
+                object-fit: fill;
+                transform: none !important;
             }
-            /* Info panel: same L/R padding as .img-modal-left so text aligns with image edges */
+            /* Info panel: same L/R padding as .img-modal-left so text aligns with image */
             .img-modal-right {
                 width: 100%;
                 padding: 0.75rem 0.9rem 1.5rem 0.9rem;
@@ -3937,7 +3936,7 @@
             newImg.src = item.image_url;
             var isMob = window.innerWidth <= 640;
             if (isMob) {
-                newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;';
+                newImg.style.cssText = 'display:block;width:100%;height:auto;position:static;';
             } else {
                 newImg.style.cssText = 'max-width:100%;max-height:88vh;object-fit:contain;display:block;position:relative;';
             }
@@ -3951,21 +3950,13 @@
             slider.appendChild(newImg);
 
             // Make slider relative so absolute child is contained
-            var isMobNav = window.innerWidth <= 640;
             slider.style.position = 'relative';
-            if (isMobNav) {
-                oldImg.style.position = 'absolute';
-                oldImg.style.top = '0'; oldImg.style.left = '0';
-                oldImg.style.width = '100%'; oldImg.style.height = '100%';
-                oldImg.style.objectFit = 'cover';
-            } else {
-                oldImg.style.position = 'absolute';
-                oldImg.style.top = '0'; oldImg.style.left = '0';
-                oldImg.style.width = '100%'; oldImg.style.height = '100%';
-                oldImg.style.maxWidth = '100%';
-                oldImg.style.maxHeight = '88vh';
-                oldImg.style.objectFit = 'contain';
-            }
+            oldImg.style.position = 'absolute';
+            oldImg.style.top = '0'; oldImg.style.left = '0';
+            oldImg.style.width = '100%'; oldImg.style.height = '100%';
+            oldImg.style.maxWidth = '100%';
+            oldImg.style.maxHeight = '88vh';
+            oldImg.style.objectFit = 'contain';
 
             // Trigger animations next frame
             requestAnimationFrame(function() {
@@ -3990,7 +3981,7 @@
                 newImg.style.width = ''; newImg.style.height = '';
                 var isMobClean = window.innerWidth <= 640;
                 if (isMobClean) {
-                    newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;';
+                    newImg.style.cssText = 'display:block;width:100%;height:auto;position:static;';
                 } else {
                     newImg.style.cssText = 'max-width:100%;max-height:88vh;object-fit:contain;display:block;position:relative;';
                 }
