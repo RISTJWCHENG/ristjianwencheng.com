@@ -4668,6 +4668,8 @@
                     touchStartY = e.touches[0].clientY;
                     swiping     = false;
                     swipeLocked = false;
+                    // Always ensure vertical scroll is enabled at start of new touch
+                    wrap.style.overflowY = 'auto';
                 }, { passive: true });
 
                 wrap.addEventListener('touchmove', function(e) {
@@ -4745,6 +4747,9 @@
                         snapBack();
                     }
                     swiping = false;
+                    swipeLocked = false;
+                    // Always restore vertical scroll after any horizontal gesture
+                    wrap.style.overflowY = 'auto';
                 }, { passive: false });
             };
 
