@@ -899,18 +899,23 @@
             #imageModal .modal-content.img-modal-content:not(.img-card-track .img-modal-content) {
                 display: none !important;
             }
+            /* On mobile, align modal to top so card sits flush at top */
+            #imageModal {
+                align-items: flex-start !important;
+            }
             .img-card-track-wrap {
                 overflow-x: hidden;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior-y: contain;
                 width: 100vw;
-                /* Max height = viewport; if card is shorter, wrap shrinks to fit */
-                max-height: 100vh;
+                /* Exactly as tall as card content — no black void below */
+                height: fit-content;
                 max-height: calc(var(--vh, 1vh) * 100);
-                height: auto;
                 position: relative;
                 touch-action: pan-y;
+                /* No background — let modal overlay show through */
+                background: transparent;
             }
             .img-card-track {
                 display: flex;
