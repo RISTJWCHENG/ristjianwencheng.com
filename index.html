@@ -842,27 +842,33 @@
                 max-width: 100vw;
                 border-radius: 12px;
             }
-            /* Image area: exact height = image height + top padding, no extra space */
+            /* Image area: fixed height, image fills it with cover crop */
             .img-modal-left {
                 padding: 0.75rem 0.75rem 0 0.75rem;
                 background: #111;
                 border-radius: 10px 10px 0 0;
-                overflow: visible;
-                /* Fix height so slider never exceeds image — eliminates gap below image */
-                height: calc(52vw + 0.75rem);
+                overflow: hidden;          /* clip slider corners together with left */
                 flex-shrink: 0;
             }
             .img-modal-slider {
                 border-radius: 10px;
                 overflow: hidden;
-                height: 100%;         /* fill exact parent height */
+                /* Intrinsic height: always 56vw tall regardless of image aspect ratio */
+                height: 56vw;
+                width: 100%;
+                display: block;            /* not flex — avoid stretch distortion */
+                position: relative;
             }
-            /* Image itself: fill slider exactly */
+            /* Image: cover-fills the fixed-size slider, always same height */
             .img-modal-left img {
+                display: block;
                 width: 100%;
                 height: 100%;
                 border-radius: 10px !important;
-                object-fit: cover;
+                object-fit: cover;         /* crop to fill — uniform height always */
+                object-position: center;
+                position: absolute;
+                top: 0; left: 0;
             }
             /* Info panel: natural height — scrolling handled by track-wrap */
             .img-modal-right {
@@ -3225,7 +3231,7 @@
                             <polyline points="7 10 12 15 17 10"/>
                             <line x1="12" y1="15" x2="12" y2="3"/>
                         </svg>
-                        <a href="#" class="contact-link download-cv">Download CV (PDF)</a>
+                        <a href="#" class="contact-link download-cv" id="downloadCvLink" target="_blank" rel="noopener noreferrer">Download CV (PDF)</a>
                     </div>
                 </div>
             </div>
@@ -3925,7 +3931,7 @@
             // Create new img that slides in
             var newImg = document.createElement('img');
             newImg.src = item.image_url;
-            newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;max-width:100%;max-height:88vh;object-fit:cover;border-radius:10px;';
+            newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:10px;';
 
             var dur = 320; // ms — match animation duration
             var enterClass = dir > 0 ? 'slide-enter-right' : 'slide-enter-left';
@@ -3963,7 +3969,7 @@
                 newImg.style.position   = '';
                 newImg.style.top = ''; newImg.style.left = '';
                 newImg.style.width = ''; newImg.style.height = '';
-                newImg.style.borderRadius = '10px';  /* keep corners after style reset */
+                newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:10px;';
                 // Remove old img
                 if (oldImg.parentNode) oldImg.parentNode.removeChild(oldImg);
                 // Reset slider
@@ -5661,6 +5667,9 @@
                         } else if (t === 'footer imdb' && asset.type === 'html' && asset.website_url) {
                             var imdbLink = document.getElementById('footerImdbLink');
                             if (imdbLink) imdbLink.href = asset.website_url;
+                        } else if (t === 'download cv' && asset.type === 'pdf' && asset.pdf_url) {
+                            var cvLink = document.getElementById('downloadCvLink');
+                            if (cvLink) cvLink.href = asset.pdf_url;
                         }
                     });
                 })
