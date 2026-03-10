@@ -836,50 +836,50 @@
             }
         }
         @media (max-width: 640px) {
-            /* Card: uniform horizontal padding applied HERE so image & text share same margins */
             .img-modal-content {
                 flex-direction: column;
                 max-width: 100vw;
                 border-radius: 12px;
-                padding: 0.9rem 0.9rem 0 0.9rem; /* top+sides only; bottom on right panel */
+                padding: 0;                /* NO card-level padding — each child manages its own */
                 background: #111;
-                box-sizing: border-box;
             }
-            /* Image container: no extra padding (card already provides margins) */
             .img-modal-left {
-                padding: 0;
-                background: transparent;
+                padding: 0.9rem 0.9rem 0 0.9rem; /* top+sides padding creates image margins */
+                background: #111;
                 border-radius: 0;
                 overflow: visible;
                 flex-shrink: 0;
                 width: 100%;
+                box-sizing: border-box;
             }
-            /* Slider: exact visible image box, rounded all 4 corners */
+            /* Slider: the visible image frame — all 4 corners rounded */
             .img-modal-slider {
                 border-radius: 10px;
-                overflow: hidden;          /* clips image to 4 rounded corners */
+                overflow: hidden;
                 height: 56vw;
                 width: 100%;
                 display: block;
                 position: relative;
+                box-sizing: border-box;
             }
-            /* Image: fills slider completely */
+            /* Image fills the slider exactly — slider clips to round corners */
             .img-modal-left img {
                 display: block;
                 position: absolute;
                 top: 0; left: 0;
                 width: 100%;
                 height: 100%;
-                border-radius: 0 !important; /* slider clips it — no need for own radius */
+                border-radius: 0 !important;
                 object-fit: cover;
                 object-position: center;
             }
-            /* Info panel: same horizontal padding = 0 (card provides it), top gap from image */
+            /* Info panel: same L/R padding as .img-modal-left so text aligns with image edges */
             .img-modal-right {
                 width: 100%;
-                padding: 0.75rem 0 1.5rem 0; /* card padding handles L/R alignment */
-                background: transparent;
+                padding: 0.75rem 0.9rem 1.5rem 0.9rem;
+                background: #111;
                 overflow-y: visible;
+                box-sizing: border-box;
             }
 
             /* ── Full-card swipe track (mobile only) ── */
@@ -3935,7 +3935,12 @@
             // Create new img that slides in
             var newImg = document.createElement('img');
             newImg.src = item.image_url;
-            newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:10px;';
+            var isMob = window.innerWidth <= 640;
+            if (isMob) {
+                newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;';
+            } else {
+                newImg.style.cssText = 'max-width:100%;max-height:88vh;object-fit:contain;display:block;position:relative;';
+            }
 
             var dur = 320; // ms — match animation duration
             var enterClass = dir > 0 ? 'slide-enter-right' : 'slide-enter-left';
@@ -3946,11 +3951,21 @@
             slider.appendChild(newImg);
 
             // Make slider relative so absolute child is contained
+            var isMobNav = window.innerWidth <= 640;
             slider.style.position = 'relative';
-            oldImg.style.position = 'absolute';
-            oldImg.style.top = '0'; oldImg.style.left = '0';
-            oldImg.style.width = '100%'; oldImg.style.height = '100%';
-            oldImg.style.objectFit = 'contain';
+            if (isMobNav) {
+                oldImg.style.position = 'absolute';
+                oldImg.style.top = '0'; oldImg.style.left = '0';
+                oldImg.style.width = '100%'; oldImg.style.height = '100%';
+                oldImg.style.objectFit = 'cover';
+            } else {
+                oldImg.style.position = 'absolute';
+                oldImg.style.top = '0'; oldImg.style.left = '0';
+                oldImg.style.width = '100%'; oldImg.style.height = '100%';
+                oldImg.style.maxWidth = '100%';
+                oldImg.style.maxHeight = '88vh';
+                oldImg.style.objectFit = 'contain';
+            }
 
             // Trigger animations next frame
             requestAnimationFrame(function() {
@@ -3973,7 +3988,12 @@
                 newImg.style.position   = '';
                 newImg.style.top = ''; newImg.style.left = '';
                 newImg.style.width = ''; newImg.style.height = '';
-                newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:10px;';
+                var isMobClean = window.innerWidth <= 640;
+                if (isMobClean) {
+                    newImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;';
+                } else {
+                    newImg.style.cssText = 'max-width:100%;max-height:88vh;object-fit:contain;display:block;position:relative;';
+                }
                 // Remove old img
                 if (oldImg.parentNode) oldImg.parentNode.removeChild(oldImg);
                 // Reset slider
