@@ -909,12 +909,10 @@
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior-y: contain;
                 width: 100vw;
-                /* Exactly as tall as card content — no black void below */
-                height: fit-content;
-                max-height: calc(var(--vh, 1vh) * 100);
+                height: 100vh;
+                height: calc(var(--vh, 1vh) * 100);
                 position: relative;
                 touch-action: pan-y;
-                /* No background — let modal overlay show through */
                 background: transparent;
             }
             .img-card-track {
@@ -4491,6 +4489,17 @@
                 if (nav) modal.insertBefore(wrap, nav);
                 else modal.appendChild(wrap);
 
+                // After paint: set wrap height = card content height (capped at vh)
+                // so scroll stops exactly at Article/Share buttons, no black void below
+                requestAnimationFrame(function() {
+                    var vh = window.innerHeight;
+                    var currentCard = track.children[1]; // middle card is current
+                    if (currentCard) {
+                        var cardH = currentCard.scrollHeight;
+                        wrap.style.height = Math.min(cardH, vh) + 'px';
+                    }
+                });
+
                 // Attach swipe + scroll listeners to this wrap instance
                 if (typeof window._attachCardSwipeListeners === 'function') {
                     window._attachCardSwipeListeners(wrap);
@@ -4527,6 +4536,19 @@
                 img.src = item.image_url;
                 img.alt = item.title || '';
                 if (isCurrent) img.id = 'modalImage';
+                // After image loads, recalculate wrap height accurately
+                if (isCurrent) {
+                    img.addEventListener('load', function() {
+                        var modal = document.getElementById('imageModal');
+                        var wrap = modal && modal.querySelector('.img-card-track-wrap');
+                        var track = wrap && wrap.querySelector('.img-card-track');
+                        var currentCard = track && track.children[1];
+                        if (wrap && currentCard) {
+                            var vh = window.innerHeight;
+                            wrap.style.height = Math.min(currentCard.scrollHeight, vh) + 'px';
+                        }
+                    });
+                }
                 slider.appendChild(img);
                 left.appendChild(slider);
 
