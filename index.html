@@ -5572,6 +5572,25 @@
                 const { card, descId } = createVideoCard(video);
                 if (featuredGrid) featuredGrid.appendChild(card);
                 featDescIds.push(descId);
+
+                // Mobile: flash card buttons with category color on touch
+                if (window.innerWidth <= 768) {
+                    var catColor = card.style.getPropertyValue('--cat-color') || '#7c6fcd';
+                    card.querySelectorAll('.video-share-btn').forEach(function(btn) {
+                        btn.addEventListener('touchstart', function(e) {
+                            e.stopPropagation();
+                            var svg = btn.querySelector('svg');
+                            btn.style.setProperty('color', catColor, 'important');
+                            btn.style.setProperty('-webkit-text-fill-color', catColor, 'important');
+                            if (svg) svg.style.setProperty('stroke', catColor, 'important');
+                            setTimeout(function() {
+                                btn.style.removeProperty('color');
+                                btn.style.removeProperty('-webkit-text-fill-color');
+                                if (svg) svg.style.removeProperty('stroke');
+                            }, 400);
+                        }, { passive: true });
+                    });
+                }
             });
 
             // Render first page of full grid + pagination
