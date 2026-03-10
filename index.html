@@ -849,12 +849,14 @@
                 background: #111;
                 overflow: visible;
                 flex-shrink: 0;
-                flex: 0 0 auto;            /* don't stretch, size to content */
+                flex: 0 0 auto;
                 align-self: stretch;
                 width: 100%;
                 box-sizing: border-box;
                 line-height: 0;
                 font-size: 0;
+                /* Allow vertical scroll when finger is on image */
+                touch-action: pan-y !important;
             }
             /* Slider: natural height from image, rounded corners */
             .img-modal-slider {
@@ -865,6 +867,7 @@
                 display: block;
                 position: relative;
                 line-height: 0;
+                touch-action: pan-y !important;
             }
             /* Image: full width, natural aspect ratio — no black gap below */
             .img-modal-left img {
@@ -878,8 +881,9 @@
                 object-position: top !important;
                 transform: none !important;
                 background: #111;
+                touch-action: pan-y !important;
             }
-            /* Info panel: same L/R padding, fixed top gap = distance from image bottom */
+            /* Info panel */
             .img-modal-right {
                 width: 100%;
                 padding: 0.9rem 0.9rem 2.5rem 0.9rem;
@@ -896,14 +900,15 @@
                 display: none !important;
             }
             .img-card-track-wrap {
-                /* Vertical scroll container for the whole card */
                 overflow-x: hidden;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior-y: contain;
                 width: 100vw;
-                height: 100vh;
-                height: calc(var(--vh, 1vh) * 100);
+                /* Max height = viewport; if card is shorter, wrap shrinks to fit */
+                max-height: 100vh;
+                max-height: calc(var(--vh, 1vh) * 100);
+                height: auto;
                 position: relative;
                 touch-action: pan-y;
             }
