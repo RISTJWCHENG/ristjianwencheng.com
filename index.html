@@ -836,45 +836,49 @@
             }
         }
         @media (max-width: 640px) {
+            /* Card: uniform horizontal padding applied HERE so image & text share same margins */
             .img-modal-content {
                 flex-direction: column;
-                /* No max-height — card can grow beyond screen; wrap scrolls */
                 max-width: 100vw;
                 border-radius: 12px;
-            }
-            /* Image area: fixed height, image fills it with cover crop */
-            .img-modal-left {
-                padding: 0.75rem 0.75rem 0 0.75rem;
+                padding: 0.9rem 0.9rem 0 0.9rem; /* top+sides only; bottom on right panel */
                 background: #111;
-                border-radius: 10px 10px 0 0;
-                overflow: hidden;          /* clip slider corners together with left */
-                flex-shrink: 0;
+                box-sizing: border-box;
             }
+            /* Image container: no extra padding (card already provides margins) */
+            .img-modal-left {
+                padding: 0;
+                background: transparent;
+                border-radius: 0;
+                overflow: visible;
+                flex-shrink: 0;
+                width: 100%;
+            }
+            /* Slider: exact visible image box, rounded all 4 corners */
             .img-modal-slider {
                 border-radius: 10px;
-                overflow: hidden;
-                /* Intrinsic height: always 56vw tall regardless of image aspect ratio */
+                overflow: hidden;          /* clips image to 4 rounded corners */
                 height: 56vw;
                 width: 100%;
-                display: block;            /* not flex — avoid stretch distortion */
+                display: block;
                 position: relative;
             }
-            /* Image: cover-fills the fixed-size slider, always same height */
+            /* Image: fills slider completely */
             .img-modal-left img {
                 display: block;
-                width: 100%;
-                height: 100%;
-                border-radius: 10px !important;
-                object-fit: cover;         /* crop to fill — uniform height always */
-                object-position: center;
                 position: absolute;
                 top: 0; left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 0 !important; /* slider clips it — no need for own radius */
+                object-fit: cover;
+                object-position: center;
             }
-            /* Info panel: natural height — scrolling handled by track-wrap */
+            /* Info panel: same horizontal padding = 0 (card provides it), top gap from image */
             .img-modal-right {
                 width: 100%;
-                padding: 0.75rem 0.75rem 2rem 0.75rem;
-                background: #111;
+                padding: 0.75rem 0 1.5rem 0; /* card padding handles L/R alignment */
+                background: transparent;
                 overflow-y: visible;
             }
 
