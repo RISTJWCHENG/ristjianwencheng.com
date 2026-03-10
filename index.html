@@ -844,41 +844,47 @@
                 background: #111;
             }
             .img-modal-left {
+                /* Shrink-wrap to slider content — no extra height */
                 padding: 0.9rem 0.9rem 0 0.9rem;
                 background: #111;
                 overflow: visible;
                 flex-shrink: 0;
+                align-self: stretch;       /* full width */
                 width: 100%;
                 box-sizing: border-box;
+                /* line-height:0 removes the mysterious inline gap under slider */
+                line-height: 0;
+                font-size: 0;
             }
-            /* Slider: wraps image naturally — height follows image aspect ratio */
+            /* Slider: natural height from image, rounded corners */
             .img-modal-slider {
                 border-radius: 10px;
-                overflow: hidden;          /* clips image corners */
+                overflow: hidden;
                 width: 100%;
-                /* NO fixed height — let image determine height */
                 display: block;
-                position: static;
-                line-height: 0;            /* remove inline gap below img */
+                position: relative;        /* for maximize btn absolute positioning */
+                line-height: 0;
             }
-            /* Image: full width, natural height, rounded via slider overflow */
+            /* Image: full width, natural aspect ratio */
             .img-modal-left img {
                 display: block;
-                position: static !important; /* override any inline absolute */
+                position: static !important;
                 width: 100% !important;
-                height: auto !important;     /* natural aspect ratio */
-                max-height: none !important;
-                border-radius: 0 !important; /* slider handles clipping */
-                object-fit: fill;
+                height: auto !important;
+                max-height: 80vh !important;   /* cap very tall portrait images */
+                border-radius: 0 !important;
+                object-fit: contain;
                 transform: none !important;
             }
-            /* Info panel: same L/R padding as .img-modal-left so text aligns with image */
+            /* Info panel: same L/R padding, fixed top gap = distance from image bottom */
             .img-modal-right {
                 width: 100%;
-                padding: 0.75rem 0.9rem 1.5rem 0.9rem;
+                padding: 0.9rem 0.9rem 1.5rem 0.9rem;
                 background: #111;
                 overflow-y: visible;
                 box-sizing: border-box;
+                line-height: normal;
+                font-size: initial;
             }
 
             /* ── Full-card swipe track (mobile only) ── */
