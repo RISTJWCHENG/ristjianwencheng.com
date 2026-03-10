@@ -882,7 +882,7 @@
             /* Info panel: same L/R padding, fixed top gap = distance from image bottom */
             .img-modal-right {
                 width: 100%;
-                padding: 0.9rem 0.9rem 1.5rem 0.9rem;
+                padding: 0.9rem 0.9rem 2.5rem 0.9rem;
                 background: #111;
                 overflow-y: visible;
                 box-sizing: border-box;
@@ -905,7 +905,7 @@
                 height: 100vh;
                 height: calc(var(--vh, 1vh) * 100);
                 position: relative;
-                touch-action: pan-y; /* default: allow vertical scroll */
+                touch-action: pan-y;
             }
             .img-card-track {
                 display: flex;
@@ -913,16 +913,18 @@
                 width: 300vw;
                 transform: translateX(-100vw);
                 will-change: transform;
-                /* touch-action set dynamically by JS during horizontal swipe */
             }
             .img-card-track .img-modal-content {
                 flex: 0 0 100vw;
                 width: 100vw;
                 max-width: 100vw;
-                /* No max-height: card grows to fit all content */
-                min-height: calc(var(--vh, 1vh) * 95);
+                /* Height grows with content — never clipped */
+                min-height: calc(var(--vh, 1vh) * 100);
+                height: auto;
                 flex-direction: column;
                 border-radius: 12px;
+                /* Bottom padding ensures Article/Share buttons fully visible */
+                padding-bottom: 2.5rem !important;
             }
 
             /* Fix Complete Gallery grid overflowing on mobile */
