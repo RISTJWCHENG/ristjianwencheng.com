@@ -918,12 +918,11 @@
                 flex: 0 0 100vw;
                 width: 100vw;
                 max-width: 100vw;
-                /* Height grows with content — never clipped */
-                min-height: calc(var(--vh, 1vh) * 100);
+                /* Height = exactly content height, no forced min */
+                min-height: unset;
                 height: auto;
                 flex-direction: column;
                 border-radius: 12px;
-                /* Bottom padding ensures Article/Share buttons fully visible */
                 padding-bottom: 2.5rem !important;
             }
 
