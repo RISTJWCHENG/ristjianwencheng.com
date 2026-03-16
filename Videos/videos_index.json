@@ -30,7 +30,7 @@
     "watchTime": "1.22 min watch",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/Reset%20Curves_Tool_RISTJIANWENCHENG.mp4",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/Reset%20Curves_Tool_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "A production-oriented tool for safely resetting curve states in complex scenes.",
+    "description": "Maya’s built-in Rebuild Curve tool allows simple curve adjustments but lacks control over individual span lengths and doesn’t account for each curve’s actual length, making complex curves harder to manage. The Reset Curves tool addresses these limitations by enabling multiple curve selection and automatically calculating rebuild parameters based on each curve’s length. It allows precise control over segment lengths, maintains consistent distances between CVs, and includes options to display EPs and CVs for easy visual inspection and editing. This enhances workflow efficiency and ensures uniform, coherent curve structures. By improving precision, consistency, and flexibility, the tool is especially valuable in complex scenes with multiple or intricate curves, and careful CV management helps achieve accurate dynamics simulations and animation outcomes.",
     "link": ["PDF","https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/Reset%20Curves_Document.pdf"],
     "download": ["Python Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
     "display": "on"
@@ -90,7 +90,7 @@
     "watchTime": "1.39 min watch",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2015_Updated_Rigging%20Demo%20Reel_RISTJIANWENCHENG.mp4",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2015_Updated_Rigging%20Demo%20Reel_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "Character rigging demo reel showcasing setup and deformation systems.",
+    "description": "Character rigging setup and deformation testing.",
     "link": ["LinkedIn","www.linkedin.com/in/rist-jw-cheng"],
     "download": [],
     "display": "on"
@@ -114,7 +114,7 @@
     "watchTime": "1.15 min watch",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2014_Updated_Rigging%20Demo%20Reel_RISTJIANWENCHENG.mp4",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2014_Updated_Character%20Rigging%20Setup%20Demo%20Reel_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "A selection of CFX setups I created for some projects, designed using the Maya Nucleus system to ensure stable simulations and reliable results even during fast character movements, making them fully suitable for CFX production.",
+    "description": "Character rigging setup I created for the How to Train Your Dragon — TV Series projects.",
     "link": ["LinkedIn","www.linkedin.com/in/rist-jw-cheng"],
     "download": [],
     "display": "on"
