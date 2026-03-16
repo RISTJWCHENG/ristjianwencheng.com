@@ -126,7 +126,7 @@
     "watchTime": "3.20 min watch",
     "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/2013_N%20DYNAMIC%20CURVES%20RIGGING%20SETUP_%20Tool_RISTJIANWENCHENG.mp4",
     "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/2013_N%20DYNAMIC%20CURVES%20RIGGING%20SETUP_%20Tool_Thumbnail_RISTJIANWENCHENG.png",
-    "description": "Dynamic curve rigging automation tool for production use.",
+    "description": "This was the first Maya tool I created using MEL script, and it was used in How to Train Your Dragon: Dragons — TV Series, demonstrating both stability and productivity improvements. The tool creates dynamic curve rigging based on the hair system. It supports customizing the number of FK and secondary controllers, and provides advanced features such as force attenuation, squash and stretch. Ideal for animating flexible objects like tails, tentacles, and hair.",
     "link": ["LinkedIn","www.linkedin.com/in/rist-jw-cheng"],
     "download": ["MEL Code","https://pub-06bd961174f94348a6d424261543b763.r2.dev/Classic_nDynamic_Curve_Rigging_Setup/Classic_nDynamic_Curve_Rigging_Setup.mel"],
     "display": "on"
