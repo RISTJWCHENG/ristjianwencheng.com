@@ -72,7 +72,19 @@
     "display": "on"
   },
   {
-    "title": "2015 Updated Rigging Demo Reel",
+    "title": "RIGGING DEMO REEL 2015 N01",
+    "category": "Work",
+    "updated_time": "2015",
+    "watchTime": "3.27 min watch",
+    "video_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/RIGGING%20DEMO%20REEL%202015%20N01_RIST%20JIANWEN%20CHENG.mp4",
+    "thumbnail_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Video%20Thumbnails/RIGGING%20DEMO%20REEL%202015%20N01_thumbnail_RIST%20JIANWEN%20CHENG.jpg",
+    "description": "The character rigging setup was created manually in 2015. The rig was designed to provide intuitive controls and stable deformation for expressive character animation. If you would like to check the Maya file, you can download it here.",
+    "link": ["LinkedIn","www.linkedin.com/in/rist-jw-cheng"],
+    "download": ["Maya File","https://pub-be55520ef38745d6bdd2347de9cfa440.r2.dev/N%20HAIR%20SETUP_Document.pdf"],
+    "display": "on"
+  },
+  {
+    "title": "RIGGING DEMO REEL 2015 N02",
     "category": "Work",
     "updated_time": "2015",
     "watchTime": "1.39 min watch",
