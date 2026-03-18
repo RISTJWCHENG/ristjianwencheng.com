@@ -4677,8 +4677,9 @@
                 if (isCurrent) linksEl.id = 'imgModalLinks';
 
                 // Touch press: scale down + catColor → bounce → restore animation
-                // For share btn: trigger shareCurrentImage on touchend (after press completes)
-                function attachModalBtnFlash(btn, isShareBtn) {
+                // isShareBtn: trigger shareCurrentImage on touchend
+                // isLink: don't preventDefault so <a> navigation still works
+                function attachModalBtnFlash(btn, isShareBtn, isLink) {
                     btn.addEventListener('touchstart', function(e) {
                         e.stopPropagation();
                         var svg = btn.querySelector('svg');
@@ -4690,7 +4691,8 @@
                     }, { passive: true });
 
                     btn.addEventListener('touchend', function(e) {
-                        e.preventDefault(); // prevent ghost click
+                        // Only preventDefault for non-link buttons (share)
+                        if (!isLink) e.preventDefault();
                         var svg = btn.querySelector('svg');
                         btn.style.setProperty('transform', 'scale(1.08)', 'important');
                         setTimeout(function() {
@@ -4702,7 +4704,6 @@
                             btn.style.removeProperty('transform');
                             if (svg) svg.style.removeProperty('stroke');
                         }, 350);
-                        // Fire share after press animation starts
                         if (isShareBtn) {
                             setTimeout(function() { shareCurrentImage(); }, 80);
                         }
@@ -4714,19 +4715,39 @@
                     a.className = 'img-modal-link-btn';
                     a.href = item.link[1]; a.target = '_blank'; a.rel = 'noopener noreferrer';
                     a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + item.link[0];
-                    attachModalBtnFlash(a, false);
+                    attachModalBtnFlash(a, false, true); // isLink=true: preserve navigation
                     linksEl.appendChild(a);
                 }
                 var shareBtn = document.createElement('button');
                 shareBtn.className = 'img-modal-share-btn';
                 shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
-                // Desktop: onclick; Mobile: handled by touchend in attachModalBtnFlash
-                if (isCurrent) shareBtn.onclick = function(e) {
-                    if (e.pointerType === 'touch') return; // mobile handled by touchend
-                    shareCurrentImage();
-                };
-                if (isCurrent) attachModalBtnFlash(shareBtn, true);
-                else attachModalBtnFlash(shareBtn, false);
+                if (isCurrent) {
+                    // Desktop: onclick with visual press effect
+                    shareBtn.addEventListener('mousedown', function() {
+                        var svg = shareBtn.querySelector('svg');
+                        var cc = catColor || '#7c6fcd';
+                        shareBtn.style.setProperty('transform', 'scale(0.88)', 'important');
+                        shareBtn.style.setProperty('color', cc, 'important');
+                        if (svg) svg.style.setProperty('stroke', cc, 'important');
+                    });
+                    shareBtn.addEventListener('mouseup', function() {
+                        var svg = shareBtn.querySelector('svg');
+                        shareBtn.style.setProperty('transform', 'scale(1.08)', 'important');
+                        setTimeout(function() { shareBtn.style.setProperty('transform', 'scale(1)', 'important'); }, 100);
+                        setTimeout(function() {
+                            shareBtn.style.removeProperty('transform');
+                            shareBtn.style.removeProperty('color');
+                            if (svg) svg.style.removeProperty('stroke');
+                        }, 320);
+                    });
+                    shareBtn.onclick = function(e) {
+                        if (e.pointerType === 'touch') return;
+                        shareCurrentImage();
+                    };
+                    attachModalBtnFlash(shareBtn, true, false); // mobile: touchend triggers share
+                } else {
+                    attachModalBtnFlash(shareBtn, false, false);
+                }
                 linksEl.appendChild(shareBtn);
 
                 right.appendChild(catEl);
