@@ -3009,23 +3009,65 @@
             }, 120);
         }
 
+        // Show a floating toast centered on a card thumbnail
+        function showCardToast(btn, message) {
+            // Find card container (article-card or video-card-featured)
+            var card = btn ? (btn.closest('.article-card') || btn.closest('.video-card-featured')) : null;
+            // Get category color from card's --cat-color CSS variable
+            var catColor = '#7c6fcd';
+            if (card) {
+                var cc = card.style.getPropertyValue('--cat-color').trim();
+                if (cc) catColor = cc;
+            }
+            // Find the thumbnail image inside the card for centering
+            var thumb = card ? (card.querySelector('.article-card-image') || card.querySelector('.video-thumbnail-wrapper')) : null;
+            var rect = thumb ? thumb.getBoundingClientRect() : (card ? card.getBoundingClientRect() : null);
+            var cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+            var cy = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+
+            var t = document.createElement('div');
+            t.textContent = message;
+            t.style.cssText = [
+                'position:fixed',
+                'left:' + cx + 'px',
+                'top:' + cy + 'px',
+                'transform:translate(-50%,-50%) scale(0.85)',
+                'background:' + catColor,
+                'color:#fff',
+                'padding:0.55rem 1.3rem',
+                'border-radius:24px',
+                'font-size:0.82rem',
+                'font-weight:500',
+                'white-space:nowrap',
+                'pointer-events:none',
+                'z-index:9999',
+                'opacity:0',
+                'transition:opacity 0.22s,transform 0.22s',
+                'letter-spacing:0.3px'
+            ].join(';');
+            document.body.appendChild(t);
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    t.style.opacity = '1';
+                    t.style.transform = 'translate(-50%,-50%) scale(1)';
+                });
+            });
+            setTimeout(function() {
+                t.style.opacity = '0';
+                t.style.transform = 'translate(-50%,-50%) scale(0.85)';
+                setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 280);
+            }, 2000);
+        }
+
         function shareVideo(videoUrl, btn) {
             applyBtnPressEffect(btn);
-            // Build a deep-link: current page URL + ?play=base64(videoUrl)
             const pageBase = window.location.href.split('?')[0];
             const encoded = btoa(encodeURIComponent(videoUrl));
             const shareUrl = pageBase + '?play=' + encoded;
-            const copyText = shareUrl;
-            function doToast() {
-                const toast = document.getElementById('shareToast');
-                if (toast) {
-                    toast.classList.add('show');
-                    setTimeout(function() { toast.classList.remove('show'); }, 2200);
-                }
-            }
-            navigator.clipboard.writeText(copyText).then(doToast).catch(function() {
+            function doToast() { showCardToast(btn, '🔗 Video link copied!'); }
+            navigator.clipboard.writeText(shareUrl).then(doToast).catch(function() {
                 const ta = document.createElement('textarea');
-                ta.value = copyText;
+                ta.value = shareUrl;
                 ta.style.position = 'fixed';
                 ta.style.opacity = '0';
                 document.body.appendChild(ta);
@@ -3038,21 +3080,12 @@
 
         function shareArticle(articleUrl, btn) {
             applyBtnPressEffect(btn);
-            // Copy the article's direct HTML/PDF link
             var shareUrl = articleUrl;
-            // If it's a relative path, resolve to absolute
             if (shareUrl && !shareUrl.match(/^https?:\/\//)) {
                 var base = window.location.href.split('?')[0].replace(/\/[^\/]*$/, '/');
                 shareUrl = base + shareUrl;
             }
-            function doToast() {
-                const toast = document.getElementById('shareToast');
-                if (toast) {
-                    toast.textContent = '🔗 Article link copied!';
-                    toast.classList.add('show');
-                    setTimeout(function() { toast.classList.remove('show'); }, 2200);
-                }
-            }
+            function doToast() { showCardToast(btn, '🔗 Article link copied!'); }
             navigator.clipboard.writeText(shareUrl).then(doToast).catch(function() {
                 const ta = document.createElement('textarea');
                 ta.value = shareUrl;
