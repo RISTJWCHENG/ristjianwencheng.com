@@ -2993,17 +2993,44 @@
         function applyBtnPressEffect(btn) {
             if (!btn) return;
             var svg = btn.querySelector('svg');
-            var catColor = (btn.closest('[style]') && getComputedStyle(btn.closest('[style]')).getPropertyValue('--cat-color').trim())
-                || '#7c6fcd';
+
+            // Reliably get catColor — same 3-method chain as showCardToast
+            var catColor = '#7c6fcd';
+            var card = btn.closest('.article-card') || btn.closest('.video-card-featured');
+            if (card) {
+                var dataCat = card.getAttribute('data-category');
+                if (dataCat && typeof getCategoryColor === 'function') {
+                    var cc1 = getCategoryColor(dataCat);
+                    if (cc1) catColor = cc1;
+                }
+                if (catColor === '#7c6fcd') {
+                    var styleAttr = card.getAttribute('style') || '';
+                    var match = styleAttr.match(/--cat-color:\s*([^;]+)/);
+                    if (match) catColor = match[1].trim();
+                }
+                if (catColor === '#7c6fcd') {
+                    var catEl = card.querySelector('.article-card-category, .video-category');
+                    if (catEl) catColor = catEl.style.color || getComputedStyle(catEl).color || catColor;
+                }
+            }
+
+            // Press down: scale + catColor (override rainbow text-fill too)
             btn.style.setProperty('transform', 'scale(0.88)', 'important');
             btn.style.setProperty('color', catColor, 'important');
+            btn.style.setProperty('-webkit-text-fill-color', catColor, 'important');
+            btn.style.setProperty('background', 'none', 'important');
             if (svg) svg.style.setProperty('stroke', catColor, 'important');
+
             setTimeout(function() {
+                // Bounce up
                 btn.style.setProperty('transform', 'scale(1.08)', 'important');
                 setTimeout(function() { btn.style.setProperty('transform', 'scale(1)', 'important'); }, 100);
+                // Restore original styles
                 setTimeout(function() {
                     btn.style.removeProperty('transform');
                     btn.style.removeProperty('color');
+                    btn.style.removeProperty('-webkit-text-fill-color');
+                    btn.style.removeProperty('background');
                     if (svg) svg.style.removeProperty('stroke');
                 }, 320);
             }, 120);
