@@ -702,7 +702,6 @@
             font-family: inherit;
             cursor: pointer;
             animation: modalBtnColorCycle 4s ease-in-out infinite;
-            animation-delay: 1s;
             transition: color 0.3s;
         }
         .img-modal-link-btn:hover {
@@ -4721,7 +4720,15 @@
                         }
                     }
 
-                    if (swipeLocked) return; // vertical scroll: do nothing, let browser handle
+                    if (swipeLocked) {
+                        // Vertical scroll: clamp so scroll stops at card bottom
+                        var maxScroll = wrap.scrollHeight - wrap.clientHeight;
+                        if (maxScroll > 0 && wrap.scrollTop >= maxScroll) {
+                            // Already at bottom — prevent further upward scroll
+                            if (dy < 0) e.preventDefault();
+                        }
+                        return;
+                    }
 
                     if (!swiping) return;
 
