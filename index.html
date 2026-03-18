@@ -2663,6 +2663,12 @@
             *, *::before, *::after {
                 transition: none !important;
             }
+            /* Exception: keep transform transition for press feedback on buttons */
+            .gallery-card-btn,
+            .img-modal-share-btn,
+            .img-modal-link-btn {
+                transition: transform 0.12s ease !important;
+            }
 
             /* 6. Disable hover transform/shadow on cards */
             .full-gallery-item:hover,
@@ -4625,25 +4631,29 @@
                 linksEl.className = 'img-modal-links';
                 if (isCurrent) linksEl.id = 'imgModalLinks';
 
-                // Touch flash: #fff→#000→#fff→#000 (2x) → catColor → restore animation
+                // Touch press: scale down + catColor → bounce → restore animation
                 function attachModalBtnFlash(btn) {
                     btn.addEventListener('touchstart', function() {
                         var svg = btn.querySelector('svg');
                         var cc = catColor || '#7c6fcd';
-                        var steps = ['#fff', '#000', '#fff', '#000', cc];
-                        var delays = [0, 80, 160, 240, 360];
                         btn.style.setProperty('animation', 'none', 'important');
-                        steps.forEach(function(color, i) {
-                            setTimeout(function() {
-                                btn.style.setProperty('color', color, 'important');
-                                if (svg) svg.style.setProperty('stroke', color, 'important');
-                            }, delays[i]);
-                        });
+                        btn.style.setProperty('color', cc, 'important');
+                        btn.style.setProperty('transform', 'scale(0.88)', 'important');
+                        if (svg) svg.style.setProperty('stroke', cc, 'important');
+                    }, { passive: true });
+
+                    btn.addEventListener('touchend', function() {
+                        var svg = btn.querySelector('svg');
+                        btn.style.setProperty('transform', 'scale(1.08)', 'important');
+                        setTimeout(function() {
+                            btn.style.setProperty('transform', 'scale(1)', 'important');
+                        }, 120);
                         setTimeout(function() {
                             btn.style.removeProperty('animation');
                             btn.style.removeProperty('color');
+                            btn.style.removeProperty('transform');
                             if (svg) svg.style.removeProperty('stroke');
-                        }, 650);
+                        }, 350);
                     }, { passive: true });
                 }
 
@@ -5191,28 +5201,37 @@
             actions.className = 'gallery-card-actions';
             actions.style.setProperty('--card-cat-color', catColor || '#7c6fcd');
 
-            // Touch flash: #fff→#000→#fff→#000 (2x) → catColor → restore animation
+            // Touch press: scale down + catColor → restore animation
             function attachTouchFlash(btn) {
                 btn.addEventListener('touchstart', function(e) {
                     e.stopPropagation();
                     var svg = btn.querySelector('svg');
                     var cc = catColor || '#7c6fcd';
-                    var steps = ['#fff', '#000', '#fff', '#000', cc];
-                    var delays = [0, 80, 160, 240, 360];
+                    // Pause animation, flash catColor, press scale
                     btn.style.setProperty('animation', 'none', 'important');
+                    btn.style.setProperty('color', cc, 'important');
                     btn.style.setProperty('border-color', cc, 'important');
-                    steps.forEach(function(color, i) {
-                        setTimeout(function() {
-                            btn.style.setProperty('color', color, 'important');
-                            if (svg) svg.style.setProperty('stroke', color, 'important');
-                        }, delays[i]);
-                    });
+                    btn.style.setProperty('transform', 'scale(0.88)', 'important');
+                    btn.style.setProperty('background', 'rgba(255,255,255,0.55)', 'important');
+                    if (svg) svg.style.setProperty('stroke', cc, 'important');
+                }, { passive: true });
+
+                btn.addEventListener('touchend', function() {
+                    var svg = btn.querySelector('svg');
+                    // Release: bounce back
+                    btn.style.setProperty('transform', 'scale(1.08)', 'important');
+                    setTimeout(function() {
+                        btn.style.setProperty('transform', 'scale(1)', 'important');
+                    }, 120);
+                    // Restore animation after bounce
                     setTimeout(function() {
                         btn.style.removeProperty('animation');
                         btn.style.removeProperty('color');
                         btn.style.removeProperty('border-color');
+                        btn.style.removeProperty('transform');
+                        btn.style.removeProperty('background');
                         if (svg) svg.style.removeProperty('stroke');
-                    }, 650);
+                    }, 350);
                 }, { passive: true });
             }
 
