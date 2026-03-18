@@ -418,7 +418,7 @@
             transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
         }
         .gallery-card-btn:nth-child(2) {
-            animation-delay: 1s;
+            animation-delay: 0s;
         }
         .gallery-card-btn:hover {
             animation: none;
@@ -2641,6 +2641,17 @@
             .img-modal-share-btn svg,
             .img-modal-link-btn svg {
                 stroke: #7c6fcd !important;
+            }
+
+            /* Gallery thumbnail Article + Share buttons — unified blue */
+            .gallery-card-btn,
+            .gallery-card-btn:nth-child(2) {
+                color: #85c1e9 !important;
+                border-color: #85c1e9 !important;
+            }
+            .gallery-card-btn svg {
+                stroke: #85c1e9 !important;
+                color: #85c1e9 !important;
             }
 
             /* 3. Fix SVG strokes to purple */
