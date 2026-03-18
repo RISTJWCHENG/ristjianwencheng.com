@@ -2614,7 +2614,6 @@
             .close-gallery-btn, .close-gallery-btn:hover,
             .back-to-gallery-btn, .back-to-gallery-btn:hover,
             .btn-rainbow-text,
-            .img-modal-share-btn, .img-modal-link-btn,
             .video-share-btn, .video-share-btn svg,
             #videoModalShareBtn span, #videoModalShareBtn svg,
             #videoModalDownloadBtn, #videoModalDownloadBtn svg,
@@ -2629,6 +2628,13 @@
                 animation-delay: 0s !important;
             }
 
+            /* img card Article + Share buttons — keep color cycle animation on mobile */
+            .img-modal-share-btn,
+            .img-modal-link-btn {
+                animation: modalBtnColorCycle 4s ease-in-out infinite !important;
+                animation-delay: 0s !important;
+            }
+
             /* 2. Replace animated gradient text with static purple color */
             .view-all-link, .close-gallery-btn, .back-to-gallery-btn,
             .btn-rainbow-text, .video-share-btn,
@@ -2637,16 +2643,6 @@
                 background: none !important;
                 -webkit-text-fill-color: #7c6fcd !important;
                 color: #7c6fcd !important;
-            }
-
-            /* img card Article + Share buttons — same color as Share */
-            .img-modal-share-btn,
-            .img-modal-link-btn {
-                color: #7c6fcd !important;
-            }
-            .img-modal-share-btn svg,
-            .img-modal-link-btn svg {
-                stroke: #7c6fcd !important;
             }
 
             /* 3. Fix SVG strokes to purple */
