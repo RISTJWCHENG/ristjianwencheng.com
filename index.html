@@ -1421,7 +1421,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: btn-rainbow 3s linear infinite;
-            transition: background-size 0.3s, filter 0.2s;
+            transition: background-size 0.3s, filter 0.2s, transform 0.12s ease;
         }
         .video-share-btn:hover {
             animation: none;
@@ -2989,7 +2989,28 @@
                 btn.textContent = 'less';
             }
         }
+        // Global helper: press effect on any share/download btn
+        function applyBtnPressEffect(btn) {
+            if (!btn) return;
+            var svg = btn.querySelector('svg');
+            var catColor = (btn.closest('[style]') && getComputedStyle(btn.closest('[style]')).getPropertyValue('--cat-color').trim())
+                || '#7c6fcd';
+            btn.style.setProperty('transform', 'scale(0.88)', 'important');
+            btn.style.setProperty('color', catColor, 'important');
+            if (svg) svg.style.setProperty('stroke', catColor, 'important');
+            setTimeout(function() {
+                btn.style.setProperty('transform', 'scale(1.08)', 'important');
+                setTimeout(function() { btn.style.setProperty('transform', 'scale(1)', 'important'); }, 100);
+                setTimeout(function() {
+                    btn.style.removeProperty('transform');
+                    btn.style.removeProperty('color');
+                    if (svg) svg.style.removeProperty('stroke');
+                }, 320);
+            }, 120);
+        }
+
         function shareVideo(videoUrl, btn) {
+            applyBtnPressEffect(btn);
             // Build a deep-link: current page URL + ?play=base64(videoUrl)
             const pageBase = window.location.href.split('?')[0];
             const encoded = btoa(encodeURIComponent(videoUrl));
@@ -3016,6 +3037,7 @@
         }
 
         function shareArticle(articleUrl, btn) {
+            applyBtnPressEffect(btn);
             // Copy the article's direct HTML/PDF link
             var shareUrl = articleUrl;
             // If it's a relative path, resolve to absolute
@@ -5700,24 +5722,7 @@
                     }, { once: true, passive: true });
                 }
 
-                // Mobile: flash card buttons with category color on touch
-                if (window.innerWidth <= 768) {
-                    var catColor = card.style.getPropertyValue('--cat-color') || '#7c6fcd';
-                    card.querySelectorAll('.video-share-btn').forEach(function(btn) {
-                        btn.addEventListener('touchstart', function(e) {
-                            e.stopPropagation();
-                            var svg = btn.querySelector('svg');
-                            btn.style.setProperty('color', catColor, 'important');
-                            btn.style.setProperty('-webkit-text-fill-color', catColor, 'important');
-                            if (svg) svg.style.setProperty('stroke', catColor, 'important');
-                            setTimeout(function() {
-                                btn.style.removeProperty('color');
-                                btn.style.removeProperty('-webkit-text-fill-color');
-                                if (svg) svg.style.removeProperty('stroke');
-                            }, 400);
-                        }, { passive: true });
-                    });
-                }
+                // Press effect handled by applyBtnPressEffect() inside shareVideo()
             });
 
             renderPagination();
@@ -5787,24 +5792,7 @@
                 if (featuredGrid) featuredGrid.appendChild(card);
                 featDescIds.push(descId);
 
-                // Mobile: flash card buttons with category color on touch
-                if (window.innerWidth <= 768) {
-                    var catColor = card.style.getPropertyValue('--cat-color') || '#7c6fcd';
-                    card.querySelectorAll('.video-share-btn').forEach(function(btn) {
-                        btn.addEventListener('touchstart', function(e) {
-                            e.stopPropagation();
-                            var svg = btn.querySelector('svg');
-                            btn.style.setProperty('color', catColor, 'important');
-                            btn.style.setProperty('-webkit-text-fill-color', catColor, 'important');
-                            if (svg) svg.style.setProperty('stroke', catColor, 'important');
-                            setTimeout(function() {
-                                btn.style.removeProperty('color');
-                                btn.style.removeProperty('-webkit-text-fill-color');
-                                if (svg) svg.style.removeProperty('stroke');
-                            }, 400);
-                        }, { passive: true });
-                    });
-                }
+                // Press effect handled by applyBtnPressEffect() inside shareVideo()
             });
 
             // Render first page of full grid + pagination
