@@ -4624,17 +4624,35 @@
                 var linksEl = document.createElement('div');
                 linksEl.className = 'img-modal-links';
                 if (isCurrent) linksEl.id = 'imgModalLinks';
+
+                // Touch flash helper for img card buttons
+                function attachModalBtnFlash(btn) {
+                    btn.addEventListener('touchstart', function() {
+                        var svg = btn.querySelector('svg');
+                        btn.style.setProperty('animation', 'none', 'important');
+                        btn.style.setProperty('color', catColor, 'important');
+                        if (svg) svg.style.setProperty('stroke', catColor, 'important');
+                        setTimeout(function() {
+                            btn.style.removeProperty('animation');
+                            btn.style.removeProperty('color');
+                            if (svg) svg.style.removeProperty('stroke');
+                        }, 400);
+                    }, { passive: true });
+                }
+
                 if (item.link && item.link[0] && item.link[1]) {
                     var a = document.createElement('a');
                     a.className = 'img-modal-link-btn';
                     a.href = item.link[1]; a.target = '_blank'; a.rel = 'noopener noreferrer';
                     a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + item.link[0];
+                    attachModalBtnFlash(a);
                     linksEl.appendChild(a);
                 }
                 var shareBtn = document.createElement('button');
                 shareBtn.className = 'img-modal-share-btn';
                 shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
                 if (isCurrent) shareBtn.onclick = function() { shareCurrentImage(); };
+                attachModalBtnFlash(shareBtn);
                 linksEl.appendChild(shareBtn);
 
                 right.appendChild(catEl);
@@ -5166,6 +5184,26 @@
             actions.className = 'gallery-card-actions';
             actions.style.setProperty('--card-cat-color', catColor || '#7c6fcd');
 
+            // Helper: touch flash to catColor then restore animation
+            function attachTouchFlash(btn) {
+                btn.addEventListener('touchstart', function(e) {
+                    e.stopPropagation();
+                    var svg = btn.querySelector('svg');
+                    // Pause animation and flash catColor
+                    btn.style.setProperty('animation', 'none', 'important');
+                    btn.style.setProperty('color', catColor || '#7c6fcd', 'important');
+                    btn.style.setProperty('border-color', catColor || '#7c6fcd', 'important');
+                    if (svg) svg.style.setProperty('stroke', catColor || '#7c6fcd', 'important');
+                    // Restore animation after flash
+                    setTimeout(function() {
+                        btn.style.removeProperty('animation');
+                        btn.style.removeProperty('color');
+                        btn.style.removeProperty('border-color');
+                        if (svg) svg.style.removeProperty('stroke');
+                    }, 400);
+                }, { passive: true });
+            }
+
             if (item.link && item.link[0] && item.link[1]) {
                 var linkBtn = document.createElement('a');
                 linkBtn.className = 'gallery-card-btn';
@@ -5174,6 +5212,7 @@
                 linkBtn.rel = 'noopener';
                 linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Article';
                 linkBtn.onclick = function(e) { e.stopPropagation(); };
+                attachTouchFlash(linkBtn);
                 actions.appendChild(linkBtn);
             }
 
@@ -5183,6 +5222,7 @@
             shareBtn.onclick = (function(iu, cat, el) {
                 return function(e) { e.stopPropagation(); shareGalleryCard(iu, cat, el); };
             })(item.image_url, item.category || '', cardEl);
+            attachTouchFlash(shareBtn);
             actions.appendChild(shareBtn);
 
             return actions;
