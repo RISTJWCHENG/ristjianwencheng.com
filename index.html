@@ -2609,16 +2609,22 @@
            ══════════════════════════════════════════════════ */
         @media (max-width: 768px) {
 
-            /* 1. Kill every infinite CSS animation */
-            .view-all-link, .view-all-link:hover,
-            .close-gallery-btn, .close-gallery-btn:hover,
-            .back-to-gallery-btn, .back-to-gallery-btn:hover,
+            /* 1. Kill every infinite CSS animation except nav buttons */
             .btn-rainbow-text,
             .video-share-btn, .video-share-btn svg,
             #videoModalShareBtn span, #videoModalShareBtn svg,
             #videoModalDownloadBtn, #videoModalDownloadBtn svg,
             #videoModalLinkBtn, #videoModalLinkBtn svg {
                 animation: none !important;
+            }
+
+            /* View All / Back / Close X — keep gradient-flow animation on mobile */
+            .view-all-link, .view-all-link:hover {
+                animation: gradient-flow 3s linear infinite !important;
+            }
+            .close-gallery-btn, .close-gallery-btn:hover,
+            .back-to-gallery-btn, .back-to-gallery-btn:hover {
+                animation: gradient-flow 3s linear infinite !important;
             }
 
             /* gallery-card-btn keeps color cycle animation on mobile */
@@ -2635,8 +2641,7 @@
                 animation-delay: 0s !important;
             }
 
-            /* 2. Replace animated gradient text with static purple color */
-            .view-all-link, .close-gallery-btn, .back-to-gallery-btn,
+            /* 2. Replace animated gradient text with static purple color (NOT nav buttons) */
             .btn-rainbow-text, .video-share-btn,
             #videoModalShareBtn span,
             #videoModalDownloadBtn, #videoModalLinkBtn {
