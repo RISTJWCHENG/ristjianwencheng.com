@@ -1921,12 +1921,27 @@
             color: var(--accent);
         }
 
+        /* Email address — grey */
+        .__cf_email__ {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        /* Download CV — teal↔deep-blue breathing */
+        @keyframes cvBreath {
+            0%   { color: #0ea5e9; }
+            50%  { color: #1e3a8a; }
+            100% { color: #0ea5e9; }
+        }
+
         .contact-link.download-cv {
-            color: #4a90e2;
+            animation: cvBreath 3s ease-in-out infinite;
+            background: none;
+            -webkit-text-fill-color: unset;
         }
 
         .contact-link.download-cv:hover {
-            color: #357abd;
+            animation: cvBreath 1.5s ease-in-out infinite;
             text-decoration: underline;
         }
 
