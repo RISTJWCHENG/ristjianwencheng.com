@@ -2994,29 +2994,7 @@
             if (!btn) return;
             var svg = btn.querySelector('svg');
 
-            // Get catColor — read directly from category label (most reliable)
-            var catColor = '#7c6fcd';
-            var card = btn.closest('.article-card') || btn.closest('.featured-article-card') || btn.closest('.video-card-featured');
-            if (card) {
-                var catLabel = card.querySelector('.article-card-category, .featured-article-category, .video-category');
-                if (catLabel) {
-                    var inlineColor = catLabel.getAttribute('style') || '';
-                    var cm = inlineColor.match(/color:\s*([^;!]+)/);
-                    if (cm) catColor = cm[1].trim();
-                }
-                if (catColor === '#7c6fcd') {
-                    var dc = card.getAttribute('data-category') || card.dataset.category;
-                    if (dc) {
-                        if (typeof getVideoCategoryColor === 'function') {
-                            var vc = getVideoCategoryColor(dc);
-                            if (vc && vc !== '#7c6fcd') catColor = vc;
-                        }
-                        if (catColor === '#7c6fcd' && typeof getCategoryColor === 'function') {
-                            catColor = getCategoryColor(dc) || catColor;
-                        }
-                    }
-                }
-            }
+            var catColor = _getCardCatColor(btn);
 
             btn.style.setProperty('transform', 'scale(0.88)', 'important');
             btn.style.setProperty('color', catColor, 'important');
@@ -3037,41 +3015,43 @@
             }, 120);
         }
 
+        // Shared helper: get category color from any card type
+        function _getCardCatColor(btn) {
+            var card = btn
+                ? (btn.closest('.article-card') || btn.closest('.featured-article-card') || btn.closest('.video-card-featured'))
+                : null;
+            if (!card) return '#7c6fcd';
+
+            // 1. Read directly from category label's style.color (most reliable)
+            var catLabel = card.querySelector('.article-card-category, .featured-article-category, .video-category');
+            if (catLabel && catLabel.style.color) return catLabel.style.color;
+
+            // 2. Read --cat-color from card inline style via dataset
+            var dc = card.dataset.category || card.getAttribute('data-category');
+            if (dc) {
+                if (typeof getVideoCategoryColor === 'function') {
+                    var vc = getVideoCategoryColor(dc);
+                    if (vc) return vc;
+                }
+                if (typeof getCategoryColor === 'function') {
+                    var ac = getCategoryColor(dc);
+                    if (ac) return ac;
+                }
+            }
+            return '#7c6fcd';
+        }
+
         // Show a floating toast centered on a card thumbnail
         function showCardToast(btn, message) {
-            var catColor = '#7c6fcd';
+            var catColor = _getCardCatColor(btn);
             var cx = window.innerWidth / 2;
             var cy = window.innerHeight / 2;
 
-            // Find card container
             var card = btn
                 ? (btn.closest('.article-card') || btn.closest('.featured-article-card') || btn.closest('.video-card-featured'))
                 : null;
 
             if (card) {
-                // ── Color: read directly from category label element ──
-                var catLabel = card.querySelector('.article-card-category, .featured-article-category, .video-category');
-                if (catLabel) {
-                    // inline style="color:..." is most reliable
-                    var inlineColor = catLabel.getAttribute('style') || '';
-                    var cm = inlineColor.match(/color:\s*([^;!]+)/);
-                    if (cm) catColor = cm[1].trim();
-                }
-                // Fallback: data-category via getCategoryColor or getVideoCategoryColor
-                if (catColor === '#7c6fcd') {
-                    var dc = card.getAttribute('data-category') || card.dataset.category;
-                    if (dc) {
-                        if (typeof getVideoCategoryColor === 'function') {
-                            var vc = getVideoCategoryColor(dc);
-                            if (vc && vc !== '#7c6fcd') catColor = vc;
-                        }
-                        if (catColor === '#7c6fcd' && typeof getCategoryColor === 'function') {
-                            catColor = getCategoryColor(dc) || catColor;
-                        }
-                    }
-                }
-
-                // ── Position: center of thumbnail image ──
                 var thumb = card.querySelector('.article-card-image, .featured-article-image, .video-thumbnail-wrapper');
                 var target = thumb || card;
                 var r = target.getBoundingClientRect();
