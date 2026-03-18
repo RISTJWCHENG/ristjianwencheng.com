@@ -2633,6 +2633,16 @@
                 color: #7c6fcd !important;
             }
 
+            /* img card Article + Share buttons — same color as Share */
+            .img-modal-share-btn,
+            .img-modal-link-btn {
+                color: #7c6fcd !important;
+            }
+            .img-modal-share-btn svg,
+            .img-modal-link-btn svg {
+                stroke: #7c6fcd !important;
+            }
+
             /* 3. Fix SVG strokes to purple */
             .video-share-btn svg,
             #videoModalShareBtn svg,
@@ -4706,34 +4716,38 @@
 
                     if (!swiping && !swipeLocked) {
                         var absDx = Math.abs(dx), absDy = Math.abs(dy);
-                        // Need minimum movement to determine direction
                         if (absDx < 5 && absDy < 5) return;
 
                         if (absDy > absDx) {
-                            // Clearly vertical — let the wrap scroll naturally
                             swipeLocked = true;
                             return;
                         }
                         if (absDx > absDy) {
-                            // Clearly horizontal — start swipe, block vertical
                             swiping = true;
                             _navLocked = true;
                         }
                     }
 
                     if (swipeLocked) {
-                        // Vertical scroll: clamp so scroll stops at card bottom
-                        var maxScroll = wrap.scrollHeight - wrap.clientHeight;
-                        if (maxScroll > 0 && wrap.scrollTop >= maxScroll) {
-                            // Already at bottom — prevent further upward scroll
-                            if (dy < 0) e.preventDefault();
+                        // Clamp scroll to card content height — stop exactly at Article/Share buttons
+                        var modal2 = document.getElementById('imageModal');
+                        var track2 = modal2 && modal2.querySelector('.img-card-track');
+                        var currentCard = track2 && track2.children[1];
+                        if (currentCard) {
+                            var cardH = currentCard.scrollHeight;
+                            var vh = window.innerHeight;
+                            // Max scroll = how much card overflows the viewport
+                            var maxScroll = Math.max(0, cardH - vh);
+                            if (dy < 0 && wrap.scrollTop >= maxScroll) {
+                                e.preventDefault(); // block scrolling past card bottom
+                                wrap.scrollTop = maxScroll; // clamp position
+                            }
                         }
                         return;
                     }
 
                     if (!swiping) return;
 
-                    // Horizontal swipe confirmed — prevent vertical scroll
                     e.preventDefault();
 
                     var modal = document.getElementById('imageModal');
