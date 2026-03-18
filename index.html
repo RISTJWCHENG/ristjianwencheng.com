@@ -3005,9 +3005,15 @@
                     if (cm) catColor = cm[1].trim();
                 }
                 if (catColor === '#7c6fcd') {
-                    var dc = card.getAttribute('data-category');
-                    if (dc && typeof getCategoryColor === 'function') {
-                        catColor = getCategoryColor(dc) || catColor;
+                    var dc = card.getAttribute('data-category') || card.dataset.category;
+                    if (dc) {
+                        if (typeof getVideoCategoryColor === 'function') {
+                            var vc = getVideoCategoryColor(dc);
+                            if (vc && vc !== '#7c6fcd') catColor = vc;
+                        }
+                        if (catColor === '#7c6fcd' && typeof getCategoryColor === 'function') {
+                            catColor = getCategoryColor(dc) || catColor;
+                        }
                     }
                 }
             }
@@ -3051,11 +3057,17 @@
                     var cm = inlineColor.match(/color:\s*([^;!]+)/);
                     if (cm) catColor = cm[1].trim();
                 }
-                // Fallback: data-category via getCategoryColor
+                // Fallback: data-category via getCategoryColor or getVideoCategoryColor
                 if (catColor === '#7c6fcd') {
-                    var dc = card.getAttribute('data-category');
-                    if (dc && typeof getCategoryColor === 'function') {
-                        catColor = getCategoryColor(dc) || catColor;
+                    var dc = card.getAttribute('data-category') || card.dataset.category;
+                    if (dc) {
+                        if (typeof getVideoCategoryColor === 'function') {
+                            var vc = getVideoCategoryColor(dc);
+                            if (vc && vc !== '#7c6fcd') catColor = vc;
+                        }
+                        if (catColor === '#7c6fcd' && typeof getCategoryColor === 'function') {
+                            catColor = getCategoryColor(dc) || catColor;
+                        }
                     }
                 }
 
@@ -5675,6 +5687,7 @@
             var colors = {
                 'Ideas':   'rgb(155,231,113)',
                 'Moment':  '#7c6fcd',
+                'Moments': '#7c6fcd',
                 'Work':    'rgb(255,153,129)'
             };
             return colors[category] || '#7c6fcd';
