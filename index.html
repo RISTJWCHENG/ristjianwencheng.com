@@ -2628,6 +2628,13 @@
                 animation-delay: 0s !important;
             }
 
+            /* On mobile: always show buttons (no hover) and enable touch */
+            .gallery-card-actions {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+                pointer-events: auto !important;
+            }
+
             /* img card Article + Share buttons — keep color cycle animation on mobile */
             .img-modal-share-btn,
             .img-modal-link-btn {
