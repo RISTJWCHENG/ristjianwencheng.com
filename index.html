@@ -3011,15 +3011,35 @@
 
         // Show a floating toast centered on a card thumbnail
         function showCardToast(btn, message) {
-            // Find card container (article-card or video-card-featured)
+            // Find card container
             var card = btn ? (btn.closest('.article-card') || btn.closest('.video-card-featured')) : null;
-            // Get category color from card's --cat-color CSS variable
+
+            // Get category color — try multiple methods for reliability
             var catColor = '#7c6fcd';
             if (card) {
-                var cc = card.style.getPropertyValue('--cat-color').trim();
-                if (cc) catColor = cc;
+                // Method 1: data-category + getCategoryColor()
+                var dataCat = card.getAttribute('data-category');
+                if (dataCat && typeof getCategoryColor === 'function') {
+                    var cc1 = getCategoryColor(dataCat);
+                    if (cc1) { catColor = cc1; }
+                }
+                // Method 2: inline style --cat-color (fallback)
+                if (catColor === '#7c6fcd') {
+                    var styleAttr = card.getAttribute('style') || '';
+                    var match = styleAttr.match(/--cat-color:\s*([^;]+)/);
+                    if (match) catColor = match[1].trim();
+                }
+                // Method 3: color of category label element (fallback)
+                if (catColor === '#7c6fcd') {
+                    var catEl = card.querySelector('.article-card-category, .video-category');
+                    if (catEl) {
+                        var c = catEl.style.color || getComputedStyle(catEl).color;
+                        if (c) catColor = c;
+                    }
+                }
             }
-            // Find the thumbnail image inside the card for centering
+
+            // Find the thumbnail for centering
             var thumb = card ? (card.querySelector('.article-card-image') || card.querySelector('.video-thumbnail-wrapper')) : null;
             var rect = thumb ? thumb.getBoundingClientRect() : (card ? card.getBoundingClientRect() : null);
             var cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
