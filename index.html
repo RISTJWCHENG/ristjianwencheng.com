@@ -2771,10 +2771,79 @@
                 }
             }
 
-            // Wire share button to current video URL
+            // Wire share button to current video URL + press effect with correct catColor
             const shareBtn = document.getElementById('videoModalShareBtn');
             if (shareBtn) {
-                shareBtn.onclick = function() { shareVideo(videoUrl, this); };
+                const modalCatColor = getVideoCategoryColor(category || 'Work');
+
+                // Remove old listeners by cloning
+                const freshShare = shareBtn.cloneNode(true);
+                shareBtn.parentNode.replaceChild(freshShare, shareBtn);
+
+                function doModalBtnPress(btn) {
+                    var svg = btn.querySelector('svg');
+                    var span = btn.querySelector('span');
+                    btn.style.setProperty('transform', 'scale(0.88)', 'important');
+                    btn.style.setProperty('color', modalCatColor, 'important');
+                    btn.style.setProperty('-webkit-text-fill-color', modalCatColor, 'important');
+                    btn.style.setProperty('background', 'none', 'important');
+                    if (svg) svg.style.setProperty('stroke', modalCatColor, 'important');
+                    if (span) {
+                        span.style.setProperty('color', modalCatColor, 'important');
+                        span.style.setProperty('-webkit-text-fill-color', modalCatColor, 'important');
+                    }
+                    setTimeout(function() {
+                        btn.style.setProperty('transform', 'scale(1.08)', 'important');
+                        setTimeout(function() { btn.style.setProperty('transform', 'scale(1)', 'important'); }, 100);
+                        setTimeout(function() {
+                            btn.style.removeProperty('transform');
+                            btn.style.removeProperty('color');
+                            btn.style.removeProperty('-webkit-text-fill-color');
+                            btn.style.removeProperty('background');
+                            if (svg) svg.style.removeProperty('stroke');
+                            if (span) {
+                                span.style.removeProperty('color');
+                                span.style.removeProperty('-webkit-text-fill-color');
+                            }
+                        }, 320);
+                    }, 120);
+                }
+
+                // Desktop: mousedown press + click to share
+                freshShare.addEventListener('mousedown', function() { doModalBtnPress(freshShare); });
+                freshShare.onclick = function(e) {
+                    if (e.pointerType === 'touch') return;
+                    // Show toast centered on video modal
+                    var modal = document.getElementById('videoModal');
+                    var vid = modal ? modal.querySelector('video') : null;
+                    var rect = vid ? vid.getBoundingClientRect() : (modal ? modal.getBoundingClientRect() : null);
+                    var cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+                    var cy = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+                    _showToastAt(cx, cy, modalCatColor, '🔗 Video link copied!');
+                    // Copy URL
+                    var pageBase = window.location.href.split('?')[0];
+                    var shareUrl = pageBase + '?play=' + btoa(encodeURIComponent(videoUrl));
+                    navigator.clipboard.writeText(shareUrl).catch(function() { fallbackCopy(shareUrl, function(){}); });
+                };
+
+                // Mobile: touchstart press + touchend to share
+                freshShare.addEventListener('touchstart', function() {
+                    doModalBtnPress(freshShare);
+                }, { passive: true });
+                freshShare.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    setTimeout(function() {
+                        var modal = document.getElementById('videoModal');
+                        var vid = modal ? modal.querySelector('video') : null;
+                        var rect = vid ? vid.getBoundingClientRect() : (modal ? modal.getBoundingClientRect() : null);
+                        var cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+                        var cy = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+                        _showToastAt(cx, cy, modalCatColor, '🔗 Video link copied!');
+                        var pageBase = window.location.href.split('?')[0];
+                        var shareUrl = pageBase + '?play=' + btoa(encodeURIComponent(videoUrl));
+                        navigator.clipboard.writeText(shareUrl).catch(function() { fallbackCopy(shareUrl, function(){}); });
+                    }, 80);
+                }, { passive: false });
             }
 
             // Render download button in modal
@@ -2821,51 +2890,6 @@
 
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
-
-            // Mobile: flash buttons with category color on touch, then restore
-            (function() {
-                if (window.innerWidth > 768) return;
-                var descArea = document.getElementById('videoModalDescArea');
-                var catColor = descArea
-                    ? (descArea.style.getPropertyValue('--modal-cat-color') || '#7c6fcd')
-                    : '#7c6fcd';
-
-                var btns = [
-                    document.getElementById('videoModalDownloadBtn'),
-                    document.getElementById('videoModalLinkBtn'),
-                    document.getElementById('videoModalShareBtn')
-                ].filter(Boolean);
-
-                btns.forEach(function(btn) {
-                    // Remove previous listener by cloning
-                    var fresh = btn.cloneNode(true);
-                    btn.parentNode.replaceChild(fresh, btn);
-                    fresh.addEventListener('touchstart', function() {
-                        fresh.style.setProperty('color', catColor, 'important');
-                        fresh.style.setProperty('-webkit-text-fill-color', catColor, 'important');
-                        var svg = fresh.querySelector('svg');
-                        var span = fresh.querySelector('span');
-                        if (svg) svg.style.setProperty('stroke', catColor, 'important');
-                        if (span) {
-                            span.style.setProperty('-webkit-text-fill-color', catColor, 'important');
-                            span.style.setProperty('color', catColor, 'important');
-                        }
-                        setTimeout(function() {
-                            fresh.style.removeProperty('color');
-                            fresh.style.removeProperty('-webkit-text-fill-color');
-                            if (svg) svg.style.removeProperty('stroke');
-                            if (span) {
-                                span.style.removeProperty('-webkit-text-fill-color');
-                                span.style.removeProperty('color');
-                            }
-                        }, 400);
-                    }, { passive: true });
-                });
-
-                // Re-wire share button after clone
-                var shareClone = document.getElementById('videoModalShareBtn');
-                if (shareClone) shareClone.onclick = function() { shareVideo(videoUrl, this); };
-            })();
         }
 
         function closeVideoModal() {
@@ -3041,30 +3065,14 @@
             return '#7c6fcd';
         }
 
-        // Show a floating toast centered on a card thumbnail
-        function showCardToast(btn, message) {
-            var catColor = _getCardCatColor(btn);
-            var cx = window.innerWidth / 2;
-            var cy = window.innerHeight / 2;
-
-            var card = btn
-                ? (btn.closest('.article-card') || btn.closest('.featured-article-card') || btn.closest('.video-card-featured'))
-                : null;
-
-            if (card) {
-                var thumb = card.querySelector('.article-card-image, .featured-article-image, .video-thumbnail-wrapper');
-                var target = thumb || card;
-                var r = target.getBoundingClientRect();
-                cx = r.left + r.width / 2;
-                cy = r.top  + r.height / 2;
-            }
-
+        // Low-level toast: show at exact (cx, cy) with given color
+        function _showToastAt(cx, cy, catColor, message) {
             var t = document.createElement('div');
             t.textContent = message;
             t.style.cssText = [
                 'position:fixed',
-                'left:'      + cx + 'px',
-                'top:'       + cy + 'px',
+                'left:' + cx + 'px',
+                'top:' + cy + 'px',
                 'transform:translate(-50%,-50%) scale(0.85)',
                 'background:' + catColor,
                 'color:#fff',
@@ -3091,6 +3099,27 @@
                 t.style.transform = 'translate(-50%,-50%) scale(0.85)';
                 setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 280);
             }, 2000);
+        }
+
+        // Show a floating toast centered on a card thumbnail
+        function showCardToast(btn, message) {
+            var catColor = _getCardCatColor(btn);
+            var cx = window.innerWidth / 2;
+            var cy = window.innerHeight / 2;
+
+            var card = btn
+                ? (btn.closest('.article-card') || btn.closest('.featured-article-card') || btn.closest('.video-card-featured'))
+                : null;
+
+            if (card) {
+                var thumb = card.querySelector('.article-card-image, .featured-article-image, .video-thumbnail-wrapper');
+                var target = thumb || card;
+                var r = target.getBoundingClientRect();
+                cx = r.left + r.width / 2;
+                cy = r.top  + r.height / 2;
+            }
+
+            _showToastAt(cx, cy, catColor, message);
         }
 
         function shareVideo(videoUrl, btn) {
