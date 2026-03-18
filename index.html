@@ -2996,9 +2996,9 @@
 
             // Get catColor — read directly from category label (most reliable)
             var catColor = '#7c6fcd';
-            var card = btn.closest('.article-card') || btn.closest('.video-card-featured');
+            var card = btn.closest('.article-card') || btn.closest('.featured-article-card') || btn.closest('.video-card-featured');
             if (card) {
-                var catLabel = card.querySelector('.article-card-category, .video-category');
+                var catLabel = card.querySelector('.article-card-category, .featured-article-category, .video-category');
                 if (catLabel) {
                     var inlineColor = catLabel.getAttribute('style') || '';
                     var cm = inlineColor.match(/color:\s*([^;!]+)/);
@@ -3039,12 +3039,12 @@
 
             // Find card container
             var card = btn
-                ? (btn.closest('.article-card') || btn.closest('.video-card-featured'))
+                ? (btn.closest('.article-card') || btn.closest('.featured-article-card') || btn.closest('.video-card-featured'))
                 : null;
 
             if (card) {
                 // ── Color: read directly from category label element ──
-                var catLabel = card.querySelector('.article-card-category, .video-category');
+                var catLabel = card.querySelector('.article-card-category, .featured-article-category, .video-category');
                 if (catLabel) {
                     // inline style="color:..." is most reliable
                     var inlineColor = catLabel.getAttribute('style') || '';
@@ -3060,7 +3060,7 @@
                 }
 
                 // ── Position: center of thumbnail image ──
-                var thumb = card.querySelector('.article-card-image, .video-thumbnail-wrapper');
+                var thumb = card.querySelector('.article-card-image, .featured-article-image, .video-thumbnail-wrapper');
                 var target = thumb || card;
                 var r = target.getBoundingClientRect();
                 cx = r.left + r.width / 2;
