@@ -2968,9 +2968,12 @@
 
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
-        }
 
-        function closeVideoModal() {
+            // Build nav list only on fresh open (not during navigation)
+            if (window._videoNavIndex < 0) {
+                _buildVideoNavList(videoUrl, category);
+            }
+        }
             const modal = document.getElementById('videoPlayerModal');
             const player = document.getElementById('videoModalPlayer');
             player.pause();
@@ -2996,10 +2999,92 @@
                 return v.video_url !== currentVideoUrl &&
                     (v.category || 'Work').toLowerCase() !== (currentCategory || 'Work').toLowerCase();
             });
-            // Current video first, then same category, then others
             var current = all.filter(function(v) { return v.video_url === currentVideoUrl; });
             window._videoNavList  = current.concat(same).concat(other);
             window._videoNavIndex = 0;
+        }
+
+        // Lightweight modal update used when navigating (no modal reopen)
+        function _updateVideoModal(v) {
+            var player  = document.getElementById('videoModalPlayer');
+            var source  = document.getElementById('videoModalSource');
+            var titleEl = document.getElementById('videoModalTitle');
+            var catEl   = document.getElementById('videoModalCategory');
+            var descEl  = document.getElementById('videoModalDesc');
+            var moreBtn = document.getElementById('videoModalMoreBtn');
+            var timeEl  = document.getElementById('videoModalTime');
+            var watchEl = document.getElementById('videoModalWatchTime');
+            var descArea= document.getElementById('videoModalDescArea');
+
+            // Update video source
+            source.src = v.video_url;
+            player.load();
+            player.play().catch(function(){});
+
+            // Update title
+            if (titleEl) titleEl.textContent = v.title || '';
+
+            // Update category + color
+            var catColor = getVideoCategoryColor(v.category || 'Work');
+            if (catEl) { catEl.textContent = v.category || 'Work'; catEl.style.color = catColor; }
+            if (descArea) descArea.style.setProperty('--modal-cat-color', catColor);
+
+            // Update description
+            if (descEl) {
+                descEl.textContent = v.description || '';
+                descEl.classList.remove('expanded');
+            }
+            if (moreBtn) {
+                moreBtn.style.display = 'none';
+                moreBtn.textContent = 'more';
+                if (v.description && v.description.trim()) {
+                    setTimeout(function() {
+                        if (descEl.scrollHeight > descEl.clientHeight + 2) moreBtn.style.display = 'inline-block';
+                    }, 100);
+                }
+            }
+
+            // Update time
+            if (timeEl) timeEl.textContent = v.updated_time ? '📅 ' + v.updated_time : '';
+            if (watchEl) {
+                if (v.watchTime) { watchEl.textContent = '⏱️ ' + v.watchTime; watchEl.style.display = ''; }
+                else { watchEl.style.display = 'none'; }
+            }
+
+            // Show/hide desc area
+            var hasDesc = v.description && v.description.trim();
+            var hasExtra = (v.download && v.download[1]) || (v.link && v.link[1]) || v.updated_time;
+            if (descArea) descArea.style.display = (hasDesc || hasExtra) ? '' : 'none';
+
+            // Update download/link buttons
+            var dlBtn = document.getElementById('videoModalDownloadBtn');
+            if (dlBtn) {
+                if (v.download && v.download[0] && v.download[1]) {
+                    dlBtn.href = v.download[1]; dlBtn.setAttribute('download', '');
+                    dlBtn.querySelector('.modal-btn-label').textContent = v.download[0];
+                    dlBtn.style.display = 'flex';
+                } else { dlBtn.style.display = 'none'; }
+            }
+            var lkBtn = document.getElementById('videoModalLinkBtn');
+            if (lkBtn) {
+                if (v.link && v.link[0] && v.link[1]) {
+                    lkBtn.href = v.link[1];
+                    lkBtn.querySelector('.modal-btn-label').textContent = v.link[0];
+                    lkBtn.style.display = 'flex';
+                } else { lkBtn.style.display = 'none'; }
+            }
+
+            // Re-wire share button
+            var shareBtn = document.getElementById('videoModalShareBtn');
+            if (shareBtn) {
+                shareBtn.onclick = function(e) {
+                    if (e.pointerType === 'touch') return;
+                    var rect = player.getBoundingClientRect();
+                    _showToastAt(rect.left + rect.width/2, rect.top + rect.height/2, catColor, '🔗 Video link copied!');
+                    var shareUrl = window.location.href.split('?')[0] + '?play=' + btoa(encodeURIComponent(v.video_url));
+                    navigator.clipboard.writeText(shareUrl).catch(function() { fallbackCopy(shareUrl, function(){}); });
+                };
+            }
         }
 
         function navigateVideo(dir) {
@@ -3009,26 +3094,12 @@
             var v = list[window._videoNavIndex];
             if (!v) return;
             var player = document.getElementById('videoModalPlayer');
-            var source = document.getElementById('videoModalSource');
-            // Fade out
+            // Fade out → swap → fade in
             player.style.transition = 'opacity 0.18s';
             player.style.opacity = '0';
             setTimeout(function() {
-                source.src = v.video_url;
-                player.load();
-                player.play().catch(function(){});
+                _updateVideoModal(v);
                 player.style.opacity = '1';
-                // Update all info in modal
-                openVideoModal(
-                    v.video_url,
-                    v.title || '',
-                    v.description || '',
-                    v.updated_time || '',
-                    v.download || null,
-                    v.link || null,
-                    v.category || 'Work',
-                    v.watchTime || ''
-                );
             }, 180);
         }
 
@@ -5191,8 +5262,15 @@
         }
 
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowRight') { navigateImage(1); return; }
-            if (e.key === 'ArrowLeft')  { navigateImage(-1); return; }
+            var videoModalActive = document.getElementById('videoPlayerModal').classList.contains('active');
+            if (e.key === 'ArrowRight') {
+                if (videoModalActive) { navigateVideo(1); return; }
+                navigateImage(1); return;
+            }
+            if (e.key === 'ArrowLeft') {
+                if (videoModalActive) { navigateVideo(-1); return; }
+                navigateImage(-1); return;
+            }
             if (e.key === 'Escape') {
                 closeImageModal();
                 closeImageFullscreen();
