@@ -2009,6 +2009,44 @@
         #heroLogoVideo::-webkit-media-controls-overlay-cast-button { display: none !important; }
         #heroLogoVideo::-webkit-media-controls-download-button { display: none !important; }
 
+        /* ── Video modal prev/next nav buttons ── */
+        .video-nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.22);
+            color: #fff;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3100;
+            transition: background 0.2s, transform 0.2s;
+            padding: 0;
+        }
+        .video-nav-btn:hover {
+            background: rgba(255,255,255,0.28);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .video-nav-prev { left: 1.2rem; }
+        .video-nav-next { right: 1.2rem; }
+        .video-modal.active .video-nav-btn { display: flex; }
+        @media (max-width: 768px) {
+            .video-nav-btn {
+                width: 36px;
+                height: 36px;
+                top: auto;
+                bottom: 5rem;
+                transform: none;
+            }
+            .video-nav-btn:hover { transform: scale(1.1); }
+            .video-nav-prev { left: 0.6rem; }
+            .video-nav-next { right: 0.6rem; }
+        }
 
         .video-modal {
             display: none;
@@ -2938,9 +2976,60 @@
             player.pause();
             player.currentTime = 0;
             modal.classList.remove('active');
-            // Only restore scroll if no full-screen page is still open
             const anyFullPage = document.querySelector('.full-gallery-page.active');
             document.body.style.overflow = anyFullPage ? 'hidden' : 'auto';
+            window._videoNavIndex = -1;
+        }
+
+        // ── Video navigation state ──
+        window._videoNavList  = []; // ordered list: same-category first, then others
+        window._videoNavIndex = -1; // current position in _videoNavList
+
+        function _buildVideoNavList(currentVideoUrl, currentCategory) {
+            var all = window._VIDEOS_CACHE || [];
+            if (!all.length) return;
+            var same  = all.filter(function(v) {
+                return v.video_url !== currentVideoUrl &&
+                    (v.category || 'Work').toLowerCase() === (currentCategory || 'Work').toLowerCase();
+            });
+            var other = all.filter(function(v) {
+                return v.video_url !== currentVideoUrl &&
+                    (v.category || 'Work').toLowerCase() !== (currentCategory || 'Work').toLowerCase();
+            });
+            // Current video first, then same category, then others
+            var current = all.filter(function(v) { return v.video_url === currentVideoUrl; });
+            window._videoNavList  = current.concat(same).concat(other);
+            window._videoNavIndex = 0;
+        }
+
+        function navigateVideo(dir) {
+            var list = window._videoNavList;
+            if (!list || list.length < 2) return;
+            window._videoNavIndex = (window._videoNavIndex + dir + list.length) % list.length;
+            var v = list[window._videoNavIndex];
+            if (!v) return;
+            var player = document.getElementById('videoModalPlayer');
+            var source = document.getElementById('videoModalSource');
+            // Fade out
+            player.style.transition = 'opacity 0.18s';
+            player.style.opacity = '0';
+            setTimeout(function() {
+                source.src = v.video_url;
+                player.load();
+                player.play().catch(function(){});
+                player.style.opacity = '1';
+                // Update all info in modal
+                openVideoModal(
+                    v.video_url,
+                    v.title || '',
+                    v.description || '',
+                    v.updated_time || '',
+                    v.download || null,
+                    v.link || null,
+                    v.category || 'Work',
+                    v.watchTime || ''
+                );
+            }, 180);
         }
 
         function handleVideoModalBgClick(e) {
@@ -3694,6 +3783,9 @@
 
     <!-- Video Player Modal -->
     <div class="video-modal" id="videoPlayerModal" onclick="handleVideoModalBgClick(event)">
+        <button class="video-nav-btn video-nav-prev" id="videoNavPrev" onclick="event.stopPropagation();navigateVideo(-1)" title="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
         <div class="video-modal-box" id="videoModalBox" style="display:flex;flex-direction:column;">
             <div class="video-modal-topbar">
                 <span class="video-modal-title" id="videoModalTitle"></span>
@@ -3749,6 +3841,9 @@
                 </div>
             </div>
         </div>
+        <button class="video-nav-btn video-nav-next" id="videoNavNext" onclick="event.stopPropagation();navigateVideo(1)" title="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
     </div>
 
     <!-- Share toast notification -->
