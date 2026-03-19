@@ -97,7 +97,7 @@
         }
 
         .nav-links a:hover {
-            color: var(--accent);
+            color: rgb(243, 187, 91);
         }
 
         /* When nav is over a dark background */
@@ -1927,10 +1927,11 @@
             text-decoration: none;
         }
 
-        /* Download CV — teal #0ea5e9 ↔ blue rgb(21,59,254) breathing */
+        /* Download CV — teal → blue rgb(21,59,254) → grey breathing */
         @keyframes cvBreath {
             0%   { color: #0ea5e9; }
-            50%  { color: rgb(21, 59, 254); }
+            40%  { color: rgb(21, 59, 254); }
+            70%  { color: #94a3b8; }
             100% { color: #0ea5e9; }
         }
 
