@@ -3151,6 +3151,7 @@
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
             const category = card ? card.dataset.category : 'Work';
             const watchTime = card && card.dataset.watchTime ? card.dataset.watchTime : null;
+            window._videoNavIndex = -1; // force nav list rebuild for this new video
             openVideoModal(source.src, title, desc, time, download, link, category, watchTime);
         }
 
@@ -3166,6 +3167,7 @@
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
             const category = card ? card.dataset.category : 'Work';
             const watchTime = card && card.dataset.watchTime ? card.dataset.watchTime : null;
+            window._videoNavIndex = -1; // force nav list rebuild for this new video
             openVideoModal(source.src, title, desc, time, download, link, category, watchTime);
         }
         function filterCategory(category) {
@@ -6151,6 +6153,7 @@
                 const sec = document.getElementById('video');
                 if (sec) sec.scrollIntoView({ behavior: 'smooth' });
                 setTimeout(function() {
+                    window._videoNavIndex = -1;
                     openVideoModal(videoUrl, title, desc, time, download, link, category, watchTime);
                 }, 600);
             } catch(e) {}
