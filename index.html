@@ -249,6 +249,12 @@
             0%   { background-position: 0% center; }
             100% { background-position: 200% center; }
         }
+        @keyframes shareBtn-breath {
+            0%   { color: #38bdf8; -webkit-text-fill-color: #38bdf8; }
+            40%  { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+            70%  { color: #a78bfa; -webkit-text-fill-color: #a78bfa; }
+            100% { color: #38bdf8; -webkit-text-fill-color: #38bdf8; }
+        }
         .btn-rainbow-text {
             background: linear-gradient(90deg,
                 #a78bfa, #38bdf8, #86efac, #94a3b8, #4ade80, #38bdf8, #a78bfa);
@@ -1420,22 +1426,14 @@
             border-radius: 6px;
             font-family: inherit;
             white-space: nowrap;
-            /* rainbow text */
-            background: linear-gradient(90deg,
-                #a78bfa, #38bdf8, #86efac, #94a3b8, #4ade80, #38bdf8, #a78bfa);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: btn-rainbow 3s linear infinite;
-            transition: background-size 0.3s, filter 0.2s, transform 0.12s ease;
+            /* breathing color animation */
+            animation: shareBtn-breath 4s ease-in-out infinite;
+            transition: transform 0.12s ease;
         }
         .video-share-btn:hover {
             animation: none;
-            background: var(--cat-color, #7c6fcd);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--cat-color, #7c6fcd);
+            -webkit-text-fill-color: var(--cat-color, #7c6fcd);
             filter: brightness(1.1);
         }
         .video-share-btn:hover svg {
@@ -1447,19 +1445,14 @@
         }
         .video-share-btn svg {
             flex-shrink: 0;
-            /* SVG doesn't inherit background-clip text, give it a fixed accent color */
-            -webkit-text-fill-color: initial;
-            stroke: #a78bfa;
-            animation: svgHue 3s linear infinite;
+            stroke: #38bdf8;
+            animation: svgBreath 4s ease-in-out infinite;
         }
-        @keyframes svgHue {
-            0%   { stroke: #a78bfa; }
-            16%  { stroke: #38bdf8; }
-            33%  { stroke: #86efac; }
-            50%  { stroke: #94a3b8; }
-            66%  { stroke: #4ade80; }
-            83%  { stroke: #38bdf8; }
-            100% { stroke: #a78bfa; }
+        @keyframes svgBreath {
+            0%   { stroke: #38bdf8; }
+            40%  { stroke: #94a3b8; }
+            70%  { stroke: #a78bfa; }
+            100% { stroke: #38bdf8; }
         }
         /* ── Video Pagination ─────────────────────────────────── */
         #videoPagination, #articlePagination {
@@ -2665,9 +2658,8 @@
            ══════════════════════════════════════════════════ */
         @media (max-width: 768px) {
 
-            /* 1. Kill every infinite CSS animation except nav buttons */
+            /* 1. Kill every infinite CSS animation except nav/share buttons */
             .btn-rainbow-text,
-            .video-share-btn:not(.imdb-link-btn), .video-share-btn:not(.imdb-link-btn) svg,
             #videoModalShareBtn span, #videoModalShareBtn svg,
             #videoModalDownloadBtn, #videoModalDownloadBtn svg,
             #videoModalLinkBtn, #videoModalLinkBtn svg {
@@ -2709,8 +2701,8 @@
                 animation-delay: 0s !important;
             }
 
-            /* 2. Replace animated gradient text with static purple color (NOT nav/imdb buttons) */
-            .btn-rainbow-text, .video-share-btn:not(.imdb-link-btn),
+            /* 2. Replace animated gradient text with static purple color (NOT nav/imdb/share buttons) */
+            .btn-rainbow-text,
             #videoModalShareBtn span,
             #videoModalDownloadBtn, #videoModalLinkBtn {
                 background: none !important;
@@ -2718,8 +2710,17 @@
                 color: #7c6fcd !important;
             }
 
-            /* 3. Fix SVG strokes to purple (not IMDb buttons) */
-            .video-share-btn:not(.imdb-link-btn) svg,
+            /* video-share-btn keeps breathing animation on mobile */
+            .video-share-btn:not(.imdb-link-btn) {
+                animation: shareBtn-breath 4s ease-in-out infinite !important;
+                background: none !important;
+                -webkit-text-fill-color: unset !important;
+            }
+            .video-share-btn:not(.imdb-link-btn) svg {
+                animation: svgBreath 4s ease-in-out infinite !important;
+            }
+
+            /* 3. Fix SVG strokes to purple (not IMDb/share buttons) */
             #videoModalShareBtn svg,
             #videoModalDownloadBtn svg,
             #videoModalLinkBtn svg {
