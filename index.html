@@ -2993,16 +2993,38 @@
         function _buildVideoNavList(currentVideoUrl, currentCategory) {
             var all = window._VIDEOS_CACHE || [];
             if (!all.length) return;
-            var same  = all.filter(function(v) {
-                return v.video_url !== currentVideoUrl &&
+
+            // Normalize URL for comparison (strip protocol+host if relative in cache)
+            function normalizeUrl(url) {
+                if (!url) return '';
+                // If url is relative, resolve against location; then compare pathnames
+                try {
+                    var a = document.createElement('a');
+                    a.href = url;
+                    return a.href; // always absolute
+                } catch(e) { return url; }
+            }
+            var normCurrent = normalizeUrl(currentVideoUrl);
+
+            // Find current index in all
+            var currentIdx = -1;
+            for (var i = 0; i < all.length; i++) {
+                if (normalizeUrl(all[i].video_url) === normCurrent) { currentIdx = i; break; }
+            }
+            if (currentIdx < 0) currentIdx = 0;
+
+            // Build ordered list: same-category videos first, then others
+            // Preserve relative order within each group
+            var same  = all.filter(function(v, i) {
+                return i !== currentIdx &&
                     (v.category || 'Work').toLowerCase() === (currentCategory || 'Work').toLowerCase();
             });
-            var other = all.filter(function(v) {
-                return v.video_url !== currentVideoUrl &&
+            var other = all.filter(function(v, i) {
+                return i !== currentIdx &&
                     (v.category || 'Work').toLowerCase() !== (currentCategory || 'Work').toLowerCase();
             });
-            var current = all.filter(function(v) { return v.video_url === currentVideoUrl; });
-            window._videoNavList  = current.concat(same).concat(other);
+
+            window._videoNavList  = [all[currentIdx]].concat(same).concat(other);
             window._videoNavIndex = 0;
         }
 
@@ -3151,8 +3173,10 @@
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
             const category = card ? card.dataset.category : 'Work';
             const watchTime = card && card.dataset.watchTime ? card.dataset.watchTime : null;
-            window._videoNavIndex = -1; // force nav list rebuild for this new video
-            openVideoModal(source.src, title, desc, time, download, link, category, watchTime);
+            // Use raw src attribute (not source.src which browser converts to absolute URL)
+            const videoUrl = source.getAttribute('src') || source.src;
+            window._videoNavIndex = -1;
+            openVideoModal(videoUrl, title, desc, time, download, link, category, watchTime);
         }
 
         function playVideoWithThumb(overlay) {
@@ -3167,8 +3191,10 @@
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
             const category = card ? card.dataset.category : 'Work';
             const watchTime = card && card.dataset.watchTime ? card.dataset.watchTime : null;
-            window._videoNavIndex = -1; // force nav list rebuild for this new video
-            openVideoModal(source.src, title, desc, time, download, link, category, watchTime);
+            // Use raw src attribute (not source.src which browser converts to absolute URL)
+            const videoUrl = source.getAttribute('src') || source.src;
+            window._videoNavIndex = -1;
+            openVideoModal(videoUrl, title, desc, time, download, link, category, watchTime);
         }
         function filterCategory(category) {
             document.querySelectorAll('.category-tag').forEach(tag => {
