@@ -2987,45 +2987,33 @@
         }
 
         // ── Video navigation state ──
-        window._videoNavList  = []; // ordered list: same-category first, then others
-        window._videoNavIndex = -1; // current position in _videoNavList
+        window._videoNavList  = [];
+        window._videoNavIndex = -1;
 
         function _buildVideoNavList(currentVideoUrl, currentCategory) {
             var all = window._VIDEOS_CACHE || [];
             if (!all.length) return;
 
-            // Normalize URL for comparison (strip protocol+host if relative in cache)
-            function normalizeUrl(url) {
-                if (!url) return '';
-                // If url is relative, resolve against location; then compare pathnames
-                try {
-                    var a = document.createElement('a');
-                    a.href = url;
-                    return a.href; // always absolute
-                } catch(e) { return url; }
-            }
-            var normCurrent = normalizeUrl(currentVideoUrl);
+            // Use filename only for URL comparison (avoids absolute vs relative issues)
+            function fname(url) { return (url || '').split('?')[0].split('/').pop(); }
+            var curName = fname(currentVideoUrl);
 
-            // Find current index in all
-            var currentIdx = -1;
-            for (var i = 0; i < all.length; i++) {
-                if (normalizeUrl(all[i].video_url) === normCurrent) { currentIdx = i; break; }
-            }
-            if (currentIdx < 0) currentIdx = 0;
-
-            // Build ordered list: same-category videos first, then others
-            // Preserve relative order within each group
-            var same  = all.filter(function(v, i) {
-                return i !== currentIdx &&
-                    (v.category || 'Work').toLowerCase() === (currentCategory || 'Work').toLowerCase();
+            // Same category first (preserving JSON order), then others
+            var same  = all.filter(function(v) {
+                return (v.category || 'Work').toLowerCase() === (currentCategory || 'Work').toLowerCase();
             });
-            var other = all.filter(function(v, i) {
-                return i !== currentIdx &&
-                    (v.category || 'Work').toLowerCase() !== (currentCategory || 'Work').toLowerCase();
+            var other = all.filter(function(v) {
+                return (v.category || 'Work').toLowerCase() !== (currentCategory || 'Work').toLowerCase();
             });
+            var ordered = same.concat(other);
+            window._videoNavList = ordered;
 
-            window._videoNavList  = [all[currentIdx]].concat(same).concat(other);
-            window._videoNavIndex = 0;
+            // Point index at current video
+            var idx = 0;
+            for (var i = 0; i < ordered.length; i++) {
+                if (fname(ordered[i].video_url) === curName) { idx = i; break; }
+            }
+            window._videoNavIndex = idx;
         }
 
         // Lightweight modal update used when navigating (no modal reopen)
@@ -3114,17 +3102,17 @@
         function navigateVideo(dir) {
             var list = window._videoNavList;
             if (!list || list.length < 2) return;
-            window._videoNavIndex = (window._videoNavIndex + dir + list.length) % list.length;
-            var v = list[window._videoNavIndex];
+            var newIdx = (window._videoNavIndex + dir + list.length) % list.length;
+            window._videoNavIndex = newIdx;
+            var v = list[newIdx];
             if (!v) return;
             var player = document.getElementById('videoModalPlayer');
-            // Fade out → swap → fade in
-            player.style.transition = 'opacity 0.18s';
+            player.style.transition = 'opacity 0.15s';
             player.style.opacity = '0';
             setTimeout(function() {
                 _updateVideoModal(v);
                 player.style.opacity = '1';
-            }, 180);
+            }, 150);
         }
 
         function handleVideoModalBgClick(e) {
