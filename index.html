@@ -3888,7 +3888,7 @@
             </video>
             <div class="video-modal-desc-area" id="videoModalDescArea" style="display:none;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
-                    <span id="videoModalCategory" class="video-category">Work</span>
+                    <span id="videoModalCategory" class="video-category" onclick="goToVideoCategory(this.textContent)" style="cursor:pointer;" title="View all videos in this category">Work</span>
                     <div style="display:flex;align-items:center;gap:0.3rem;">
                         <a id="videoModalDownloadBtn" class="video-share-btn video-download-btn" href="#" style="display:none;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
@@ -5406,6 +5406,25 @@
             setTimeout(resumeHeroIfVisible, 100);
         }
 
+        // Click category label in video modal → close modal, open video page filtered to that category
+        function goToVideoCategory(category) {
+            closeVideoModal();
+            setTimeout(function() {
+                openVideoPage();
+                setTimeout(function() {
+                    // Apply category filter
+                    var cat = (category || 'all').trim();
+                    _videoCategoryFilter = cat;
+                    _videoSearchQuery = '';
+                    // Update active tag UI
+                    document.querySelectorAll('#video-full-page .category-tag').forEach(function(tag) {
+                        tag.classList.toggle('active', tag.dataset.category === cat);
+                    });
+                    _applyVideoFilters();
+                }, 80);
+            }, 120);
+        }
+
         var _videoCategoryFilter = 'all';
         var _videoSearchQuery = '';
 
@@ -5972,7 +5991,7 @@
                 </div>
                 <div class="video-card-info">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
-                        <div class="video-category" style="color:${catColor};">${video.category || 'Work'}</div>
+                        <div class="video-category" style="color:${catColor};cursor:pointer;" onclick="event.stopPropagation();goToVideoCategory('${(video.category||'Work').replace(/'/g,"\\'")}')" title="View all ${video.category||'Work'} videos">${video.category || 'Work'}</div>
                         <div style="display:flex;align-items:center;gap:0.3rem;">
                             ${video.download && video.download[0] && video.download[1] ? `
                             <a class="video-share-btn video-download-btn" href="${video.download[1]}" download title="Download ${video.download[0]}">
