@@ -89,47 +89,41 @@ em {
   margin: 48px 0 32px 0;
   color: #ffffff;
   letter-spacing: 1.1px;
-  text-shadow: 
-    0 0 6px rgba(255,255,255,0.4),
-    0 0 14px rgba(255,255,255,0.5),
-    0 0 28px rgba(255,255,255,0.3);
-  animation: poeticBreath 4.2s ease-in-out infinite;
+  animation: poeticBreath 3.8s ease-in-out infinite;
 }
 
 @keyframes poeticBreath {
   0%, 100% {
-    opacity: 0.70;
-    filter: blur(1.4px);
+    opacity: 0.72;
+    filter: blur(1.5px);
     text-shadow: 
-      0 0 8px rgba(255,255,255,0.3),
-      0 0 16px rgba(255,255,255,0.4),
-      0 0 32px rgba(255,255,255,0.25);
+      0 0 10px rgba(255,255,255,0.35),
+      0 0 20px rgba(255,255,255,0.45),
+      0 0 35px rgba(255,255,255,0.3);
   }
-  40% {
+  30% {
     opacity: 1.0;
-    filter: blur(0.2px);
+    filter: blur(0.3px);
     text-shadow: 
-      0 0 12px rgba(255,255,255,0.7),
-      0 0 28px rgba(255,255,255,1.0),
-      0 0 50px rgba(255,255,255,0.8),
-      0 0 80px rgba(255,255,255,0.4);
+      0 0 8px rgba(255,255,255,0.6),
+      0 0 16px rgba(255,255,255,0.8),
+      0 0 30px rgba(255,255,255,0.5);
   }
-  60% {
+  45% {
     opacity: 1.0;
     filter: blur(0px);
     text-shadow: 
-      0 0 14px rgba(255,255,255,0.95),
-      0 0 32px rgba(255,255,255,1.0),
-      0 0 60px rgba(255,255,255,0.9),
-      0 0 100px rgba(255,255,255,0.5);
+      0 0 4px rgba(255,255,255,0.4),
+      0 0 8px  rgba(255,255,255,0.35),
+      0 0 12px rgba(255,255,255,0.2);
   }
   100% {
-    opacity: 0.70;
-    filter: blur(1.4px);
+    opacity: 0.72;
+    filter: blur(1.5px);
     text-shadow: 
-      0 0 8px rgba(255,255,255,0.3),
-      0 0 16px rgba(255,255,255,0.4),
-      0 0 32px rgba(255,255,255,0.25);
+      0 0 10px rgba(255,255,255,0.35),
+      0 0 20px rgba(255,255,255,0.45),
+      0 0 35px rgba(255,255,255,0.3);
   }
 }
 
@@ -176,12 +170,10 @@ footer {
   font-size: 16px;
   color: var(--soft);
   opacity: 0.8;
-  text-align: center;
+  text-align: left;
   line-height: 1.6;
   margin: 12px 0 40px 0;
-  max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;                        /* 与文章页面主体宽度一致 */
 }
 /* toast */
 #copy-toast {
