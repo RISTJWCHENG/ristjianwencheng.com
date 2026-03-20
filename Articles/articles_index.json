@@ -99,7 +99,7 @@
     "type": "html",
     "link": [],
     "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
-    "display": "on"
+    "display": "off"
   },
   {
     "id": "article_08",
@@ -114,7 +114,7 @@
     "type": "html",
     "link": [],
     "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"],
-    "display": "on"
+    "display": "off"
   },
   {
     "id": "article_09",
@@ -129,7 +129,7 @@
     "type": "html",
     "link": [],
     "download": [],
-    "display": "on"
+    "display": "off"
   },
   {
     "id": "article_10",
@@ -144,7 +144,7 @@
     "type": "html",
     "link": ["IMDb", "https://vimeo.com/features/video-player"],
     "download": [],
-    "display": "on"
+    "display": "off"
   },
     {
     "id": "article_11",
@@ -159,7 +159,7 @@
     "type": "html",
     "link": [],
     "download": [],
-    "display": "on"
+    "display": "off"
   },
   {
     "id": "article_12",
@@ -174,7 +174,7 @@
     "type": "html",
     "link": [],
     "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Reset_Curves/reset_curves.py"],
-    "display": "on"
+    "display": "off"
   },
   {
     "id": "article_13",
@@ -189,7 +189,7 @@
     "type": "html",
     "link": [],
     "download": ["Python Code", "https://pub-06bd961174f94348a6d424261543b763.r2.dev/Search_And_BlendShape_For_Curves/search_and_blendShape_for_curves.py"],
-    "display": "on"
+    "display": "off"
   },
   {
     "id": "article_04",
@@ -204,7 +204,7 @@
     "type": "html",
     "link": [],
     "download": [],
-    "display": "on"
+    "display": "off"
   },
   {
     "id": "article_06",
@@ -219,6 +219,6 @@
     "type": "html",
     "link": ["IMDb", "https://vimeo.com/features/video-player"],
     "download": [],
-    "display": "on"
+    "display": "off"
   }
 ]
