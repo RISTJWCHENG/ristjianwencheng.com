@@ -1426,14 +1426,22 @@
             border-radius: 6px;
             font-family: inherit;
             white-space: nowrap;
-            /* breathing color animation */
-            animation: shareBtn-breath 4s ease-in-out infinite;
-            transition: transform 0.12s ease;
+            /* rainbow text */
+            background: linear-gradient(90deg,
+                #a78bfa, #38bdf8, #86efac, #94a3b8, #4ade80, #38bdf8, #a78bfa);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: btn-rainbow 3s linear infinite;
+            transition: background-size 0.3s, filter 0.2s, transform 0.12s ease;
         }
         .video-share-btn:hover {
             animation: none;
-            color: var(--cat-color, #7c6fcd);
-            -webkit-text-fill-color: var(--cat-color, #7c6fcd);
+            background: var(--cat-color, #7c6fcd);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             filter: brightness(1.1);
         }
         .video-share-btn:hover svg {
@@ -1445,14 +1453,51 @@
         }
         .video-share-btn svg {
             flex-shrink: 0;
-            stroke: #38bdf8;
-            animation: svgBreath 4s ease-in-out infinite;
+            -webkit-text-fill-color: initial;
+            stroke: #a78bfa;
+            animation: svgHue 3s linear infinite;
         }
-        @keyframes svgBreath {
+        @keyframes svgHue {
+            0%   { stroke: #a78bfa; }
+            16%  { stroke: #38bdf8; }
+            33%  { stroke: #86efac; }
+            50%  { stroke: #94a3b8; }
+            66%  { stroke: #4ade80; }
+            83%  { stroke: #38bdf8; }
+            100% { stroke: #a78bfa; }
+        }
+
+        /* ── Article card buttons: breathing sky-blue → grey-blue → lavender ── */
+        @keyframes articleBtnBreath {
+            0%   { color: #38bdf8; -webkit-text-fill-color: #38bdf8; }
+            40%  { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+            70%  { color: #a78bfa; -webkit-text-fill-color: #a78bfa; }
+            100% { color: #38bdf8; -webkit-text-fill-color: #38bdf8; }
+        }
+        @keyframes articleSvgBreath {
             0%   { stroke: #38bdf8; }
             40%  { stroke: #94a3b8; }
             70%  { stroke: #a78bfa; }
             100% { stroke: #38bdf8; }
+        }
+        .article-share-btn {
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            background-clip: unset !important;
+            -webkit-text-fill-color: #38bdf8 !important;
+            animation: articleBtnBreath 4s ease-in-out infinite !important;
+        }
+        .article-share-btn svg {
+            animation: articleSvgBreath 4s ease-in-out infinite !important;
+        }
+        .article-share-btn:hover {
+            animation: none !important;
+            color: var(--cat-color, #7c6fcd) !important;
+            -webkit-text-fill-color: var(--cat-color, #7c6fcd) !important;
+        }
+        .article-share-btn:hover svg {
+            animation: none !important;
+            stroke: var(--cat-color, #7c6fcd) !important;
         }
         /* ── Video Pagination ─────────────────────────────────── */
         #videoPagination, #articlePagination {
@@ -2658,8 +2703,10 @@
            ══════════════════════════════════════════════════ */
         @media (max-width: 768px) {
 
-            /* 1. Kill every infinite CSS animation except nav/share buttons */
+            /* 1. Kill every infinite CSS animation except nav buttons */
             .btn-rainbow-text,
+            .video-share-btn:not(.imdb-link-btn):not(.article-share-btn),
+            .video-share-btn:not(.imdb-link-btn):not(.article-share-btn) svg,
             #videoModalShareBtn span, #videoModalShareBtn svg,
             #videoModalDownloadBtn, #videoModalDownloadBtn svg,
             #videoModalLinkBtn, #videoModalLinkBtn svg {
@@ -2701,8 +2748,8 @@
                 animation-delay: 0s !important;
             }
 
-            /* 2. Replace animated gradient text with static purple color (NOT nav/imdb/share buttons) */
-            .btn-rainbow-text,
+            /* 2. Replace animated gradient text with static purple color (NOT nav/imdb/article buttons) */
+            .btn-rainbow-text, .video-share-btn:not(.imdb-link-btn):not(.article-share-btn),
             #videoModalShareBtn span,
             #videoModalDownloadBtn, #videoModalLinkBtn {
                 background: none !important;
@@ -2710,17 +2757,8 @@
                 color: #7c6fcd !important;
             }
 
-            /* video-share-btn keeps breathing animation on mobile */
-            .video-share-btn:not(.imdb-link-btn) {
-                animation: shareBtn-breath 4s ease-in-out infinite !important;
-                background: none !important;
-                -webkit-text-fill-color: unset !important;
-            }
-            .video-share-btn:not(.imdb-link-btn) svg {
-                animation: svgBreath 4s ease-in-out infinite !important;
-            }
-
-            /* 3. Fix SVG strokes to purple (not IMDb/share buttons) */
+            /* 3. Fix SVG strokes to purple (not IMDb/article buttons) */
+            .video-share-btn:not(.imdb-link-btn):not(.article-share-btn) svg,
             #videoModalShareBtn svg,
             #videoModalDownloadBtn svg,
             #videoModalLinkBtn svg {
@@ -5507,10 +5545,10 @@
                 var articleShareUrl2 = article.type === 'pdf' ? (article.pdfUrl || getArticlePath(article)) : getArticlePath(article);
                 var catColor = getCategoryColor(article.category);
                 var dlBtn = article.download && article.download[0] && article.download[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
+                    ? '<a class="video-share-btn article-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
                 var lkBtn = article.link && article.link[0] && article.link[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '';
-                var shareBtn = '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
+                    ? '<a class="video-share-btn article-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '';
+                var shareBtn = '<button class="video-share-btn article-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl2.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
                 return '<div class="article-card" data-category="' + article.category + '" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
                     + coverHTML
                     + '<div class="article-card-content">'
@@ -6265,10 +6303,10 @@
                 var articleShareUrl = article.type === 'pdf' ? (article.pdfUrl || getArticlePath(article)) : getArticlePath(article);
                 var catColor = getCategoryColor(article.category);
                 var dlBtn = article.download && article.download[0] && article.download[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
+                    ? '<a class="video-share-btn article-share-btn video-download-btn" href="' + article.download[1] + '" download onclick="event.stopPropagation()" title="Download ' + article.download[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + article.download[0] + '</a>' : '';
                 var lkBtn = article.link && article.link[0] && article.link[1]
-                    ? '<a class="video-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '';
-                var shareBtn = '<button class="video-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
+                    ? '<a class="video-share-btn article-share-btn video-download-btn" href="' + article.link[1] + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open ' + article.link[0] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + article.link[0] + '</a>' : '';
+                var shareBtn = '<button class="video-share-btn article-share-btn" onclick="event.stopPropagation();shareArticle(\'' + articleShareUrl.replace(/'/g, "\\'") + '\', this)" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>';
                 return '<div class="featured-article-card" onclick=\'openArticleFile(' + articleJson + ')\' style="cursor:pointer;--cat-color:' + catColor + ';">'
                     + coverHTML
                     + '<div class="featured-article-content">'
