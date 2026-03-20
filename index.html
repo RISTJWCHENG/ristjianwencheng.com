@@ -4404,10 +4404,28 @@
                             var oldWrap = modal.querySelector('.img-card-track-wrap');
                             if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
                             buildCardTrack();
-                            // Ensure wrap starts at top after build
                             requestAnimationFrame(function() {
                                 var wrap = modal.querySelector('.img-card-track-wrap');
-                                if (wrap) wrap.scrollTop = 0;
+                                if (!wrap) return;
+                                // Lock scroll until image is loaded to prevent layout-shift scroll
+                                wrap.style.overflowY = 'hidden';
+                                wrap.scrollTop = 0;
+                                // Find current card's image
+                                var track = wrap.querySelector('.img-card-track');
+                                var card = track && track.children[1];
+                                var img = card && card.querySelector('img');
+                                var unlock = function() {
+                                    wrap.scrollTop = 0;
+                                    wrap.style.overflowY = 'auto';
+                                };
+                                if (img && !img.complete) {
+                                    img.addEventListener('load',  unlock, { once: true });
+                                    img.addEventListener('error', unlock, { once: true });
+                                    // Fallback: unlock after 1.5s regardless
+                                    setTimeout(unlock, 1500);
+                                } else {
+                                    unlock();
+                                }
                             });
                         }
                     });
@@ -4990,14 +5008,6 @@
                 img.src = item.image_url;
                 img.alt = item.title || '';
                 if (isCurrent) img.id = 'modalImage';
-                // After image loads, reset scroll to top
-                if (isCurrent) {
-                    img.addEventListener('load', function() {
-                        var modal = document.getElementById('imageModal');
-                        var wrap = modal && modal.querySelector('.img-card-track-wrap');
-                        if (wrap) wrap.scrollTop = 0;
-                    }, { once: true });
-                }
                 slider.appendChild(img);
                 left.appendChild(slider);
 
