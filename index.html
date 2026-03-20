@@ -5890,8 +5890,25 @@
                     tag.dataset.filter = cat.toLowerCase();
                     tag.textContent = cat;
                     tag.onclick = function() {
-                        filterContainer.querySelectorAll('.filter-tag').forEach(function(t) { t.classList.remove('active'); });
+                        // Reset all tags
+                        filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
+                            t.classList.remove('active');
+                            t.style.removeProperty('background');
+                            t.style.removeProperty('border-color');
+                            t.style.removeProperty('color');
+                        });
                         tag.classList.add('active');
+                        // Apply category color
+                        var colors = window._GALLERY_COLORS || {};
+                        var colorKey = Object.keys(colors).find(function(k) {
+                            return k.toLowerCase() === cat.toLowerCase();
+                        });
+                        if (colorKey) {
+                            var catColor = colors[colorKey];
+                            tag.style.background = catColor;
+                            tag.style.borderColor = catColor;
+                            tag.style.color = '#fff';
+                        }
                         filterGallery(cat.toLowerCase());
                     };
                     filterContainer.appendChild(tag);
@@ -5899,7 +5916,12 @@
                 // Bind "All" tag click
                 if (allTag) {
                     allTag.onclick = function() {
-                        filterContainer.querySelectorAll('.filter-tag').forEach(function(t) { t.classList.remove('active'); });
+                        filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
+                            t.classList.remove('active');
+                            t.style.removeProperty('background');
+                            t.style.removeProperty('border-color');
+                            t.style.removeProperty('color');
+                        });
                         allTag.classList.add('active');
                         filterGallery('all');
                     };
