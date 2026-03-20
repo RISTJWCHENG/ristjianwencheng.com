@@ -2805,7 +2805,15 @@
             document.body.style.overflow = 'hidden';
             window._heroPageBlocked = true;
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
-            requestAnimationFrame(function() { setTimeout(layoutGallery, 50); });
+            // Reset filter tags: deactivate all, activate All
+            requestAnimationFrame(function() {
+                document.querySelectorAll('#fullGalleryPage .filter-tag').forEach(function(tag) {
+                    tag.classList.remove('active');
+                    if (tag.dataset.filter === 'all') tag.classList.add('active');
+                });
+                filterGallery('all');
+                setTimeout(layoutGallery, 50);
+            });
         }
 
         function closeFullGallery() {
