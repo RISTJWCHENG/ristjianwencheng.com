@@ -5384,12 +5384,17 @@
             // Reset filters to All
             _articleCategoryFilter = 'all';
             _articleSearchQuery = '';
-            // Reset all category tag styles back to default, activate All
-            document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
-                tag.classList.toggle('active', tag.dataset.category === 'all');
-                tag.style.removeProperty('background');
-                tag.style.removeProperty('border-color');
-                tag.style.removeProperty('color');
+            // Reset after DOM renders so tags are visible and toggled correctly
+            requestAnimationFrame(function() {
+                document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
+                    tag.classList.remove('active');
+                    tag.style.removeProperty('background');
+                    tag.style.removeProperty('border-color');
+                    tag.style.removeProperty('color');
+                    if (tag.dataset.category === 'all') {
+                        tag.classList.add('active');
+                    }
+                });
             });
             if (window._ARTICLES_CACHE) {
                 _allArticles = window._ARTICLES_CACHE.filter(function(a) { return a.display !== 'off'; });
@@ -5452,11 +5457,16 @@
             _videoCategoryFilter = 'all';
             _videoSearchQuery = '';
             // Reset all category tag styles back to default, activate All
-            document.querySelectorAll('#video-full-page .category-tag').forEach(function(tag) {
-                tag.classList.toggle('active', tag.dataset.category === 'all');
-                tag.style.removeProperty('background');
-                tag.style.removeProperty('border-color');
-                tag.style.removeProperty('color');
+            requestAnimationFrame(function() {
+                document.querySelectorAll('#video-full-page .category-tag').forEach(function(tag) {
+                    tag.classList.remove('active');
+                    tag.style.removeProperty('background');
+                    tag.style.removeProperty('border-color');
+                    tag.style.removeProperty('color');
+                    if (tag.dataset.category === 'all') {
+                        tag.classList.add('active');
+                    }
+                });
             });
             if (window._VIDEOS_CACHE) {
                 _allVideos = Array.isArray(window._VIDEOS_CACHE)
