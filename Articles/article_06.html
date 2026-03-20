@@ -13,6 +13,7 @@
   --secondary:#9fb3c8;
   --accent:#5daeff;
   --soft:#6b7c8f;
+  --meta:#ffffff;
 }
 
 body {
@@ -29,24 +30,20 @@ body {
   padding: 100px 24px;
 }
 
-/* Title */
 h1 {
   font-family: 'Playfair Display', serif;
   font-size: 32px;
   font-weight: 600;
   letter-spacing: 3px;
   margin-bottom: 60px;
-  color: var(--primary);
 }
 
-/* Writing label */
 .meta-type{
   color:#3fe0c5;
   font-weight:500;
 }
 
-/* Drop cap first letter */
-.section p:first-child::first-letter{
+.section:first-of-type p:first-child::first-letter{
   font-family:'Playfair Display', serif;
   font-size:64px;
   float:left;
@@ -55,7 +52,6 @@ h1 {
   color:var(--primary);
 }
 
-/* Alternate typography styles */
 .section p:nth-child(2n){
   font-weight:300;
   color:var(--secondary);
@@ -65,25 +61,21 @@ h1 {
   letter-spacing:0.5px;
 }
 
-/* Section spacing */
 .section {
   margin-bottom: 80px;
 }
 
-/* Intro paragraph */
 .section p:first-child {
   font-size: 18px;
   color: var(--primary);
 }
 
-/* Body text */
 .section p {
   font-size: 16px;
   color: var(--secondary);
   margin-bottom: 20px;
 }
 
-/* Highlight quote block */
 .highlight {
   border-left: 2px solid var(--accent);
   padding-left: 24px;
@@ -91,30 +83,24 @@ h1 {
   font-family: 'Playfair Display', serif;
   font-size: 20px;
   color: var(--primary);
-  opacity: 0.9;
 }
 
-/* Divider */
 .divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
   margin: 80px 0;
 }
 
-/* Subtle emphasis */
 em {
   color: var(--accent);
   font-style: normal;
 }
 
-/* Final poetic line */
 .poetic {
   font-family: 'Playfair Display', serif;
   font-size: 22px;
-  color: var(--primary);
   text-align: center;
   margin-top: 40px;
-  opacity: 0.85;
 }
 
 footer {
@@ -124,113 +110,164 @@ footer {
   margin-top: 100px;
   letter-spacing: 2px;
 }
+
+.meta-info span, .meta-info svg {
+  color: var(--meta);
+  opacity: 0.9;
+}
+
+/* 弹出提示框样式 */
+#copy-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #071426; 
+  color: #3fe0c5; /* Writing 字体颜色 */
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(-20px);
+  z-index: 1000;
+  position: relative;
+}
+
+/* 小箭头 */
+#copy-toast::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  transform: translateY(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent #3fe0c5 transparent transparent;
+}
+
+#copy-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- Article Meta -->
-  <div style="margin-bottom:30px; color:var(--soft); font-size:12px; letter-spacing:2px;">
+  <!-- Meta 信息 -->
+  <div class="meta-info" style="margin-bottom:30px; font-size:12px; letter-spacing:2px;">
     <div class="meta-type" style="margin-bottom:10px; text-transform:uppercase;">Writing</div>
     <div style="display:flex; gap:20px; align-items:center; font-size:13px;">
+      <!-- 日期 -->
       <div style="display:flex; align-items:center; gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <span>March 2026</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <line x1="3" y1="10" x2="21" y2="10" stroke="white" stroke-width="1.5"/>
+        </svg>
+        <span>March 2022</span>
       </div>
+      <!-- 阅读时间 -->
       <div style="display:flex; align-items:center; gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="13" x2="15" y2="15"/><path d="M9 2h6"/><path d="M12 2v3"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="8"/>
+          <line x1="12" y1="12" x2="12" y2="8"/> <!-- 时针 -->
+          <line x1="12" y1="12" x2="16" y2="12"/> <!-- 分针 -->
+        </svg>
         <span>5 min read</span>
+      </div>
+      <!-- 分享 -->
+      <div style="display:flex; align-items:center; gap:6px; cursor:pointer;" id="share-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0">
+          <circle cx="18" cy="5" r="3"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="19" r="3"/>
+          <line x1="7" y1="12" x2="16" y2="5" stroke="white" stroke-width="1.5"/>
+          <line x1="16" y1="19" x2="7" y2="12" stroke="white" stroke-width="1.5"/>
+        </svg>
+        <span>Share</span>
       </div>
     </div>
   </div>
 
   <h1>THE BEAUTY OF ARCHITECTURE</h1>
 
-  <!-- Video Header -->
   <div style="margin-bottom:80px;">
     <video controls autoplay muted loop style="width:100%; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
       <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/THE%20BEAUTY%20OF%20ARCHITECTURE.mp4" type="video/mp4">
-      Your browser does not support the video tag.
     </video>
   </div>
-  
 
+  <!-- 文章内容 -->
   <div class="section">
-    <p>
-      In every era and civilization, architecture has always been the most telling measure of a society’s level of development.
-    </p>
-    <p>
-      It not only responds to practical functional needs but also embodies the spirit and cognitive boundaries of its time, allowing future generations to glimpse the hopes, pursuits, and wisdom of their predecessors.
-    </p>
-    <p>
-      Throughout humanity’s journey in the vast expanse of cosmic time, monumental architecture evolves with each era, carrying traces of order, will, and creativity.
-    </p>
-    <p class="poetic">
-      This is the beauty of architecture.
-    </p>
+    <p><span style="float:left; font-family:'Playfair Display', serif; font-size:64px; line-height:0.9; padding-right:10px; color:var(--primary);">I</span>n every era and civilization, architecture has always been the most telling measure of a society’s level of development.</p>
+    <p>It not only responds to practical functional needs but also embodies the spirit and cognitive boundaries of its time.</p>
+    <p>Throughout humanity’s journey in the vast expanse of cosmic time, monumental architecture evolves.</p>
+    <p class="poetic">This is the beauty of architecture.</p>
   </div>
 
   <div class="divider"></div>
 
   <div class="section">
-    <p>
-      This is a visual design work exploring the <em>“beauty of architecture”</em>, attempting to narrate the long journey of human civilization from primitiveness to order through minimalist and abstract visual language.
-    </p>
-
-    <div class="highlight">
-      Memory becomes the origin of form.
-    </div>
-
-    <p>
-      As a child, I saw the grandeur of ancient Greek and Roman architecture in textbooks, while in daily life I experienced laborers shaping buildings with the rhythmic strikes of stone.
-    </p>
-
-    <p>
-      As a teenager, I encountered the fascinating and rhythmic noises of modern machinery and metal clashing at vast concrete construction sites.
-    </p>
-
-    <p>
-      During my later travels, I discovered the unique beauty of diverse architectural forms.
-    </p>
-
-    <p>
-      These “noises” became an abstract component of the work, adding a tangible sense of reality and vitality to the visuals.
-    </p>
+    <p>This is a visual design work exploring the <em>beauty of architecture</em>.</p>
+    <div class="highlight">Memory becomes the origin of form.</div>
+    <p>As a child, I saw ancient architecture and real construction.</p>
+    <p>As a teenager, I experienced modern construction sounds.</p>
+    <p>During travels, I discovered diverse architectural beauty.</p>
   </div>
 
   <div class="divider"></div>
 
   <div class="section">
-    <p>
-      The work adopts blue as its tonal base—symbolizing the origin of life, the ocean, and the emergence of consciousness.
-    </p>
-
-    <p>
-      Geometric forms emerge, evolving from primitive vertical structures into ordered compositions.
-    </p>
-
-    <p>
-      From stone to concrete, from structure to proportion, architecture becomes a language of human understanding.
-    </p>
-
-    <p>
-      Ultimately, these forms transform into modern skyscrapers, representing the mastery of materials and the evolution of civilization.
-    </p>
-
-    <div class="highlight">
-      From chaos → order · From nature → reason · From classical → modern
-    </div>
-
-    <p class="poetic">
-      Architecture is the trace of human will, written into space and time.
-    </p>
+    <p>The work adopts blue as its tonal base.</p>
+    <p>Geometric forms evolve from primitive to ordered.</p>
+    <p>Architecture becomes a language of understanding.</p>
+    <p>Forms transform into modern skyscrapers.</p>
+    <div class="highlight">From chaos → order · From nature → reason · From classical → modern</div>
+    <p class="poetic">Architecture is the trace of human will.</p>
   </div>
 
-  <footer>
-    VISUAL ESSAY · ARCHITECTURE · TIME · MEMORY
-  </footer>
+  <footer>VISUAL ESSAY · ARCHITECTURE · TIME · MEMORY</footer>
 </div>
+
+<!-- 拷贝提示 -->
+<div id="copy-toast">Link copied!</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const shareBtn = document.getElementById('share-btn');
+  const toast = document.getElementById('copy-toast');
+
+  shareBtn.addEventListener('click', () => {
+    const link = 'https://ristjianwencheng.com/Articles/article_06.html';
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(link).then(() => {
+        toast.textContent = 'Link copied!';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }).catch(err => console.error('Copy failed: ', err));
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = link;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        toast.textContent = 'Link copied!';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      } catch(err) {
+        console.error('Fallback copy failed', err);
+      }
+      document.body.removeChild(textarea);
+    }
+  });
+});
+</script>
 
 </body>
 </html>
