@@ -929,12 +929,17 @@
             }
             .img-card-track-wrap {
                 overflow-x: hidden;
-                overflow-y: hidden;
+                overflow-y: auto;           /* always scrollable — no layout shift */
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-y: contain;
                 width: 100vw;
-                height: 100dvh;
-                position: relative;
+                height: 100dvh;             /* wrap = exactly viewport, never more */
+                position: fixed;            /* fixed so body-fixed trick doesn't affect it */
+                top: 0;
+                left: 0;
                 touch-action: pan-y;
                 background: transparent;
+                z-index: 2000;
             }
             .img-card-track {
                 display: flex;
@@ -948,11 +953,11 @@
                 flex: 0 0 100vw;
                 width: 100vw;
                 max-width: 100vw;
-                min-height: 100dvh;
+                /* NO min-height: card grows with content only */
                 height: auto;
                 flex-direction: column;
                 border-radius: 0 !important;
-                padding-bottom: 2.5rem !important;
+                padding-bottom: 3rem !important;
             }
 
             /* Fix Complete Gallery grid overflowing on mobile */
@@ -4413,37 +4418,11 @@
                             var oldWrap = modal.querySelector('.img-card-track-wrap');
                             if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
                             buildCardTrack();
+                            // wrap is position:fixed so scrollTop=0 is reliable immediately
                             requestAnimationFrame(function() {
                                 var wrap = modal.querySelector('.img-card-track-wrap');
                                 if (!wrap) return;
-                                wrap.style.overflowY = 'hidden';
                                 wrap.scrollTop = 0;
-                                var track = wrap.querySelector('.img-card-track');
-                                var card = track && track.children[1];
-                                var cardImg = card && card.querySelector('img');
-                                var enableScrollIfNeeded = function() {
-                                    wrap.scrollTop = 0;
-                                    // Only enable scroll if card is taller than viewport
-                                    if (card && card.scrollHeight > window.innerHeight) {
-                                        wrap.style.overflowY = 'auto';
-                                        wrap.style.webkitOverflowScrolling = 'touch';
-                                    }
-                                };
-                                // Force scrollTop=0 AFTER image loads (image load expands card,
-                                // browser may auto-scroll to maintain visual position → gap appears)
-                                var forceTop = function() {
-                                    wrap.scrollTop = 0;
-                                    enableScrollIfNeeded();
-                                };
-                                if (cardImg && !cardImg.complete) {
-                                    cardImg.addEventListener('load',  forceTop, { once: true });
-                                    cardImg.addEventListener('error', forceTop, { once: true });
-                                    // Extra safety: re-force after 300ms and 800ms
-                                    setTimeout(function() { wrap.scrollTop = 0; }, 300);
-                                    setTimeout(forceTop, 800);
-                                } else {
-                                    forceTop();
-                                }
                             });
                         }
                     });
@@ -5191,21 +5170,7 @@
                 // After buildCardTrack, find new wrap and reset scroll
                 requestAnimationFrame(function() {
                     var newWrap = modal.querySelector('.img-card-track-wrap');
-                    if (!newWrap) return;
-                    newWrap.scrollTop = 0;
-                    // Also reset after current card's image loads
-                    var track = newWrap.querySelector('.img-card-track');
-                    var card  = track && track.children[1]; // middle = current
-                    var cImg  = card && card.querySelector('img');
-                    var resetTop = function() { newWrap.scrollTop = 0; };
-                    if (cImg && !cImg.complete) {
-                        cImg.addEventListener('load',  resetTop, { once: true });
-                        cImg.addEventListener('error', resetTop, { once: true });
-                        setTimeout(resetTop, 600);
-                    } else {
-                        resetTop();
-                    }
-                    newWrap.style.overflowY = 'auto';
+                    if (newWrap) newWrap.scrollTop = 0;
                 });
 
                 // Keep populateModal in sync for share/fullscreen
