@@ -4397,17 +4397,23 @@
             document.body.style.overflow = 'hidden';
             window._heroPageBlocked = true;
             var _hv = document.getElementById('heroLogoVideo'); if (_hv) _hv.pause();
-            // On mobile: build card track immediately so the modal isn't blank on first open
+            // On mobile: build card track after modal is fully rendered
             if (window.innerWidth <= 640) {
-                // Small delay to let the modal become visible first
-                setTimeout(function() {
-                    var modal = document.getElementById('imageModal');
-                    if (modal && typeof window.buildCardTrack === 'function') {
-                        var oldWrap = modal.querySelector('.img-card-track-wrap');
-                        if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
-                        buildCardTrack();
-                    }
-                }, 0);
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        var modal = document.getElementById('imageModal');
+                        if (modal && typeof window.buildCardTrack === 'function') {
+                            var oldWrap = modal.querySelector('.img-card-track-wrap');
+                            if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
+                            buildCardTrack();
+                            // Ensure wrap starts at top after build
+                            requestAnimationFrame(function() {
+                                var wrap = modal.querySelector('.img-card-track-wrap');
+                                if (wrap) wrap.scrollTop = 0;
+                            });
+                        }
+                    });
+                });
             }
         }
 
@@ -5155,9 +5161,11 @@
                 var oldWrap = modal.querySelector('.img-card-track-wrap');
                 if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
                 buildCardTrack();
-                // Scroll new card to top
-                var newWrap = modal.querySelector('.img-card-track-wrap');
-                if (newWrap) { newWrap.scrollTop = 0; newWrap.style.overflowY = 'auto'; }
+                // Scroll new card to top — use rAF to ensure DOM is updated first
+                requestAnimationFrame(function() {
+                    var newWrap = modal.querySelector('.img-card-track-wrap');
+                    if (newWrap) { newWrap.scrollTop = 0; newWrap.style.overflowY = 'auto'; }
+                });
                 // Keep populateModal in sync for share/fullscreen
                 var list = window._GALLERY_LIST;
                 if (list && list.length) populateModal(list[window._GALLERY_INDEX].image_url);
