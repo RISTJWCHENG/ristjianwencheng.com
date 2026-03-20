@@ -930,9 +930,7 @@
             }
             .img-card-track-wrap {
                 overflow-x: hidden;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                overscroll-behavior-y: contain;
+                overflow-y: hidden;
                 width: 100vw;
                 height: 100dvh;
                 position: relative;
@@ -4418,16 +4416,20 @@
                                 var track = wrap.querySelector('.img-card-track');
                                 var card = track && track.children[1];
                                 var cardImg = card && card.querySelector('img');
-                                var unlock = function() {
+                                var enableScrollIfNeeded = function() {
                                     wrap.scrollTop = 0;
-                                    wrap.style.overflowY = 'auto';
+                                    // Only enable scroll if card is taller than viewport
+                                    if (card && card.scrollHeight > window.innerHeight) {
+                                        wrap.style.overflowY = 'auto';
+                                        wrap.style.webkitOverflowScrolling = 'touch';
+                                    }
                                 };
                                 if (cardImg && !cardImg.complete) {
-                                    cardImg.addEventListener('load',  unlock, { once: true });
-                                    cardImg.addEventListener('error', unlock, { once: true });
-                                    setTimeout(unlock, 1500);
+                                    cardImg.addEventListener('load',  enableScrollIfNeeded, { once: true });
+                                    cardImg.addEventListener('error', enableScrollIfNeeded, { once: true });
+                                    setTimeout(enableScrollIfNeeded, 1500);
                                 } else {
-                                    unlock();
+                                    enableScrollIfNeeded();
                                 }
                             });
                         }
@@ -5227,8 +5229,7 @@
                     touchStartY = e.touches[0].clientY;
                     swiping     = false;
                     swipeLocked = false;
-                    // Always ensure vertical scroll is enabled at start of new touch
-                    wrap.style.overflowY = 'auto';
+                    wrap.scrollTop = 0;
                 }, { passive: true });
 
                 wrap.addEventListener('touchmove', function(e) {
