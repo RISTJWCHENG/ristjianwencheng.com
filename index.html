@@ -1470,14 +1470,12 @@
         /* ── Article card buttons: breathing sky-blue → grey-blue → lavender ── */
         @keyframes articleBtnBreath {
             0%   { color: #38bdf8; }
-            40%  { color: #94a3b8; }
-            70%  { color: #a78bfa; }
+            50%  { color: #a78bfa; }
             100% { color: #38bdf8; }
         }
         @keyframes articleSvgBreath {
             0%   { stroke: #38bdf8; }
-            40%  { stroke: #94a3b8; }
-            70%  { stroke: #a78bfa; }
+            50%  { stroke: #a78bfa; }
             100% { stroke: #38bdf8; }
         }
         .article-share-btn {
@@ -5421,7 +5419,17 @@
                 _articleCategoryFilter = cat;
                 _articleSearchQuery = '';
                 document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
-                    tag.classList.toggle('active', tag.dataset.category === cat);
+                    var isActive = tag.dataset.category === cat;
+                    tag.classList.toggle('active', isActive);
+                    tag.style.removeProperty('background');
+                    tag.style.removeProperty('border-color');
+                    tag.style.removeProperty('color');
+                    if (isActive && cat !== 'all') {
+                        var catColor = getCategoryColor(cat);
+                        tag.style.background = catColor;
+                        tag.style.borderColor = catColor;
+                        tag.style.color = '#fff';
+                    }
                 });
                 _applyArticleFilters();
             }, 80);
@@ -5543,10 +5551,22 @@
         var _articleSearchQuery = '';
 
         function filterCategoryFull(category) {
+            // Reset all tags to default style
             document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
                 tag.classList.remove('active');
+                tag.style.removeProperty('background');
+                tag.style.removeProperty('border-color');
+                tag.style.removeProperty('color');
             });
-            event.target.classList.add('active');
+            var activeTag = event.target;
+            activeTag.classList.add('active');
+            // Apply category color only for non-All tags
+            if (category !== 'all') {
+                var catColor = getCategoryColor(category);
+                activeTag.style.background = catColor;
+                activeTag.style.borderColor = catColor;
+                activeTag.style.color = '#fff';
+            }
             _articleCategoryFilter = category;
             _applyArticleFilters();
         }
