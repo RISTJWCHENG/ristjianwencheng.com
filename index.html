@@ -5441,9 +5441,16 @@
             document.body.style.overflow = 'hidden';
             window._heroPageBlocked = true;
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
-            // Reset filters and re-render from cache
+            // Reset filters to All
             _videoCategoryFilter = 'all';
             _videoSearchQuery = '';
+            // Reset all category tag styles back to default, activate All
+            document.querySelectorAll('#video-full-page .category-tag').forEach(function(tag) {
+                tag.classList.toggle('active', tag.dataset.category === 'all');
+                tag.style.removeProperty('background');
+                tag.style.removeProperty('border-color');
+                tag.style.removeProperty('color');
+            });
             if (window._VIDEOS_CACHE) {
                 _allVideos = Array.isArray(window._VIDEOS_CACHE)
                     ? window._VIDEOS_CACHE
