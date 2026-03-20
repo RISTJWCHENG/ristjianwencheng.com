@@ -5423,7 +5423,9 @@
             _videoCategoryFilter = 'all';
             _videoSearchQuery = '';
             if (window._VIDEOS_CACHE) {
-                _allVideos = window._VIDEOS_CACHE.filter(function(v) { return v.display !== 'off'; });
+                _allVideos = Array.isArray(window._VIDEOS_CACHE)
+                    ? window._VIDEOS_CACHE
+                    : (window._VIDEOS_CACHE.videos || []);
                 _currentPage = 1;
                 renderVideoPage(1);
             }
@@ -5481,8 +5483,10 @@
         }
 
         function _applyVideoFilters() {
-            const allVideos = (window._VIDEOS_CACHE || []).filter(function(v) { return v.display !== 'off'; });
-            _allVideos = allVideos.filter(function(video) {
+            var cache = Array.isArray(window._VIDEOS_CACHE)
+                ? window._VIDEOS_CACHE
+                : ((window._VIDEOS_CACHE || {}).videos || []);
+            _allVideos = cache.filter(function(video) {
                 const matchCat = _videoCategoryFilter === 'all' ||
                     (video.category || 'Work').toLowerCase() === _videoCategoryFilter.toLowerCase();
                 const title = (video.title || '').toLowerCase();
@@ -6159,17 +6163,15 @@
             const rawVideos = Array.isArray(data) ? data : (data.videos || []);
             const featuredCount = Array.isArray(data) ? 3 : (data.featuredCount || 3);
 
-            // Only include videos where display is not explicitly "off"
-            const videos = rawVideos.filter(function(v) { return v.display !== 'off'; });
-
-            _allVideos = videos;
+            // Cache is already filtered — all videos here are visible
+            _allVideos = rawVideos;
             _currentPage = 1;
 
             // Render featured grid (homepage)
             const featuredGrid = document.getElementById('videoGridFeatured');
             if (featuredGrid) featuredGrid.innerHTML = '';
             const featDescIds = [];
-            videos.slice(0, featuredCount).forEach(function(video) {
+            rawVideos.slice(0, featuredCount).forEach(function(video) {
                 const { card, descId } = createVideoCard(video);
                 if (featuredGrid) featuredGrid.appendChild(card);
                 featDescIds.push(descId);
@@ -6194,10 +6196,14 @@
         function loadVideos() {
             fetch('Videos/videos_index.json')
                 .then(function(res) { if (!res.ok) throw new Error('No videos index'); return res.json(); })
-                .then(function(videos) {
-                    window._VIDEOS_CACHE = videos;
-                    renderVideos(videos);
-                    tryAutoPlayFromUrl(); // try after cache is loaded
+                .then(function(data) {
+                    // Filter out display:off videos at source — they are never created anywhere
+                    var rawVideos = Array.isArray(data) ? data : (data.videos || data);
+                    var filtered = rawVideos.filter(function(v) { return v.display !== 'off'; });
+                    // Store only visible videos in cache
+                    window._VIDEOS_CACHE = Array.isArray(data) ? filtered : Object.assign({}, data, { videos: filtered });
+                    renderVideos(window._VIDEOS_CACHE);
+                    tryAutoPlayFromUrl();
                 })
                 .catch(function(err) { console.warn('Could not load Videos/videos_index.json:', err); });
         }
