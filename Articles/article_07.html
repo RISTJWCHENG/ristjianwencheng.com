@@ -1,98 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Journey Through Southeast Asia</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background: #faf9f7;
-            color: #2a2a2a;
-            margin: 0;
-            padding: 2rem;
-            line-height: 1.8;
-        }
-        .article-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .article-category {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #d4a574;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-        h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
-        }
-        .article-meta {
-            font-size: 0.85rem;
-            color: #6a6a6a;
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1.5rem;
-        }
-        .article-cover {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-        }
-        h2 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin: 2rem 0 1rem;
-        }
-        p {
-            margin-bottom: 1.2rem;
-            color: #3a3a3a;
-        }
-        blockquote {
-            border-left: 3px solid #d4a574;
-            padding-left: 1.5rem;
-            margin: 1.5rem 0;
-            color: #6a6a6a;
-            font-style: italic;
-        }
-        hr {
-            border: none;
-            border-top: 1px solid #e5e3df;
-            margin: 2rem 0;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beauty of Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#071426;
+  --bg2:#000;
+  --primary:#e6edf5;
+  --secondary:#9fb3c8;
+  --accent:#5daeff;
+  --soft:#6b7c8f;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2));
+  color: var(--primary);
+  line-height: 1.9;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 100px 24px;
+}
+
+/* Title */
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  margin-bottom: 60px;
+  color: var(--primary);
+}
+
+/* Writing label */
+.meta-type{
+  color:#3fe0c5;
+  font-weight:500;
+}
+
+/* Drop cap first letter */
+.section p:first-child::first-letter{
+  font-family:'Playfair Display', serif;
+  font-size:64px;
+  float:left;
+  line-height:0.9;
+  padding-right:10px;
+  color:var(--primary);
+}
+
+/* Alternate typography styles */
+.section p:nth-child(2n){
+  font-weight:300;
+  color:var(--secondary);
+}
+
+.section p:nth-child(3n){
+  letter-spacing:0.5px;
+}
+
+/* Section spacing */
+.section {
+  margin-bottom: 80px;
+}
+
+/* Intro paragraph */
+.section p:first-child {
+  font-size: 18px;
+  color: var(--primary);
+}
+
+/* Body text */
+.section p {
+  font-size: 16px;
+  color: var(--secondary);
+  margin-bottom: 20px;
+}
+
+/* Highlight quote block */
+.highlight {
+  border-left: 2px solid var(--accent);
+  padding-left: 24px;
+  margin: 50px 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--primary);
+  opacity: 0.9;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  margin: 80px 0;
+}
+
+/* Subtle emphasis */
+em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+/* Final poetic line */
+.poetic {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--primary);
+  text-align: center;
+  margin-top: 40px;
+  opacity: 0.85;
+}
+
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--soft);
+  margin-top: 100px;
+  letter-spacing: 2px;
+}
+</style>
 </head>
 <body>
-    <div class="article-container">
-        <div class="article-category">Travel</div>
-        <h1>Journey Through Southeast Asia</h1>
-        <div class="article-meta">
-            <span>📅 October 22, 2025</span>
-            <span>⏱️ 6 min read</span>
-        </div>
-        <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800" alt="Southeast Asia" class="article-cover">
 
-        <h2>The Beginning</h2>
-        <p>Southeast Asia has always been a destination that calls to the curious traveler. From the ancient temples of Cambodia to the bustling streets of Bangkok, every corner of this region tells a story layered with history, culture, and human connection.</p>
+<div class="container">
 
-        <blockquote>
-            "Travel is the only thing you buy that makes you richer."
-        </blockquote>
-
-        <h2>Vietnam & Cambodia</h2>
-        <p>Starting in Ho Chi Minh City, the energy is immediate and electric. Motorbikes weave through traffic like a choreographed dance, street vendors fill the air with the scent of pho, and every alleyway reveals a new story waiting to be discovered.</p>
-
-        <h2>Reflections</h2>
-        <p>After weeks of traveling, what stays with you isn't the landmarks — it's the people. The warmth of strangers who become friends, the shared meals, the quiet moments watching the sun set over the Mekong. These are the moments that reshape how you see the world.</p>
-
-        <hr>
-        <p><em>This article was written by RIST JIANWEN CHENG. All rights reserved.</em></p>
+  <!-- Article Meta -->
+  <div style="margin-bottom:30px; color:var(--soft); font-size:12px; letter-spacing:2px;">
+    <div class="meta-type" style="margin-bottom:10px; text-transform:uppercase;">Writing</div>
+    <div style="display:flex; gap:20px; align-items:center; font-size:13px;">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>March 2026</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="13" x2="15" y2="15"/><path d="M9 2h6"/><path d="M12 2v3"/></svg>
+        <span>5 min read</span>
+      </div>
     </div>
+  </div>
+
+  <h1>THE BEAUTY OF ARCHITECTURE</h1>
+
+  <!-- Video Header -->
+  <div style="margin-bottom:80px;">
+    <video controls autoplay muted loop style="width:100%; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+      <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/THE%20BEAUTY%20OF%20ARCHITECTURE.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  
+
+  <div class="section">
+    <p>
+      In every era and civilization, architecture has always been the most telling measure of a society’s level of development.
+    </p>
+    <p>
+      It not only responds to practical functional needs but also embodies the spirit and cognitive boundaries of its time, allowing future generations to glimpse the hopes, pursuits, and wisdom of their predecessors.
+    </p>
+    <p>
+      Throughout humanity’s journey in the vast expanse of cosmic time, monumental architecture evolves with each era, carrying traces of order, will, and creativity.
+    </p>
+    <p class="poetic">
+      This is the beauty of architecture.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <p>
+      This is a visual design work exploring the <em>“beauty of architecture”</em>, attempting to narrate the long journey of human civilization from primitiveness to order through minimalist and abstract visual language.
+    </p>
+
+    <div class="highlight">
+      Memory becomes the origin of form.
+    </div>
+
+    <p>
+      As a child, I saw the grandeur of ancient Greek and Roman architecture in textbooks, while in daily life I experienced laborers shaping buildings with the rhythmic strikes of stone.
+    </p>
+
+    <p>
+      As a teenager, I encountered the fascinating and rhythmic noises of modern machinery and metal clashing at vast concrete construction sites.
+    </p>
+
+    <p>
+      During my later travels, I discovered the unique beauty of diverse architectural forms.
+    </p>
+
+    <p>
+      These “noises” became an abstract component of the work, adding a tangible sense of reality and vitality to the visuals.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <p>
+      The work adopts blue as its tonal base—symbolizing the origin of life, the ocean, and the emergence of consciousness.
+    </p>
+
+    <p>
+      Geometric forms emerge, evolving from primitive vertical structures into ordered compositions.
+    </p>
+
+    <p>
+      From stone to concrete, from structure to proportion, architecture becomes a language of human understanding.
+    </p>
+
+    <p>
+      Ultimately, these forms transform into modern skyscrapers, representing the mastery of materials and the evolution of civilization.
+    </p>
+
+    <div class="highlight">
+      From chaos → order · From nature → reason · From classical → modern
+    </div>
+
+    <p class="poetic">
+      Architecture is the trace of human will, written into space and time.
+    </p>
+  </div>
+
+  <footer>
+    VISUAL ESSAY · ARCHITECTURE · TIME · MEMORY
+  </footer>
+</div>
+
 </body>
 </html>
