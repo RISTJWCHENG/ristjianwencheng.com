@@ -911,9 +911,8 @@
             #imageModal .modal-content.img-modal-content:not(.img-card-track .img-modal-content) {
                 display: none !important;
             }
-            /* On mobile: modal bg transparent, card has its own bg, no black void */
+            /* On mobile: modal bg transparent, card has its own bg */
             #imageModal {
-                align-items: flex-start !important;
                 background: transparent !important;
             }
             /* Dim overlay behind the card — only fills what's needed */
@@ -1997,6 +1996,12 @@
             display: flex;
             touch-action: none; /* block all touch scroll bleeding to background */
             overscroll-behavior: contain;
+        }
+
+        /* imageModal always aligns to top — card should never be vertically centered */
+        #imageModal {
+            align-items: flex-start;
+            justify-content: flex-start;
         }
 
         .modal-content {
@@ -4424,12 +4429,20 @@
                                         wrap.style.webkitOverflowScrolling = 'touch';
                                     }
                                 };
-                                if (cardImg && !cardImg.complete) {
-                                    cardImg.addEventListener('load',  enableScrollIfNeeded, { once: true });
-                                    cardImg.addEventListener('error', enableScrollIfNeeded, { once: true });
-                                    setTimeout(enableScrollIfNeeded, 1500);
-                                } else {
+                                // Force scrollTop=0 AFTER image loads (image load expands card,
+                                // browser may auto-scroll to maintain visual position → gap appears)
+                                var forceTop = function() {
+                                    wrap.scrollTop = 0;
                                     enableScrollIfNeeded();
+                                };
+                                if (cardImg && !cardImg.complete) {
+                                    cardImg.addEventListener('load',  forceTop, { once: true });
+                                    cardImg.addEventListener('error', forceTop, { once: true });
+                                    // Extra safety: re-force after 300ms and 800ms
+                                    setTimeout(function() { wrap.scrollTop = 0; }, 300);
+                                    setTimeout(forceTop, 800);
+                                } else {
+                                    forceTop();
                                 }
                             });
                         }
@@ -5174,11 +5187,27 @@
                 var oldWrap = modal.querySelector('.img-card-track-wrap');
                 if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
                 buildCardTrack();
-                // Scroll new card to top — use rAF to ensure DOM is updated first
+
+                // After buildCardTrack, find new wrap and reset scroll
                 requestAnimationFrame(function() {
                     var newWrap = modal.querySelector('.img-card-track-wrap');
-                    if (newWrap) { newWrap.scrollTop = 0; newWrap.style.overflowY = 'auto'; }
+                    if (!newWrap) return;
+                    newWrap.scrollTop = 0;
+                    // Also reset after current card's image loads
+                    var track = newWrap.querySelector('.img-card-track');
+                    var card  = track && track.children[1]; // middle = current
+                    var cImg  = card && card.querySelector('img');
+                    var resetTop = function() { newWrap.scrollTop = 0; };
+                    if (cImg && !cImg.complete) {
+                        cImg.addEventListener('load',  resetTop, { once: true });
+                        cImg.addEventListener('error', resetTop, { once: true });
+                        setTimeout(resetTop, 600);
+                    } else {
+                        resetTop();
+                    }
+                    newWrap.style.overflowY = 'auto';
                 });
+
                 // Keep populateModal in sync for share/fullscreen
                 var list = window._GALLERY_LIST;
                 if (list && list.length) populateModal(list[window._GALLERY_INDEX].image_url);
