@@ -4986,6 +4986,14 @@
                 img.src = item.image_url;
                 img.alt = item.title || '';
                 if (isCurrent) img.id = 'modalImage';
+                // After image loads, reset scroll to top so card starts flush at top
+                if (isCurrent) {
+                    img.addEventListener('load', function() {
+                        var modal = document.getElementById('imageModal');
+                        var wrap = modal && modal.querySelector('.img-card-track-wrap');
+                        if (wrap) wrap.scrollTop = 0;
+                    }, { once: true });
+                }
                 slider.appendChild(img);
                 left.appendChild(slider);
 
