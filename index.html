@@ -5381,9 +5381,16 @@
             document.body.style.overflow = 'hidden';
             window._heroPageBlocked = true;
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
-            // Reset filters
+            // Reset filters to All
             _articleCategoryFilter = 'all';
             _articleSearchQuery = '';
+            // Reset all category tag styles back to default, activate All
+            document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
+                tag.classList.toggle('active', tag.dataset.category === 'all');
+                tag.style.removeProperty('background');
+                tag.style.removeProperty('border-color');
+                tag.style.removeProperty('color');
+            });
             if (window._ARTICLES_CACHE) {
                 _allArticles = window._ARTICLES_CACHE.filter(function(a) { return a.display !== 'off'; });
                 _articlePage = 1;
