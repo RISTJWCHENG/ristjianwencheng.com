@@ -5413,6 +5413,20 @@
             setTimeout(resumeHeroIfVisible, 100);
         }
 
+        // Click category label on article card → open article page filtered to that category
+        function goToArticleCategory(category) {
+            var cat = (category || 'all').trim();
+            openArticlePage();
+            setTimeout(function() {
+                _articleCategoryFilter = cat;
+                _articleSearchQuery = '';
+                document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
+                    tag.classList.toggle('active', tag.dataset.category === cat);
+                });
+                _applyArticleFilters();
+            }, 80);
+        }
+
         function openVideoPage() {
             const videoPage = document.getElementById('video-full-page');
             videoPage.classList.add('active');
@@ -5558,7 +5572,7 @@
                     + coverHTML
                     + '<div class="article-card-content">'
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
-                    + '<div class="article-card-category" style="color:' + catColor + ';">' + article.category + '</div>'
+                    + '<div class="article-card-category" style="color:' + catColor + ';cursor:pointer;" onclick="event.stopPropagation();goToArticleCategory(\'' + (article.category || '').replace(/'/g, "\\'") + '\')" title="View all ' + (article.category || '') + ' articles">' + article.category + '</div>'
                     + '<div style="display:flex;align-items:center;gap:0.3rem;">' + dlBtn + lkBtn + shareBtn + '</div>'
                     + '</div>'
                     + '<h3 class="article-card-title">' + article.title + '</h3>'
@@ -6318,7 +6332,7 @@
                     + coverHTML
                     + '<div class="featured-article-content">'
                     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">'
-                    + '<div class="featured-article-category" style="color:' + catColor + ';">' + article.category + '</div>'
+                    + '<div class="featured-article-category" style="color:' + catColor + ';cursor:pointer;" onclick="event.stopPropagation();goToArticleCategory(\'' + (article.category || '').replace(/'/g, "\\'") + '\')" title="View all ' + (article.category || '') + ' articles">' + article.category + '</div>'
                     + '<div style="display:flex;align-items:center;gap:0.3rem;">' + dlBtn + lkBtn + shareBtn + '</div>'
                     + '</div>'
                     + '<h3 class="featured-article-title">' + article.title + '</h3>'
