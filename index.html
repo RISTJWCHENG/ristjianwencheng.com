@@ -934,9 +934,7 @@
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior-y: contain;
                 width: 100vw;
-                /* height = card content, capped at viewport — no black void */
-                height: auto;
-                max-height: 100dvh;
+                height: 100dvh;
                 position: relative;
                 touch-action: pan-y;
                 background: transparent;
@@ -948,6 +946,7 @@
                 transform: translateX(-100vw);
                 will-change: transform;
                 align-items: flex-start;
+                min-height: 100dvh;
             }
             .img-card-track .img-modal-content {
                 flex: 0 0 100vw;
@@ -4956,6 +4955,17 @@
                 if (nav) modal.insertBefore(wrap, nav);
                 else modal.appendChild(wrap);
 
+                // Set wrap height immediately, then refine after image loads
+                requestAnimationFrame(function() {
+                    var track2 = wrap.querySelector('.img-card-track');
+                    var card2 = track2 && track2.children[1];
+                    if (card2) {
+                        var vh = window.innerHeight;
+                        wrap.style.height = Math.min(card2.scrollHeight, vh) + 'px';
+                    }
+                    wrap.scrollTop = 0;
+                });
+
                 // Attach swipe + scroll listeners to this wrap instance
                 if (typeof window._attachCardSwipeListeners === 'function') {
                     window._attachCardSwipeListeners(wrap);
@@ -4992,11 +5002,18 @@
                 img.src = item.image_url;
                 img.alt = item.title || '';
                 if (isCurrent) img.id = 'modalImage';
-                // After image loads, reset scroll to top so card starts flush at top
+                // After image loads, set wrap height = card height so no black void below
                 if (isCurrent) {
                     img.addEventListener('load', function() {
                         var modal = document.getElementById('imageModal');
                         var wrap = modal && modal.querySelector('.img-card-track-wrap');
+                        var track = wrap && wrap.querySelector('.img-card-track');
+                        var card = track && track.children[1];
+                        if (wrap && card) {
+                            var vh = window.innerHeight;
+                            var cardH = card.scrollHeight;
+                            wrap.style.height = Math.min(cardH, vh) + 'px';
+                        }
                         if (wrap) wrap.scrollTop = 0;
                     }, { once: true });
                 }
