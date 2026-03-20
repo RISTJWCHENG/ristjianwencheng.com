@@ -5468,13 +5468,22 @@
             setTimeout(function() {
                 openVideoPage();
                 setTimeout(function() {
-                    // Apply category filter
                     var cat = (category || 'all').trim();
                     _videoCategoryFilter = cat;
                     _videoSearchQuery = '';
-                    // Update active tag UI
+                    // Update active tag UI with category color
                     document.querySelectorAll('#video-full-page .category-tag').forEach(function(tag) {
-                        tag.classList.toggle('active', tag.dataset.category === cat);
+                        var isActive = tag.dataset.category === cat;
+                        tag.classList.toggle('active', isActive);
+                        tag.style.removeProperty('background');
+                        tag.style.removeProperty('border-color');
+                        tag.style.removeProperty('color');
+                        if (isActive && cat !== 'all') {
+                            var catColor = getVideoCategoryColor(cat);
+                            tag.style.background = catColor;
+                            tag.style.borderColor = catColor;
+                            tag.style.color = '#fff';
+                        }
                     });
                     _applyVideoFilters();
                 }, 80);
@@ -5485,8 +5494,22 @@
         var _videoSearchQuery = '';
 
         function filterVideoCategory(category) {
-            document.querySelectorAll('#video-full-page .category-tag').forEach(tag => tag.classList.remove('active'));
-            event.target.classList.add('active');
+            // Reset all tags to default style
+            document.querySelectorAll('#video-full-page .category-tag').forEach(function(tag) {
+                tag.classList.remove('active');
+                tag.style.removeProperty('background');
+                tag.style.removeProperty('border-color');
+                tag.style.removeProperty('color');
+            });
+            var activeTag = event.target;
+            activeTag.classList.add('active');
+            // Apply category color only for non-All tags
+            if (category !== 'all') {
+                var catColor = getVideoCategoryColor(category);
+                activeTag.style.background = catColor;
+                activeTag.style.borderColor = catColor;
+                activeTag.style.color = '#fff';
+            }
             _videoCategoryFilter = category;
             _applyVideoFilters();
         }
