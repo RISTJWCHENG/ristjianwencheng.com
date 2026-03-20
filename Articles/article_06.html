@@ -103,19 +103,31 @@ em {
   }
   30% {
     opacity: 1.0;
-    filter: blur(0.3px);
+    filter: blur(0.4px);
     text-shadow: 
-      0 0 8px rgba(255,255,255,0.6),
-      0 0 16px rgba(255,255,255,0.8),
-      0 0 30px rgba(255,255,255,0.5);
+      0 0 8px rgba(255,255,255,0.5),
+      0 0 16px rgba(255,255,255,0.7);
   }
-  45% {
+  35% {
     opacity: 1.0;
     filter: blur(0px);
     text-shadow: 
-      0 0 4px rgba(255,255,255,0.4),
-      0 0 8px  rgba(255,255,255,0.35),
-      0 0 12px rgba(255,255,255,0.2);
+      0 0 3px rgba(255,255,255,0.25),
+      0 0 6px  rgba(255,255,255,0.2);
+  }
+  75% {
+    opacity: 1.0;
+    filter: blur(0px);
+    text-shadow: 
+      0 0 3px rgba(255,255,255,0.25),
+      0 0 6px  rgba(255,255,255,0.2);
+  }
+  85% {
+    opacity: 0.95;
+    filter: blur(0.6px);
+    text-shadow: 
+      0 0 6px rgba(255,255,255,0.4),
+      0 0 12px rgba(255,255,255,0.5);
   }
   100% {
     opacity: 0.72;
@@ -158,12 +170,12 @@ footer {
   font-weight: 400;
 }
 .meta-info .author-avatar {
-  width: 28px;
-  height: 28px;
+  width: 20px;                         /* ← 缩小为 20px */
+  height: 20px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(63, 224, 197, 0.18);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+  border: 1px solid rgba(63, 224, 197, 0.25);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   flex-shrink: 0;
 }
 .section .evolution-note {
@@ -173,7 +185,7 @@ footer {
   text-align: left;
   line-height: 1.6;
   margin: 12px 0 40px 0;
-  width: 100%;                        /* 与文章页面主体宽度一致 */
+  width: 100%;
 }
 /* toast */
 #copy-toast {
@@ -220,9 +232,9 @@ footer {
       <div style="display:flex; align-items:center; gap:8px;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
+          <line x="16" y1="2" x2="16" y2="6"></line>
+          <line x="8" y1="2" x2="8" y2="6"></line>
+          <line x="3" y1="10" x2="21" y2="10"></line>
         </svg>
         <span>March 2026</span>
       </div>
