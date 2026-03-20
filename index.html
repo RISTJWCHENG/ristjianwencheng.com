@@ -1469,10 +1469,10 @@
 
         /* ── Article card buttons: breathing sky-blue → grey-blue → lavender ── */
         @keyframes articleBtnBreath {
-            0%   { color: #38bdf8; -webkit-text-fill-color: #38bdf8; }
-            40%  { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
-            70%  { color: #a78bfa; -webkit-text-fill-color: #a78bfa; }
-            100% { color: #38bdf8; -webkit-text-fill-color: #38bdf8; }
+            0%   { color: #38bdf8; }
+            40%  { color: #94a3b8; }
+            70%  { color: #a78bfa; }
+            100% { color: #38bdf8; }
         }
         @keyframes articleSvgBreath {
             0%   { stroke: #38bdf8; }
@@ -1484,16 +1484,17 @@
             background: none !important;
             -webkit-background-clip: unset !important;
             background-clip: unset !important;
-            -webkit-text-fill-color: #38bdf8 !important;
+            -webkit-text-fill-color: unset !important;
             animation: articleBtnBreath 4s ease-in-out infinite !important;
         }
         .article-share-btn svg {
+            stroke: currentColor !important;
             animation: articleSvgBreath 4s ease-in-out infinite !important;
         }
         .article-share-btn:hover {
             animation: none !important;
             color: var(--cat-color, #7c6fcd) !important;
-            -webkit-text-fill-color: var(--cat-color, #7c6fcd) !important;
+            -webkit-text-fill-color: unset !important;
         }
         .article-share-btn:hover svg {
             animation: none !important;
