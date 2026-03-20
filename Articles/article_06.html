@@ -15,7 +15,6 @@
   --soft:#6b7c8f;
   --meta:#ffffff;
 }
-
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -23,13 +22,11 @@ body {
   color: var(--primary);
   line-height: 1.9;
 }
-
 .container {
   max-width: 900px;
   margin: auto;
   padding: 100px 24px;
 }
-
 h1 {
   font-family: 'Playfair Display', serif;
   font-size: 32px;
@@ -37,12 +34,10 @@ h1 {
   letter-spacing: 3px;
   margin-bottom: 60px;
 }
-
 .meta-type{
   color:#3fe0c5;
   font-weight:500;
 }
-
 .section:first-of-type p:first-child::first-letter{
   font-family:'Playfair Display', serif;
   font-size:64px;
@@ -51,31 +46,25 @@ h1 {
   padding-right:10px;
   color:var(--primary);
 }
-
 .section p:nth-child(2n){
   font-weight:300;
   color:var(--secondary);
 }
-
 .section p:nth-child(3n){
   letter-spacing:0.5px;
 }
-
 .section {
   margin-bottom: 80px;
 }
-
 .section p:first-child {
   font-size: 18px;
   color: var(--primary);
 }
-
 .section p {
   font-size: 16px;
   color: var(--secondary);
   margin-bottom: 20px;
 }
-
 .highlight {
   border-left: 2px solid var(--accent);
   padding-left: 24px;
@@ -84,25 +73,21 @@ h1 {
   font-size: 20px;
   color: var(--primary);
 }
-
 .divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
   margin: 80px 0;
 }
-
 em {
   color: var(--accent);
   font-style: normal;
 }
-
 .poetic {
   font-family: 'Playfair Display', serif;
   font-size: 22px;
   text-align: center;
   margin-top: 40px;
 }
-
 footer {
   text-align: center;
   font-size: 12px;
@@ -110,10 +95,16 @@ footer {
   margin-top: 100px;
   letter-spacing: 2px;
 }
-
 .meta-info span, .meta-info svg {
-  color: var(--meta);
+  color: var(--soft);
   opacity: 0.9;
+}
+.meta-info svg {
+  transition: all 0.2s ease;
+}
+.meta-info svg:hover {
+  opacity: 1;
+  color: #ffffff;
 }
 
 /* 弹出提示框样式 */
@@ -121,8 +112,8 @@ footer {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #071426; 
-  color: #3fe0c5; /* Writing 字体颜色 */
+  background-color: #071426;
+  color: #3fe0c5;
   padding: 12px 20px;
   border-radius: 8px;
   font-family: 'Playfair Display', serif;
@@ -135,8 +126,6 @@ footer {
   z-index: 1000;
   position: relative;
 }
-
-/* 小箭头 */
 #copy-toast::after {
   content: '';
   position: absolute;
@@ -147,7 +136,6 @@ footer {
   border-style: solid;
   border-color: transparent #3fe0c5 transparent transparent;
 }
-
 #copy-toast.show {
   opacity: 1;
   transform: translateY(0);
@@ -155,41 +143,45 @@ footer {
 </style>
 </head>
 <body>
-
 <div class="container">
 
-  <!-- Meta 信息 -->
+  <!-- Meta 信息（已更新為極簡線框風格） -->
   <div class="meta-info" style="margin-bottom:30px; font-size:12px; letter-spacing:2px;">
     <div class="meta-type" style="margin-bottom:10px; text-transform:uppercase;">Writing</div>
-    <div style="display:flex; gap:20px; align-items:center; font-size:13px;">
+    <div style="display:flex; gap:32px; align-items:center; font-size:13px;">
+      
       <!-- 日期 -->
-      <div style="display:flex; align-items:center; gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0">
-          <rect x="3" y="4" width="18" height="18" rx="2"/>
-          <line x1="3" y1="10" x2="21" y2="10" stroke="white" stroke-width="1.5"/>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
         </svg>
         <span>March 2022</span>
       </div>
-      <!-- 阅读时间 -->
-      <div style="display:flex; align-items:center; gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="12" cy="12" r="8"/>
-          <line x1="12" y1="12" x2="12" y2="8"/> <!-- 时针 -->
-          <line x1="12" y1="12" x2="16" y2="12"/> <!-- 分针 -->
+
+      <!-- 閱讀時間 -->
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="13" r="8"></circle>
+          <polyline points="12 9 12 13 16 15"></polyline>
         </svg>
         <span>5 min read</span>
       </div>
+
       <!-- 分享 -->
-      <div style="display:flex; align-items:center; gap:6px; cursor:pointer;" id="share-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0">
-          <circle cx="18" cy="5" r="3"/>
-          <circle cx="6" cy="12" r="3"/>
-          <circle cx="18" cy="19" r="3"/>
-          <line x1="7" y1="12" x2="16" y2="5" stroke="white" stroke-width="1.5"/>
-          <line x1="16" y1="19" x2="7" y2="12" stroke="white" stroke-width="1.5"/>
+      <div style="display:flex; align-items:center; gap:8px; cursor:pointer;" id="share-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
         </svg>
         <span>Share</span>
       </div>
+
     </div>
   </div>
 
@@ -201,7 +193,7 @@ footer {
     </video>
   </div>
 
-  <!-- 文章内容 -->
+  <!-- 文章內容 -->
   <div class="section">
     <p><span style="float:left; font-family:'Playfair Display', serif; font-size:64px; line-height:0.9; padding-right:10px; color:var(--primary);">I</span>n every era and civilization, architecture has always been the most telling measure of a society’s level of development.</p>
     <p>It not only responds to practical functional needs but also embodies the spirit and cognitive boundaries of its time.</p>
@@ -231,6 +223,7 @@ footer {
   </div>
 
   <footer>VISUAL ESSAY · ARCHITECTURE · TIME · MEMORY</footer>
+
 </div>
 
 <!-- 拷贝提示 -->
@@ -240,10 +233,8 @@ footer {
 document.addEventListener('DOMContentLoaded', () => {
   const shareBtn = document.getElementById('share-btn');
   const toast = document.getElementById('copy-toast');
-
   shareBtn.addEventListener('click', () => {
     const link = 'https://ristjianwencheng.com/Articles/article_06.html';
-
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(link).then(() => {
         toast.textContent = 'Link copied!';
@@ -268,6 +259,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
 </body>
 </html>
