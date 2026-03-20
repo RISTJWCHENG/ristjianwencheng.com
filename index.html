@@ -4391,8 +4391,14 @@
             window._GALLERY_INDEX = window._GALLERY_LIST.findIndex(function(i) { return i.image_url === url; });
             if (window._GALLERY_INDEX < 0) window._GALLERY_INDEX = 0;
             populateModal(url);
-            document.getElementById('imageModal').classList.add('active');
+            // Save scroll position and lock body scroll (iOS fix)
+            var savedScrollY = window.scrollY || window.pageYOffset || 0;
             document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = '-' + savedScrollY + 'px';
+            document.body.style.width = '100%';
+            window._savedScrollY = savedScrollY;
+            document.getElementById('imageModal').classList.add('active');
             window._heroPageBlocked = true;
             var _hv = document.getElementById('heroLogoVideo'); if (_hv) _hv.pause();
             // On mobile: build card track after modal is fully rendered
@@ -4407,21 +4413,18 @@
                             requestAnimationFrame(function() {
                                 var wrap = modal.querySelector('.img-card-track-wrap');
                                 if (!wrap) return;
-                                // Lock scroll until image is loaded to prevent layout-shift scroll
                                 wrap.style.overflowY = 'hidden';
                                 wrap.scrollTop = 0;
-                                // Find current card's image
                                 var track = wrap.querySelector('.img-card-track');
                                 var card = track && track.children[1];
-                                var img = card && card.querySelector('img');
+                                var cardImg = card && card.querySelector('img');
                                 var unlock = function() {
                                     wrap.scrollTop = 0;
                                     wrap.style.overflowY = 'auto';
                                 };
-                                if (img && !img.complete) {
-                                    img.addEventListener('load',  unlock, { once: true });
-                                    img.addEventListener('error', unlock, { once: true });
-                                    // Fallback: unlock after 1.5s regardless
+                                if (cardImg && !cardImg.complete) {
+                                    cardImg.addEventListener('load',  unlock, { once: true });
+                                    cardImg.addEventListener('error', unlock, { once: true });
                                     setTimeout(unlock, 1500);
                                 } else {
                                     unlock();
@@ -5336,8 +5339,15 @@
         function closeImageModal() {
             document.getElementById('imageModal').classList.remove('active');
             var anyFullPage = document.querySelector('.full-gallery-page.active');
+            // Restore body scroll position (iOS position:fixed fix)
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
             document.body.style.overflow = anyFullPage ? 'hidden' : 'auto';
-            // Only unblock if no other full-page overlay is open
+            if (typeof window._savedScrollY === 'number') {
+                window.scrollTo(0, window._savedScrollY);
+                window._savedScrollY = null;
+            }
             if (!anyFullPage) {
                 window._heroPageBlocked = false;
                 setTimeout(resumeHeroIfVisible, 100);
