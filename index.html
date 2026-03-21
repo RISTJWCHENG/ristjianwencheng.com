@@ -746,9 +746,15 @@
             align-items: center;
             gap: 1.2rem;
             padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
             border-top: 1px solid rgba(255,255,255,0.15);
-            margin-top: auto;
             flex-shrink: 0;
+        }
+        .img-modal-date-bottom {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: auto;
+            padding-top: 0.5rem;
         }
         @keyframes modalBtnColorCycle {
             0%   { color: #e8a87c; }
@@ -3956,7 +3962,6 @@
             <div class="img-modal-right" id="imgModalInfo">
                 <div class="img-modal-category" id="imgModalCategory"></div>
                 <h3 class="img-modal-title" id="imgModalTitle"></h3>
-                <div class="img-modal-date" id="imgModalDate"></div>
                 <div class="img-modal-desc-wrap">
                     <p class="img-modal-desc" id="imgModalDesc"></p>
                 </div>
@@ -3970,6 +3975,7 @@
                         Share
                     </button>
                 </div>
+                <div class="img-modal-date img-modal-date-bottom" id="imgModalDate"></div>
             </div>
         </div>
         <button class="img-nav-btn img-nav-next" id="imgNavNext" onclick="event.stopPropagation();navigateImage(1)" title="Next">
@@ -4329,7 +4335,7 @@
                 }; })(data.category || '');
             }
             if (title) title.textContent = data.title        || '';
-            if (date)  date.textContent  = data.updated_time || '';
+            if (date)  date.textContent  = data.created_time || data.updated_time || '';
             if (desc)  desc.textContent  = data.description  || '';
 
             // Update desktop download button URL (static card, identified by id)
@@ -5369,9 +5375,11 @@
 
                 right.appendChild(catEl);
                 right.appendChild(titleEl);
-                right.appendChild(dateEl);
                 right.appendChild(descWrap);
                 right.appendChild(linksEl);
+                // Date at bottom
+                dateEl.className = 'img-modal-date img-modal-date-bottom';
+                right.appendChild(dateEl);
                 card.appendChild(right);
                 return card;
             }
