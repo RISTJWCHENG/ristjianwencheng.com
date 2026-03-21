@@ -5252,7 +5252,7 @@
 
                 var dateEl = document.createElement('div');
                 dateEl.className = 'img-modal-date';
-                dateEl.textContent = item.updated_time || '';
+                dateEl.textContent = item.created_time || item.updated_time || '';
                 if (isCurrent) dateEl.id = 'imgModalDate';
 
                 var descWrap = document.createElement('div');
