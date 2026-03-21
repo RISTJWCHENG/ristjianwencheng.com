@@ -2914,16 +2914,7 @@
         }
         // Open video in modal (medium size), stop any previously playing video
         function openVideoModal(videoUrl, title, description, time, download, link, category, watchTime) {
-            // Stop all inline card videos
-            document.querySelectorAll('.video-thumbnail-bg').forEach(function(v) {
-                v.pause();
-                v.currentTime = 0;
-                v.removeAttribute('controls');
-            });
-            // Restore all overlays and thumbnails
-            document.querySelectorAll('.video-overlay').forEach(function(o) { o.style.display = 'flex'; });
-            document.querySelectorAll('.video-thumbnail-wrapper img').forEach(function(img) { img.style.display = ''; });
-            document.querySelectorAll('.video-thumbnail-bg').forEach(function(v) { v.style.opacity = '0'; });
+            // No inline card videos to stop — cards use thumbnail images only
 
             const modal = document.getElementById('videoPlayerModal');
             const player = document.getElementById('videoModalPlayer');
@@ -2937,7 +2928,8 @@
 
             titleEl.textContent = title || '';
             source.src = videoUrl;
-            player.preload = 'auto';
+            // metadata only until user explicitly plays — reduces mobile data/heat
+            player.preload = 'metadata';
             player.load();
             player.play().catch(function(){});
 
@@ -3104,6 +3096,10 @@
             const player = document.getElementById('videoModalPlayer');
             player.pause();
             player.currentTime = 0;
+            // Remove src entirely so browser stops all buffering/decoding (key for mobile heat)
+            var src = document.getElementById('videoModalSource');
+            if (src) src.src = '';
+            player.load(); // flush buffers
             modal.classList.remove('active');
             const anyFullPage = document.querySelector('.full-gallery-page.active');
             document.body.style.overflow = anyFullPage ? 'hidden' : 'auto';
@@ -3154,6 +3150,7 @@
 
             // Update video source
             source.src = v.video_url;
+            player.preload = 'metadata';
             player.load();
             player.play().catch(function(){});
 
@@ -3275,8 +3272,6 @@
 
         function playVideo(overlay) {
             const wrapper = overlay.parentElement;
-            const video = wrapper.querySelector('.video-thumbnail-bg');
-            const source = video.querySelector('source');
             const card = wrapper.closest('.video-card-featured');
             const title = card ? card.querySelector('.video-card-title').textContent : '';
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
@@ -3285,16 +3280,14 @@
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
             const category = card ? card.dataset.category : 'Work';
             const watchTime = card && card.dataset.watchTime ? card.dataset.watchTime : null;
-            // Use raw src attribute (not source.src which browser converts to absolute URL)
-            const videoUrl = source.getAttribute('src') || source.src;
+            // Read video URL from data attribute (no <video> element in DOM)
+            const videoUrl = wrapper.dataset.videoUrl || '';
             window._videoNavIndex = -1;
             openVideoModal(videoUrl, title, desc, time, download, link, category, watchTime);
         }
 
         function playVideoWithThumb(overlay) {
             const wrapper = overlay.parentElement;
-            const video = wrapper.querySelector('.video-thumbnail-bg');
-            const source = video.querySelector('source');
             const card = wrapper.closest('.video-card-featured');
             const title = card ? card.querySelector('.video-card-title').textContent : '';
             const desc = card ? card.querySelector('.video-card-description').textContent.trim() : '';
@@ -3303,8 +3296,8 @@
             const link = card && card.dataset.linkLabel ? [card.dataset.linkLabel, card.dataset.linkUrl] : null;
             const category = card ? card.dataset.category : 'Work';
             const watchTime = card && card.dataset.watchTime ? card.dataset.watchTime : null;
-            // Use raw src attribute (not source.src which browser converts to absolute URL)
-            const videoUrl = source.getAttribute('src') || source.src;
+            // Read video URL from data attribute (no <video> element in DOM until modal opens)
+            const videoUrl = wrapper.dataset.videoUrl || '';
             window._videoNavIndex = -1;
             openVideoModal(videoUrl, title, desc, time, download, link, category, watchTime);
         }
@@ -6450,18 +6443,19 @@
                 card.dataset.time = video.updated_time;
             }
             const thumbUrl = video.thumbnail_url || '';
-            const thumbHTML = thumbUrl
-                ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.querySelector('.video-thumbnail-bg').style.opacity='1';">`
-                : '';
             const descId = 'desc-' + Math.random().toString(36).substr(2, 8);
             const descText = video.description && video.description.trim() ? video.description : '';
+            // Thumbnail-only card: no <video> element in DOM until user taps play.
+            // This prevents mobile from preloading/buffering video data on scroll,
+            // which is the main cause of device heating.
+            const thumbHTML = thumbUrl
+                ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
+                : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#111;">
+                       <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" width="40" height="40"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                   </div>`;
             card.innerHTML = `
-                <div class="video-thumbnail-wrapper">
+                <div class="video-thumbnail-wrapper" data-video-url="${video.video_url}">
                     ${thumbHTML}
-                    <video class="video-thumbnail-bg" preload="none" style="${thumbUrl ? 'opacity:0;' : ''}">
-                        <source src="${video.video_url}" type="video/mp4">
-                        <source src="${video.video_url}" type="video/quicktime">
-                    </video>
                     <div class="video-overlay" onclick="playVideoWithThumb(this)">
                         <div class="play-button-circle">
                             <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
@@ -6534,17 +6528,7 @@
                 fullGrid.appendChild(card);
                 descIds.push(descId);
 
-                // Preload video on hover so it starts faster when clicked
-                var bgVid = card.querySelector('.video-thumbnail-bg');
-                if (bgVid) {
-                    card.addEventListener('mouseenter', function() {
-                        if (bgVid.preload === 'none') bgVid.preload = 'metadata';
-                    }, { once: true, passive: true });
-                    card.addEventListener('touchstart', function() {
-                        if (bgVid.preload === 'none') bgVid.preload = 'metadata';
-                    }, { once: true, passive: true });
-                }
-
+                // No preload on mobile — video element is created only when user taps play.
                 // Press effect handled by applyBtnPressEffect() inside shareVideo()
             });
 
