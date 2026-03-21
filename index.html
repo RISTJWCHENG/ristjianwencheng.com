@@ -326,9 +326,17 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.9rem;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .filter-tag:hover, .filter-tag.active {
+        @media (hover: hover) {
+            .filter-tag:hover {
+                background: var(--text-primary);
+                color: white;
+                border-color: var(--text-primary);
+            }
+        }
+        .filter-tag.active {
             background: var(--text-primary);
             color: white;
             border-color: var(--text-primary);
