@@ -919,17 +919,9 @@
             #imageModal .modal-content.img-modal-content:not(.img-card-track .img-modal-content) {
                 display: none !important;
             }
-            /* On mobile: modal bg transparent, card has its own bg */
+            /* On mobile: modal itself is hidden behind track-wrap which handles bg */
             #imageModal {
                 background: transparent !important;
-            }
-            /* Dim overlay behind the card — only fills what's needed */
-            #imageModal::before {
-                content: '';
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.85);
-                z-index: -1;
             }
             /* Card itself must be fully opaque with its own background */
             .img-card-track .img-modal-content {
@@ -937,16 +929,19 @@
             }
             .img-card-track-wrap {
                 overflow-x: hidden;
-                overflow-y: auto;           /* always scrollable — no layout shift */
+                overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior-y: contain;
                 width: 100vw;
-                height: 100dvh;             /* wrap = exactly viewport, never more */
-                position: fixed;            /* fixed so body-fixed trick doesn't affect it */
+                /* Use JS-measured --vh so height = actual visible viewport exactly */
+                height: 100vh;
+                height: calc(var(--vh, 1vh) * 100);
+                position: fixed;
                 top: 0;
                 left: 0;
                 touch-action: pan-y;
-                background: transparent;
+                /* Black background fills entire wrap — no page bleed-through */
+                background: rgba(0, 0, 0, 0.92);
                 z-index: 2000;
             }
             .img-card-track {
