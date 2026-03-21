@@ -52,6 +52,15 @@
       "link": ["Article", "https://www.pinterest.com/pin/245305510948528413/"],
       "display": "on"
     },
+      {
+      "title": "Work-2014-07-17",
+      "category": "Drawing & Painting",
+      "created_time": "2014",
+      "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Images/Work-2014-07-17.jpg",
+      "description": "N HAIR SETUP Tool is a technical utility for Maya that automates and standardizes dynamic curve simulations in production.",
+      "link": ["Article", "https://pin.it/3266VVzCf"],
+      "display": "on"
+    },
     {
       "title": "Work-2008-01-14",
       "category": "Drawing & Painting",
