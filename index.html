@@ -1031,15 +1031,29 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.9rem;
+            -webkit-tap-highlight-color: transparent; /* remove iOS tap glow */
         }
 
-        .category-tag:hover, .category-tag.active {
+        /* Desktop hover */
+        @media (hover: hover) {
+            .category-tag:hover {
+                background: var(--text-primary);
+                color: white;
+                border-color: #999;
+            }
+            .filter-tag:hover {
+                background: var(--text-primary);
+                color: white;
+                border-color: #999;
+            }
+        }
+        /* Active state — works on all devices */
+        .category-tag.active {
             background: var(--text-primary);
             color: white;
             border-color: #999;
         }
-
-        .filter-tag:hover, .filter-tag.active {
+        .filter-tag.active {
             background: var(--text-primary);
             color: white;
             border-color: #999;
