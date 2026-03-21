@@ -2461,6 +2461,11 @@
                 min-height: auto;
             }
 
+            /* Reset desktop spacing overrides back to compact mobile values */
+            #video           { padding-top: 6rem !important; padding-bottom: 2rem !important; }
+            #featured-articles { padding-top: 3rem !important; padding-bottom: 2rem !important; }
+            #information     { padding-top: 3rem !important; }
+
             #home {
                 padding: 1rem 0 2rem;
             }
@@ -3602,7 +3607,7 @@
         </div>
     </section>
 
-    <section id="video" class="section" style="min-height: auto;">
+    <section id="video" class="section" style="min-height: auto; padding-top: 6rem; padding-bottom: 6rem;">
         <div class="container">
             <div class="video-header">
                 <div>
@@ -3617,7 +3622,7 @@
         </div>
     </section>
 
-    <section id="featured-articles" class="section" style="min-height: auto; padding-top: 4rem;">
+    <section id="featured-articles" class="section" style="min-height: auto; padding-top: 6rem; padding-bottom: 6rem;">
         <div class="container">
             <div class="gallery-header">
                 <div class="gallery-header-left">
@@ -3632,7 +3637,7 @@
         </div>
     </section>
 
-    <section id="information" class="section" style="min-height: auto; padding-top: 4rem;">
+    <section id="information" class="section" style="padding-top: 6rem;">
         <div class="container">
             <h2 class="section-title">Information</h2>
             <div class="info-content">
