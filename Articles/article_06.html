@@ -28,11 +28,13 @@ body {
   padding: 100px 24px;
 }
 h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: 3px;
+  font-family: "Microsoft Himalaya", Georgia, serif;
+  font-size: 38px;
+  font-weight: normal;
+  letter-spacing: 4px;
   margin-bottom: 60px;
+  color: var(--primary);
+  text-align: left;
 }
 .meta-type {
   color: var(--toast-color);
@@ -59,11 +61,13 @@ h1 {
 .section p:first-child {
   font-size: 18px;
   color: var(--primary);
+  font-family: Georgia, serif;
 }
 .section p {
   font-size: 16px;
   color: var(--secondary);
   margin-bottom: 20px;
+  font-family: Georgia, serif;
 }
 .highlight {
   border-left: 2px solid var(--accent);
@@ -94,48 +98,51 @@ em {
 
 @keyframes poeticBreath {
   0%, 100% {
-    opacity: 0.72;
-    filter: blur(1.5px);
+    opacity: 0.75;
+    filter: blur(1.4px);
     text-shadow: 
-      0 0 10px rgba(255,255,255,0.35),
-      0 0 20px rgba(255,255,255,0.45),
-      0 0 35px rgba(255,255,255,0.3);
+      0 0 12px rgba(255,255,255,0.5),
+      0 0 24px rgba(255,255,255,0.4),
+      0 0 40px rgba(255,255,255,0.25);
   }
   30% {
-    opacity: 1.0;
-    filter: blur(0.4px);
+    opacity: 0.98;
+    filter: blur(0.5px);
     text-shadow: 
-      0 0 8px rgba(255,255,255,0.5),
-      0 0 16px rgba(255,255,255,0.7);
+      0 0 10px rgba(255,255,255,0.7),
+      0 0 20px rgba(255,255,255,0.6),
+      0 0 35px rgba(255,255,255,0.45);
   }
   35% {
     opacity: 1.0;
     filter: blur(0px);
     text-shadow: 
-      0 0 3px rgba(255,255,255,0.25),
-      0 0 6px  rgba(255,255,255,0.2);
+      0 0 4px rgba(255,255,255,0.35),
+      0 0 8px rgba(255,255,255,0.25),
+      0 0 12px rgba(255,255,255,0.15);
   }
-  75% {
+  80% {
     opacity: 1.0;
     filter: blur(0px);
     text-shadow: 
-      0 0 3px rgba(255,255,255,0.25),
-      0 0 6px  rgba(255,255,255,0.2);
+      0 0 4px rgba(255,255,255,0.35),
+      0 0 8px rgba(255,255,255,0.25),
+      0 0 12px rgba(255,255,255,0.15);
   }
-  85% {
-    opacity: 0.95;
-    filter: blur(0.6px);
+  88% {
+    opacity: 0.92;
+    filter: blur(0.8px);
     text-shadow: 
-      0 0 6px rgba(255,255,255,0.4),
-      0 0 12px rgba(255,255,255,0.5);
+      0 0 8px rgba(255,255,255,0.5),
+      0 0 16px rgba(255,255,255,0.4);
   }
   100% {
-    opacity: 0.72;
-    filter: blur(1.5px);
+    opacity: 0.75;
+    filter: blur(1.4px);
     text-shadow: 
-      0 0 10px rgba(255,255,255,0.35),
-      0 0 20px rgba(255,255,255,0.45),
-      0 0 35px rgba(255,255,255,0.3);
+      0 0 12px rgba(255,255,255,0.5),
+      0 0 24px rgba(255,255,255,0.4),
+      0 0 40px rgba(255,255,255,0.25);
   }
 }
 
@@ -154,10 +161,6 @@ footer {
 .meta-info svg {
   transition: all 0.2s ease;
 }
-.meta-info svg:hover {
-  opacity: 1;
-  color: #ffffff;
-}
 .meta-info .author-line {
   display: flex;
   align-items: center;
@@ -170,7 +173,7 @@ footer {
   font-weight: 400;
 }
 .meta-info .author-avatar {
-  width: 20px;                         /* ← 缩小为 20px */
+  width: 20px;
   height: 20px;
   border-radius: 50%;
   object-fit: cover;
@@ -187,6 +190,23 @@ footer {
   margin: 12px 0 40px 0;
   width: 100%;
 }
+
+/* Share 按鈕 hover 效果 */
+#share-btn {
+  transition: color 0.25s ease;
+  color: var(--soft);
+  cursor: pointer;
+}
+
+#share-btn:hover {
+  color: #ffffff;
+}
+
+#share-btn:hover svg {
+  color: #ffffff;
+  opacity: 1;
+}
+
 /* toast */
 #copy-toast {
   position: fixed;
@@ -245,7 +265,7 @@ footer {
         </svg>
         <span>5 min read</span>
       </div>
-      <div style="display:flex; align-items:center; gap:8px; cursor:pointer;" id="share-btn">
+      <div style="display:flex; align-items:center; gap:8px;" id="share-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="18" cy="5" r="3"></circle>
           <circle cx="6" cy="12" r="3"></circle>
@@ -265,7 +285,7 @@ footer {
       <span>Written by Rist Jianwen Cheng</span>
     </div>
   </div>
-  <h1>THE BEAUTY OF ARCHITECTURE</h1>
+  <h1>The Beauty of Architecture</h1>
   <div style="margin-bottom:80px;">
     <video controls autoplay muted loop style="width:100%; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
       <source src="https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Videos/THE%20BEAUTY%20OF%20ARCHITECTURE.mp4" type="video/mp4">
@@ -277,7 +297,9 @@ footer {
   </div>
   <div class="divider"></div>
   <div class="section">
-    <p>This is a visual design work exploring the <span style="color: var(--accent); font-style: italic;">“beauty of architecture,”</span> attempting to narrate the long journey of human civilization from primitiveness to order through minimalist and abstract visual language.</p>
+    <p style="font-family: Ebrima, 'Segoe UI', sans-serif;">
+      This is a visual design work exploring the <span style="color: var(--accent); font-style: italic;">“beauty of architecture,”</span> attempting to narrate the long journey of human civilization from primitiveness to order through minimalist and abstract visual language.
+    </p>
     <div class="highlight">Memory becomes the origin of form.</div>
     <p>The work draws its inspiration from fragments of my own memories growing up: as a child, I saw the grandeur of ancient Greek and Roman architecture in textbooks, while in daily life I experienced laborers shaping buildings with the rhythmic strikes of stone; as a teenager, I encountered the fascinating and rhythmic noises of modern machinery and metal clashing at vast concrete construction sites; and during my later travels, I discovered the unique beauty of diverse architectural forms. All these sensory memories and experiences became the starting point for my visual creation.</p>
     <p>Some of the sound materials in the video were sampled years ago, when I casually recorded the sounds of construction sites with my phone while passing by. These “noises” became an abstract component of the work, adding a tangible sense of reality and vitality to the visuals.</p>
@@ -291,9 +313,11 @@ footer {
       The entire visual process moves from “chaos” to “order,” from “nature” to “rationality,” and from “classical” to “modern.” Rather than depicting specific buildings, the work uses abstract formal evolution to distill a more essential meaning of architecture—that is, humanity’s continuous exploration of space, structure, beauty, and materials, as well as the enduring upward projection of civilization’s spirit.
     </p>
   </div>
+  <div class="divider"></div>
   <footer>VISUAL ESSAY · ARCHITECTURE · TIME · MEMORY</footer>
 </div>
 <div id="copy-toast">🔗Article link copied！</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const shareBtn = document.getElementById('share-btn');
@@ -305,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(link);
+        toast.textContent = '🔗Article link copied！';
       } else {
         const textarea = document.createElement('textarea');
         textarea.value = link;
@@ -315,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
+        toast.textContent = '🔗Article link copied！';
       }
      
       toast.classList.add('show');
