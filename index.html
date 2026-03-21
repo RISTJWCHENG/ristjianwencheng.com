@@ -5742,15 +5742,7 @@
                 _currentPage = 1;
                 renderVideoPage(1);
             }
-            // Check more buttons after page is visible
-            requestAnimationFrame(function() {
-                document.querySelectorAll('#videoGridFull .desc-clamp').forEach(function(descEl) {
-                    const moreBtn = document.getElementById('btn-' + descEl.id);
-                    if (moreBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
-                        moreBtn.style.display = 'inline-block';
-                    }
-                });
-            });
+            // desc-clamp check is handled inside renderVideoPage with setTimeout
         }
 
         function closeVideoPage() {
@@ -6449,7 +6441,7 @@
             // This prevents mobile from preloading/buffering video data on scroll,
             // which is the main cause of device heating.
             const thumbHTML = thumbUrl
-                ? `<img src="${thumbUrl}" alt="${video.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
+                ? `<img src="${thumbUrl}" alt="${video.title}" loading="lazy" decoding="async" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
                 : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#111;">
                        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" width="40" height="40"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
                    </div>`;
@@ -6511,7 +6503,7 @@
         // ── Pagination state ──────────────────────────────────────────────────
         var _allVideos = [];
         var _currentPage = 1;
-        var _videosPerPage = 12;
+        var _videosPerPage = 12; // reduced to 9 on mobile (see renderVideoPage)
 
         function renderVideoPage(page) {
             _currentPage = page;
@@ -6519,8 +6511,10 @@
             if (!fullGrid) return;
             fullGrid.innerHTML = '';
 
-            const start = (page - 1) * _videosPerPage;
-            const pageVideos = _allVideos.slice(start, start + _videosPerPage);
+            // Fewer cards per page on mobile = less DOM, less GPU work, less heat
+            var perPage = (window.innerWidth <= 768) ? 9 : _videosPerPage;
+            const start = (page - 1) * perPage;
+            const pageVideos = _allVideos.slice(start, start + perPage);
             const descIds = [];
 
             pageVideos.forEach(function(video) {
@@ -6534,24 +6528,27 @@
 
             renderPagination();
 
-            const pageEl = document.getElementById('video-full-page');
-            if (pageEl) pageEl.scrollTop = 0;
+            // Scroll page to top on pagination — use scrollTo for smoother behavior
+            var pageEl = document.getElementById('video-full-page');
+            if (pageEl) pageEl.scrollTo(0, 0);
 
-            requestAnimationFrame(function() {
+            // Defer desc-clamp check: setTimeout avoids forced reflow on paint frame
+            setTimeout(function() {
                 descIds.forEach(function(descId) {
-                    const descEl = document.getElementById(descId);
-                    const moreBtn = document.getElementById('btn-' + descId);
+                    var descEl = document.getElementById(descId);
+                    var moreBtn = document.getElementById('btn-' + descId);
                     if (descEl && moreBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
                         moreBtn.style.display = 'inline-block';
                     }
                 });
-            });
+            }, 200);
         }
 
         function renderPagination() {
             const pagination = document.getElementById('videoPagination');
             if (!pagination) return;
-            const totalPages = Math.ceil(_allVideos.length / _videosPerPage);
+            var perPage = (window.innerWidth <= 768) ? 9 : _videosPerPage;
+            const totalPages = Math.ceil(_allVideos.length / perPage);
             if (totalPages <= 1) { pagination.style.display = 'none'; return; }
             pagination.style.display = 'flex';
 
