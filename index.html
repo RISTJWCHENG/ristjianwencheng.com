@@ -3235,7 +3235,8 @@
             document.querySelectorAll('.category-tag').forEach(tag => {
                 tag.classList.remove('active');
             });
-            event.target.classList.add('active');
+            var _fcTag = document.querySelector('.category-tag[data-category="' + category + '"]');
+            if (_fcTag) _fcTag.classList.add('active');
             const cards = document.querySelectorAll('.article-card');
             cards.forEach(card => {
                 if (category === 'all' || card.dataset.category === category) {
@@ -4131,7 +4132,8 @@
             document.querySelectorAll('.category-tag').forEach(tag => {
                 tag.classList.remove('active');
             });
-            event.target.classList.add('active');
+            var _fcTag = document.querySelector('.category-tag[data-category="' + category + '"]');
+            if (_fcTag) _fcTag.classList.add('active');
 
             const cards = document.querySelectorAll('.article-card');
             cards.forEach(card => {
@@ -5563,21 +5565,23 @@
         var _videoSearchQuery = '';
 
         function filterVideoCategory(category) {
-            // Reset all tags to default style
             document.querySelectorAll('#video-full-page .category-tag').forEach(function(tag) {
                 tag.classList.remove('active');
                 tag.style.removeProperty('background');
                 tag.style.removeProperty('border-color');
                 tag.style.removeProperty('color');
             });
-            var activeTag = event.target;
-            activeTag.classList.add('active');
-            // Apply category color only for non-All tags
-            if (category !== 'all') {
-                var catColor = getVideoCategoryColor(category);
-                activeTag.style.background = catColor;
-                activeTag.style.borderColor = catColor;
-                activeTag.style.color = '#fff';
+            var activeTag = document.querySelector(
+                '#video-full-page .category-tag[data-category="' + category + '"]'
+            );
+            if (activeTag) {
+                activeTag.classList.add('active');
+                if (category !== 'all') {
+                    var catColor = getVideoCategoryColor(category);
+                    activeTag.style.background = catColor;
+                    activeTag.style.borderColor = catColor;
+                    activeTag.style.color = '#fff';
+                }
             }
             _videoCategoryFilter = category;
             _applyVideoFilters();
@@ -5612,21 +5616,26 @@
         var _articleSearchQuery = '';
 
         function filterCategoryFull(category) {
-            // Reset all tags to default style
+            // Reset all tags — use data-category to find active tag, NOT event.target
+            // (event.target on mobile can be a child text node, causing two buttons to be active)
             document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
                 tag.classList.remove('active');
                 tag.style.removeProperty('background');
                 tag.style.removeProperty('border-color');
                 tag.style.removeProperty('color');
             });
-            var activeTag = event.target;
-            activeTag.classList.add('active');
-            // Apply category color only for non-All tags
-            if (category !== 'all') {
-                var catColor = getCategoryColor(category);
-                activeTag.style.background = catColor;
-                activeTag.style.borderColor = catColor;
-                activeTag.style.color = '#fff';
+            // Find the correct button by data-category attribute
+            var activeTag = document.querySelector(
+                '#article-full-page .category-tag[data-category="' + category + '"]'
+            );
+            if (activeTag) {
+                activeTag.classList.add('active');
+                if (category !== 'all') {
+                    var catColor = getCategoryColor(category);
+                    activeTag.style.background = catColor;
+                    activeTag.style.borderColor = catColor;
+                    activeTag.style.color = '#fff';
+                }
             }
             _articleCategoryFilter = category;
             _applyArticleFilters();
