@@ -6165,42 +6165,21 @@
                 if (asp > ASP_MAX) asp = ASP_MAX;
                 if (asp < ASP_MIN) asp = ASP_MIN;
 
-                // Occasionally give an item double width (22% chance, desktop only)
-                var useDouble = (sr() < 0.22) && (COLS >= 4);
-
-                // Find shortest column
+                // Find shortest column — place every item in single-column width
                 var shortestCol = 0;
                 for (var c2 = 1; c2 < COLS; c2++) {
                     if (colHeights[c2] < colHeights[shortestCol]) shortestCol = c2;
                 }
 
-                // Double-wide only if it fits without overflowing
-                if (useDouble && shortestCol < COLS - 1) {
-                    var itemW = colW * 2 + GAP;
-                    // For double-wide, also clamp aspect ratio
-                    var dAsp = rawAsp;
-                    if (dAsp > 0.8) dAsp = 0.8;  // double-wide shouldn't be too tall
-                    if (dAsp < 0.3) dAsp = 0.3;
-                    var itemH = itemW * dAsp;
-                    var x = shortestCol * (colW + GAP);
-                    var y = Math.max(colHeights[shortestCol], colHeights[shortestCol + 1]);
-                    el.style.left   = x + 'px';
-                    el.style.top    = y + 'px';
-                    el.style.width  = itemW + 'px';
-                    el.style.height = itemH + 'px';
-                    colHeights[shortestCol]     = y + itemH + GAP;
-                    colHeights[shortestCol + 1] = y + itemH + GAP;
-                } else {
-                    var itemW2 = colW;
-                    var itemH2 = itemW2 * asp;
-                    var x2 = shortestCol * (colW + GAP);
-                    var y2 = colHeights[shortestCol];
-                    el.style.left   = x2 + 'px';
-                    el.style.top    = y2 + 'px';
-                    el.style.width  = itemW2 + 'px';
-                    el.style.height = itemH2 + 'px';
-                    colHeights[shortestCol] = y2 + itemH2 + GAP;
-                }
+                var itemW2 = colW;
+                var itemH2 = itemW2 * asp;
+                var x2 = shortestCol * (colW + GAP);
+                var y2 = colHeights[shortestCol];
+                el.style.left   = x2 + 'px';
+                el.style.top    = y2 + 'px';
+                el.style.width  = itemW2 + 'px';
+                el.style.height = itemH2 + 'px';
+                colHeights[shortestCol] = y2 + itemH2 + GAP;
             });
 
             grid.style.height = (Math.max.apply(null, colHeights) - GAP) + 'px';
