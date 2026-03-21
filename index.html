@@ -2859,21 +2859,35 @@
             // Activate matching filter tag and apply filter
             requestAnimationFrame(function() {
                 var matched = false;
+                var matchedColor = '';
                 document.querySelectorAll('#fullGalleryPage .filter-tag').forEach(function(tag) {
                     tag.classList.remove('active');
-                    // Match by category name (case-insensitive)
+                    tag.style.removeProperty('background');
+                    tag.style.removeProperty('border-color');
+                    tag.style.removeProperty('color');
                     if (tag.dataset.filter && tag.dataset.filter.toLowerCase() === cat.toLowerCase()) {
                         tag.classList.add('active');
                         matched = true;
+                        // Apply category color to active tag
+                        var colors = window._GALLERY_COLORS || {};
+                        var colorKey = Object.keys(colors).find(function(k) {
+                            return k.toLowerCase() === cat.toLowerCase();
+                        });
+                        if (colorKey) {
+                            matchedColor = colors[colorKey];
+                            tag.style.background = matchedColor;
+                            tag.style.borderColor = matchedColor;
+                            tag.style.color = '#fff';
+                        }
+                        cat = tag.dataset.filter; // use original case from tag
                     }
                 });
-                // Fallback to All if no match
                 if (!matched) {
                     var allTag = document.querySelector('#fullGalleryPage .filter-tag[data-filter="all"]');
                     if (allTag) allTag.classList.add('active');
                     filterGallery('all');
                 } else {
-                    filterGallery(cat.toLowerCase());
+                    filterGallery(cat);
                 }
                 setTimeout(layoutGallery, 50);
             });
@@ -3929,9 +3943,6 @@
                     <img id="modalImage" src="" alt="" class="modal-img-rounded">
                 </div>
                 <div class="img-share-toast" id="imgShareToast">🔗 Image link copied!</div>
-                <button class="img-modal-download-btn" onclick="event.stopPropagation();downloadCurrentImage()" title="Download">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                </button>
                 <button class="img-modal-maximize-btn" onclick="event.stopPropagation();openImageFullscreen()" ontouchend="event.stopPropagation();event.preventDefault();openImageFullscreen();" title="Maximize">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                         <polyline points="15 3 21 3 21 9"/>
@@ -4310,13 +4321,6 @@
                     a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + data.link[0];
                     links.appendChild(a);
                 }
-                // Download button (mobile only — desktop uses floating btn on image)
-                var dlBtn = document.createElement('button');
-                dlBtn.className = 'img-modal-share-btn img-modal-download-mobile';
-                dlBtn.onclick = downloadCurrentImage;
-                dlBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download';
-                links.insertBefore(dlBtn, links.firstChild);
-
                 if (shareBtn) links.appendChild(shareBtn);
                 else {
                     var sb = document.createElement('button');
@@ -4332,20 +4336,16 @@
             }
         }
 
-        // Download current modal image
-        function downloadCurrentImage() {
-            var modalImg = document.getElementById('modalImage');
-            if (!modalImg || !modalImg.src) return;
-            var url = modalImg.src;
-            // Extract filename from URL
-            var filename = url.split('/').pop().split('?')[0] || 'image.jpg';
-            // Use fetch+blob so browser triggers Save dialog instead of opening in tab
-            fetch(url)
+        // Download image — url comes from image_url in JSON (passed directly)
+        function downloadImage(imageUrl) {
+            if (!imageUrl) return;
+            var filename = decodeURIComponent(imageUrl.split('/').pop().split('?')[0]) || 'image.jpg';
+            fetch(imageUrl)
                 .then(function(res) { return res.blob(); })
                 .then(function(blob) {
                     var a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
-                    a.download = decodeURIComponent(filename);
+                    a.download = filename;
                     document.body.appendChild(a);
                     a.click();
                     setTimeout(function() {
@@ -4354,8 +4354,7 @@
                     }, 200);
                 })
                 .catch(function() {
-                    // Fallback: open in new tab
-                    window.open(url, '_blank');
+                    window.open(imageUrl, '_blank');
                 });
         }
 
@@ -5137,21 +5136,6 @@
                 }
 
                 // Maximize button
-                // Desktop floating download btn (hidden on mobile via CSS)
-                var dlFloatBtn = document.createElement('button');
-                dlFloatBtn.className = 'img-modal-download-btn';
-                dlFloatBtn.title = 'Download';
-                dlFloatBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
-                (function(capturedImg2) {
-                    dlFloatBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        var mi = document.getElementById('modalImage');
-                        if (mi) mi.src = capturedImg2.src;
-                        downloadCurrentImage();
-                    });
-                })(img);
-                left.appendChild(dlFloatBtn);
-
                 var maxBtn = document.createElement('button');
                 maxBtn.className = 'img-modal-maximize-btn';
                 maxBtn.title = 'Maximize';
@@ -5262,21 +5246,18 @@
                     attachModalBtnFlash(a, false, true); // isLink=true: preserve navigation
                     linksEl.appendChild(a);
                 }
-                // Download button — before Share, visible on mobile
+                // Download button — before Article link and Share
+                // Use item.image_url directly from JSON (not from DOM img.src)
                 var dlBtnCard = document.createElement('button');
                 dlBtnCard.className = 'img-modal-share-btn';
                 dlBtnCard.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download';
-                if (isCurrent) {
-                    (function(capturedImg3) {
-                        dlBtnCard.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            var mi = document.getElementById('modalImage');
-                            if (mi) mi.src = capturedImg3.src;
-                            downloadCurrentImage();
-                        });
-                        attachModalBtnFlash(dlBtnCard, false, false);
-                    })(img);
-                }
+                (function(imageUrl) {
+                    dlBtnCard.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        downloadImage(imageUrl);
+                    });
+                    attachModalBtnFlash(dlBtnCard, false, false);
+                })(item.image_url);
                 linksEl.appendChild(dlBtnCard);
 
                 var shareBtn = document.createElement('button');
@@ -5948,9 +5929,11 @@
 
         function filterGallery(category) {
             const input = (document.getElementById('searchInputGallery') ? document.getElementById('searchInputGallery').value : '').toLowerCase();
+            const catLower = (category || '').toLowerCase();
             const items = document.querySelectorAll('.full-gallery-item');
             items.forEach(item => {
-                const matchCat = category === 'all' || item.dataset.category === category;
+                // Case-insensitive category match
+                const matchCat = catLower === 'all' || (item.dataset.category || '').toLowerCase() === catLower;
                 const altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
                 const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
                 item.style.display = (matchCat && matchSearch) ? '' : 'none';
@@ -6113,27 +6096,43 @@
             // Build dynamic category filter tags from unique categories in JSON
             var filterContainer = document.getElementById('galleryFilterTags');
             if (filterContainer) {
-                // Collect unique categories preserving original case
-                var seen = {};
-                var cats = [];
-                images.forEach(function(item) {
-                    var c = (item.category || '').trim();
-                    if (c && !seen[c.toLowerCase()]) {
-                        seen[c.toLowerCase()] = true;
-                        cats.push(c);
-                    }
-                });
-                // Clear existing tags except "All"
-                var allTag = filterContainer.querySelector('[data-filter="all"]');
+                var colors = window._GALLERY_COLORS || {};
+                // Use category_colors key order from JSON — guaranteed consistent ordering
+                // Falls back to unique categories from images if category_colors is empty
+                var cats = Object.keys(colors).length
+                    ? Object.keys(colors)
+                    : (function() {
+                        var seen = {}, arr = [];
+                        images.forEach(function(item) {
+                            var c = (item.category || '').trim();
+                            if (c && !seen[c.toLowerCase()]) { seen[c.toLowerCase()] = true; arr.push(c); }
+                        });
+                        return arr;
+                    })();
+
+                // Rebuild all tags from scratch (including "All")
                 filterContainer.innerHTML = '';
-                if (allTag) filterContainer.appendChild(allTag);
+
+                // "All" tag
+                var allTag = document.createElement('div');
+                allTag.className = 'filter-tag active';
+                allTag.dataset.filter = 'all';
+                allTag.textContent = 'All';
+                filterContainer.appendChild(allTag);
+
+                // One tag per category from category_colors
                 cats.forEach(function(cat) {
                     var tag = document.createElement('div');
                     tag.className = 'filter-tag';
-                    tag.dataset.filter = cat.toLowerCase();
+                    // data-filter stores original case for matching
+                    tag.dataset.filter = cat;
                     tag.textContent = cat;
+                    // Apply category color as text color when inactive
+                    var catColor = colors[cat] || colors[Object.keys(colors).find(function(k) {
+                        return k.toLowerCase() === cat.toLowerCase();
+                    })] || '';
+                    if (catColor) tag.style.setProperty('--tag-cat-color', catColor);
                     tag.onclick = function() {
-                        // Reset all tags
                         filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
                             t.classList.remove('active');
                             t.style.removeProperty('background');
@@ -6141,31 +6140,25 @@
                             t.style.removeProperty('color');
                         });
                         tag.classList.add('active');
-                        // Apply category color
-                        var colors = window._GALLERY_COLORS || {};
-                        var colorKey = Object.keys(colors).find(function(k) {
-                            return k.toLowerCase() === cat.toLowerCase();
-                        });
-                        if (colorKey) {
-                            var catColor = colors[colorKey];
+                        if (catColor) {
                             tag.style.background = catColor;
                             tag.style.borderColor = catColor;
                             tag.style.color = '#fff';
                         }
-                        filterGallery(cat.toLowerCase());
+                        filterGallery(cat);
                     };
                     filterContainer.appendChild(tag);
                 });
+
                 // Bind "All" tag click
-                if (allTag) {
-                    allTag.onclick = function() {
-                        filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
-                            t.classList.remove('active');
-                            t.style.removeProperty('background');
-                            t.style.removeProperty('border-color');
-                            t.style.removeProperty('color');
-                        });
-                        allTag.classList.add('active');
+                allTag.onclick = function() {
+                    filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
+                        t.classList.remove('active');
+                        t.style.removeProperty('background');
+                        t.style.removeProperty('border-color');
+                        t.style.removeProperty('color');
+                    });
+                    allTag.classList.add('active');
                         filterGallery('all');
                     };
                 }
