@@ -780,6 +780,31 @@
         }
         .img-modal-maximize-btn:hover { background: rgba(255,255,255,0.32); }
 
+        /* Download button — mirrors maximize btn, top-left of image */
+        .img-modal-download-btn {
+            position: absolute;
+            top: 0.6rem;
+            left: 0.6rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.18);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+        .img-modal-download-btn:hover { background: rgba(255,255,255,0.32); }
+        /* On mobile: hide the floating download btn — use the one in info panel instead */
+        @media (max-width: 640px) {
+            .img-modal-download-btn { display: none; }
+        }
+
         /* Fullscreen image overlay */
         #imgFullscreenOverlay {
             display: none;
@@ -3869,6 +3894,9 @@
                     <img id="modalImage" src="" alt="" class="modal-img-rounded">
                 </div>
                 <div class="img-share-toast" id="imgShareToast">🔗 Image link copied!</div>
+                <button class="img-modal-download-btn" onclick="event.stopPropagation();downloadCurrentImage()" title="Download">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
                 <button class="img-modal-maximize-btn" onclick="event.stopPropagation();openImageFullscreen()" ontouchend="event.stopPropagation();event.preventDefault();openImageFullscreen();" title="Maximize">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                         <polyline points="15 3 21 3 21 9"/>
@@ -4241,6 +4269,13 @@
                     a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + data.link[0];
                     links.appendChild(a);
                 }
+                // Download button (mobile only — desktop uses floating btn on image)
+                var dlBtn = document.createElement('button');
+                dlBtn.className = 'img-modal-share-btn img-modal-download-mobile';
+                dlBtn.onclick = downloadCurrentImage;
+                dlBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download';
+                links.insertBefore(dlBtn, links.firstChild);
+
                 if (shareBtn) links.appendChild(shareBtn);
                 else {
                     var sb = document.createElement('button');
@@ -4254,6 +4289,33 @@
                 var hasInfo = data.title || data.description || (data.link && data.link[1]);
                 right.style.display = hasInfo ? 'flex' : 'none';
             }
+        }
+
+        // Download current modal image
+        function downloadCurrentImage() {
+            var modalImg = document.getElementById('modalImage');
+            if (!modalImg || !modalImg.src) return;
+            var url = modalImg.src;
+            // Extract filename from URL
+            var filename = url.split('/').pop().split('?')[0] || 'image.jpg';
+            // Use fetch+blob so browser triggers Save dialog instead of opening in tab
+            fetch(url)
+                .then(function(res) { return res.blob(); })
+                .then(function(blob) {
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = decodeURIComponent(filename);
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function() {
+                        URL.revokeObjectURL(a.href);
+                        document.body.removeChild(a);
+                    }, 200);
+                })
+                .catch(function() {
+                    // Fallback: open in new tab
+                    window.open(url, '_blank');
+                });
         }
 
         function shareGalleryCard(imageUrl, category, cardEl) {
@@ -5034,6 +5096,21 @@
                 }
 
                 // Maximize button
+                // Desktop floating download btn (hidden on mobile via CSS)
+                var dlFloatBtn = document.createElement('button');
+                dlFloatBtn.className = 'img-modal-download-btn';
+                dlFloatBtn.title = 'Download';
+                dlFloatBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+                (function(capturedImg2) {
+                    dlFloatBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var mi = document.getElementById('modalImage');
+                        if (mi) mi.src = capturedImg2.src;
+                        downloadCurrentImage();
+                    });
+                })(img);
+                left.appendChild(dlFloatBtn);
+
                 var maxBtn = document.createElement('button');
                 maxBtn.className = 'img-modal-maximize-btn';
                 maxBtn.title = 'Maximize';
@@ -5136,6 +5213,23 @@
                     attachModalBtnFlash(a, false, true); // isLink=true: preserve navigation
                     linksEl.appendChild(a);
                 }
+                // Download button — before Share, visible on mobile
+                var dlBtnCard = document.createElement('button');
+                dlBtnCard.className = 'img-modal-share-btn';
+                dlBtnCard.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download';
+                if (isCurrent) {
+                    (function(capturedImg3) {
+                        dlBtnCard.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            var mi = document.getElementById('modalImage');
+                            if (mi) mi.src = capturedImg3.src;
+                            downloadCurrentImage();
+                        });
+                        attachModalBtnFlash(dlBtnCard, false, false);
+                    })(img);
+                }
+                linksEl.appendChild(dlBtnCard);
+
                 var shareBtn = document.createElement('button');
                 shareBtn.className = 'img-modal-share-btn';
                 shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
