@@ -4225,7 +4225,7 @@
                 if (links) links.style.setProperty('--modal-cat-color', catColor);
             }
             if (title) title.textContent = data.title        || '';
-            if (date)  date.textContent  = data.updated_time || '';
+            if (date)  date.textContent  = data.created_time || data.updated_time || '';
             if (desc)  desc.textContent  = data.description  || '';
 
             if (links) {
@@ -5079,7 +5079,7 @@
 
                 var dateEl = document.createElement('div');
                 dateEl.className = 'img-modal-date';
-                dateEl.textContent = item.updated_time || '';
+                dateEl.textContent = item.created_time || item.updated_time || '';
                 if (isCurrent) dateEl.id = 'imgModalDate';
 
                 var descWrap = document.createElement('div');
@@ -5952,7 +5952,7 @@
                 div.style.cursor = 'pointer';
                 div.style.setProperty('--card-cat-color', catColor);
                 div.innerHTML = '<img src="' + item.image_url + '" alt="' + item.title + '" loading="lazy" decoding="async">'
-                    + '<div class="gallery-info"><h3>' + item.title + '</h3><p>' + item.category + ', ' + item.updated_time + '</p></div>';
+                    + '<div class="gallery-info"><h3>' + item.title + '</h3><p>' + item.category + ', ' + (item.created_time || item.updated_time || '') + '</p></div>';
                 div.appendChild(buildCardActions(item, catColor, div));
                 div.onclick = (function(el) { return function(e) {
                     if (e.target.closest('.gallery-card-actions')) return;
