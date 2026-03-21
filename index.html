@@ -4321,11 +4321,23 @@
                     links.appendChild(a);
                 }
 
-                // Share button — always recreate fresh
+                // Share button — desktop onclick + mobile touchend
                 var sb = document.createElement('button');
                 sb.className = 'img-modal-share-btn';
-                sb.onclick = shareCurrentImage;
                 sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share';
+                sb.onclick = function(e) {
+                    if (e.pointerType === 'touch') return;
+                    shareCurrentImage();
+                };
+                var _sbMoved = false;
+                sb.addEventListener('touchstart', function() { _sbMoved = false; }, { passive: true });
+                sb.addEventListener('touchmove',  function() { _sbMoved = true;  }, { passive: true });
+                sb.addEventListener('touchend', function(e) {
+                    if (_sbMoved) return;
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setTimeout(function() { shareCurrentImage(); }, 80);
+                }, { passive: false });
                 links.appendChild(sb);
             }
             if (right) {
@@ -5333,14 +5345,14 @@
                 var oldWrap = modal.querySelector('.img-card-track-wrap');
                 if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
                 buildCardTrack();
-                // Scroll new card to top — use rAF to ensure DOM is updated first
                 requestAnimationFrame(function() {
                     var newWrap = modal.querySelector('.img-card-track-wrap');
                     if (newWrap && newWrap._resetVertical) newWrap._resetVertical();
                 });
-                // Keep populateModal in sync for share/fullscreen
-                var list = window._GALLERY_LIST;
-                if (list && list.length) populateModal(list[window._GALLERY_INDEX].image_url);
+                // Do NOT call populateModal here on mobile —
+                // buildCard already created all buttons with proper touchend handlers.
+                // populateModal would replace them with onclick-only buttons that
+                // don't fire on mobile after touchmove preventDefault.
                 swiping = false;
                 _navLocked = false;
             }
