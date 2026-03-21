@@ -4290,16 +4290,14 @@
             }
 
             if (links) {
-                // Preserve download button if already created by buildCard,
-                // clear everything else and rebuild link + share buttons
+                // Preserve download button (has unique class img-modal-dl-btn)
                 var existingDl = links.querySelector('.img-modal-dl-btn');
-                var shareBtn   = links.querySelector('.img-modal-share-btn');
                 links.innerHTML = '';
 
-                // Re-append download button (already created by buildCard on mobile,
-                // or by static HTML on desktop — do not create a second one here)
+                // Re-append download button
                 if (existingDl) links.appendChild(existingDl);
 
+                // Article link button
                 if (data.link && data.link[0] && data.link[1]) {
                     var a = document.createElement('a');
                     a.className = 'img-modal-link-btn';
@@ -4309,14 +4307,13 @@
                     a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + data.link[0];
                     links.appendChild(a);
                 }
-                if (shareBtn) links.appendChild(shareBtn);
-                else {
-                    var sb = document.createElement('button');
-                    sb.className = 'img-modal-share-btn';
-                    sb.onclick = shareCurrentImage;
-                    sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share';
-                    links.appendChild(sb);
-                }
+
+                // Share button — always recreate fresh
+                var sb = document.createElement('button');
+                sb.className = 'img-modal-share-btn';
+                sb.onclick = shareCurrentImage;
+                sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share';
+                links.appendChild(sb);
             }
             if (right) {
                 var hasInfo = data.title || data.description || (data.link && data.link[1]);
