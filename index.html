@@ -6705,16 +6705,8 @@
         }
 
         function openArticleFile(article) {
-            if (article.type === 'pdf') {
-                var pdfSrc = article.pdfUrl || getArticlePath(article);
-                openPdfModal(article.title, pdfSrc);
-            } else {
-                var modal = document.getElementById('documentModal');
-                document.getElementById('documentTitle').textContent = article.title;
-                document.getElementById('documentFrame').src = getArticlePath(article);
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
+            var path = article.pdfUrl || getArticlePath(article);
+            if (path) window.open(path, '_blank', 'noopener,noreferrer');
         }
 
         function makePdfCoverHTML(article) {
