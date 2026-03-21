@@ -4219,6 +4219,14 @@
             nav.classList.toggle('nav-dark', isDark);
         }
 
+        // Prevent any footer social icon from showing browser focus ring
+        document.addEventListener('focusin', function(e) {
+            var el = e.target;
+            if (el && el.classList && el.classList.contains('social-icon')) {
+                el.blur();
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function() { updateNavColor(); });
 
         function filterCategory(category) {
