@@ -4276,6 +4276,8 @@
 
             if (cat) {
                 cat.textContent = data.category || '';
+                cat.style.cursor = 'pointer';
+                cat.title = 'View all ' + (data.category || '') + ' images';
                 // Look up color from JSON category_colors (case-insensitive match)
                 var colors = window._GALLERY_COLORS || {};
                 var catKey = Object.keys(colors).find(function(k) {
@@ -4285,6 +4287,10 @@
                 cat.style.color = catColor;
                 // Apply to modal links so buttons use it via CSS variable
                 if (links) links.style.setProperty('--modal-cat-color', catColor);
+                // Click → go to Complete Gallery filtered by this category
+                cat.onclick = (function(c) { return function(e) {
+                    e.stopPropagation(); goToGalleryCategory(c);
+                }; })(data.category || '');
             }
             if (title) title.textContent = data.title        || '';
             if (date)  date.textContent  = data.updated_time || '';
@@ -5160,8 +5166,16 @@
                 var catEl = document.createElement('div');
                 catEl.className = 'img-modal-category';
                 catEl.style.color = catColor;
+                catEl.style.cursor = 'pointer';
+                catEl.title = 'View all ' + (item.category || '') + ' images';
                 catEl.textContent = item.category || '';
                 if (isCurrent) catEl.id = 'imgModalCategory';
+                (function(cat) {
+                    catEl.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        goToGalleryCategory(cat);
+                    });
+                })(item.category || '');
 
                 var titleEl = document.createElement('h3');
                 titleEl.className = 'img-modal-title';
@@ -5706,6 +5720,43 @@
         }
 
         // Click category label in video modal → close modal, open video page filtered to that category
+        // Click category text in image modal → open Complete Gallery filtered to that category
+        function goToGalleryCategory(category) {
+            var cat = (category || '').trim();
+            closeImageModal();
+            setTimeout(function() {
+                openFullGallery();
+                setTimeout(function() {
+                    var filterContainer = document.getElementById('galleryFilterTags');
+                    if (!filterContainer) return;
+                    // Reset all tags
+                    filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
+                        t.classList.remove('active');
+                        t.style.removeProperty('background');
+                        t.style.removeProperty('border-color');
+                        t.style.removeProperty('color');
+                    });
+                    // Find matching tag (case-insensitive)
+                    var matched = Array.from(filterContainer.querySelectorAll('.filter-tag')).find(function(t) {
+                        return (t.dataset.filter || '').toLowerCase() === cat.toLowerCase();
+                    });
+                    if (matched) {
+                        matched.classList.add('active');
+                        var colors = window._GALLERY_COLORS || {};
+                        var colorKey = Object.keys(colors).find(function(k) {
+                            return k.toLowerCase() === cat.toLowerCase();
+                        });
+                        if (colorKey) {
+                            matched.style.background  = colors[colorKey];
+                            matched.style.borderColor = colors[colorKey];
+                            matched.style.color       = '#fff';
+                        }
+                        filterGallery(cat);
+                    }
+                }, 80);
+            }, 120);
+        }
+
         function goToVideoCategory(category) {
             closeVideoModal();
             setTimeout(function() {
