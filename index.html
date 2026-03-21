@@ -326,17 +326,9 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.9rem;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        @media (hover: hover) {
-            .filter-tag:hover {
-                background: var(--text-primary);
-                color: white;
-                border-color: var(--text-primary);
-            }
-        }
-        .filter-tag.active {
+        .filter-tag:hover, .filter-tag.active {
             background: var(--text-primary);
             color: white;
             border-color: var(--text-primary);
@@ -647,7 +639,6 @@
             overflow-y: auto;
         }
         .img-modal-category {
-            cursor: pointer;
             font-size: 0.72rem;
             font-weight: 400;
             font-family: 'Ebrima', sans-serif;
@@ -781,31 +772,6 @@
         }
         .img-modal-maximize-btn:hover { background: rgba(255,255,255,0.32); }
 
-        /* Download button — mirrors maximize btn, top-left of image */
-        .img-modal-download-btn {
-            position: absolute;
-            top: 0.6rem;
-            left: 0.6rem;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.18);
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-            backdrop-filter: blur(4px);
-            z-index: 10;
-        }
-        .img-modal-download-btn:hover { background: rgba(255,255,255,0.32); }
-        /* On mobile: hide the floating download btn — use the one in info panel instead */
-        @media (max-width: 640px) {
-            .img-modal-download-btn { display: none; }
-        }
-
         /* Fullscreen image overlay */
         #imgFullscreenOverlay {
             display: none;
@@ -932,7 +898,7 @@
             /* Info panel */
             .img-modal-right {
                 width: 100%;
-                padding: 0.9rem 0.9rem 1.2rem 0.9rem;
+                padding: 0.9rem 0.9rem 2.5rem 0.9rem;
                 background: #111;
                 overflow-y: visible;
                 box-sizing: border-box;
@@ -945,31 +911,36 @@
             #imageModal .modal-content.img-modal-content:not(.img-card-track .img-modal-content) {
                 display: none !important;
             }
-            /* On mobile: modal itself is hidden behind track-wrap which handles bg */
+            /* On mobile: modal bg transparent, card has its own bg */
             #imageModal {
                 background: transparent !important;
+            }
+            /* Dim overlay behind the card — only fills what's needed */
+            #imageModal::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.85);
+                z-index: -1;
             }
             /* Card itself must be fully opaque with its own background */
             .img-card-track .img-modal-content {
                 background: #111 !important;
             }
             .img-card-track-wrap {
-                overflow: hidden;
+                overflow-x: hidden;
+                overflow-y: hidden;
                 width: 100vw;
-                height: 100vh;
-                height: calc(var(--vh, 1vh) * 100);
-                position: fixed;
-                top: 0;
-                left: 0;
-                touch-action: none;
-                background: rgba(0, 0, 0, 0.92);
-                z-index: 2000;
+                height: 100dvh;
+                position: relative;
+                touch-action: pan-y;
+                background: transparent;
             }
             .img-card-track {
                 display: flex;
                 flex-direction: row;
                 width: 300vw;
-                transform: translateX(-100vw) translateY(0px);
+                transform: translateX(-100vw);
                 will-change: transform;
                 align-items: flex-start;
             }
@@ -977,13 +948,11 @@
                 flex: 0 0 100vw;
                 width: 100vw;
                 max-width: 100vw;
-                min-height: 100vh;
-                min-height: calc(var(--vh, 1vh) * 100);
+                min-height: 100dvh;
                 height: auto;
                 flex-direction: column;
                 border-radius: 0 !important;
-                padding-bottom: 1.5rem !important;
-                box-sizing: border-box;
+                padding-bottom: 2.5rem !important;
             }
 
             /* Fix Complete Gallery grid overflowing on mobile */
@@ -1057,29 +1026,15 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.9rem;
-            -webkit-tap-highlight-color: transparent; /* remove iOS tap glow */
         }
 
-        /* Desktop hover */
-        @media (hover: hover) {
-            .category-tag:hover {
-                background: var(--text-primary);
-                color: white;
-                border-color: #999;
-            }
-            .filter-tag:hover {
-                background: var(--text-primary);
-                color: white;
-                border-color: #999;
-            }
-        }
-        /* Active state — works on all devices */
-        .category-tag.active {
+        .category-tag:hover, .category-tag.active {
             background: var(--text-primary);
             color: white;
             border-color: #999;
         }
-        .filter-tag.active {
+
+        .filter-tag:hover, .filter-tag.active {
             background: var(--text-primary);
             color: white;
             border-color: #999;
@@ -2043,10 +1998,10 @@
             overscroll-behavior: contain;
         }
 
-        /* imageModal desktop: centered; mobile: top-left (handled by track-wrap fixed positioning) */
+        /* imageModal always aligns to top — card should never be vertically centered */
         #imageModal {
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
+            justify-content: flex-start;
         }
 
         .modal-content {
@@ -2845,54 +2800,6 @@
                 section.scrollIntoView({ behavior: 'smooth' });
             }
         }
-        function goToGalleryCategory(category) {
-            var cat = (category || '').trim();
-            // Close image modal first
-            closeImageModal();
-            // Open Complete Gallery page
-            var fullGalleryPage = document.getElementById('fullGalleryPage');
-            if (!fullGalleryPage) return;
-            fullGalleryPage.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            window._heroPageBlocked = true;
-            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
-            // Activate matching filter tag and apply filter
-            requestAnimationFrame(function() {
-                var matched = false;
-                var matchedColor = '';
-                document.querySelectorAll('#fullGalleryPage .filter-tag').forEach(function(tag) {
-                    tag.classList.remove('active');
-                    tag.style.removeProperty('background');
-                    tag.style.removeProperty('border-color');
-                    tag.style.removeProperty('color');
-                    if (tag.dataset.filter && tag.dataset.filter.toLowerCase() === cat.toLowerCase()) {
-                        tag.classList.add('active');
-                        matched = true;
-                        // Apply category color to active tag
-                        var colors = window._GALLERY_COLORS || {};
-                        var colorKey = Object.keys(colors).find(function(k) {
-                            return k.toLowerCase() === cat.toLowerCase();
-                        });
-                        if (colorKey) {
-                            matchedColor = colors[colorKey];
-                            tag.style.background = matchedColor;
-                            tag.style.borderColor = matchedColor;
-                            tag.style.color = '#fff';
-                        }
-                        cat = tag.dataset.filter; // use original case from tag
-                    }
-                });
-                if (!matched) {
-                    var allTag = document.querySelector('#fullGalleryPage .filter-tag[data-filter="all"]');
-                    if (allTag) allTag.classList.add('active');
-                    filterGallery('all');
-                } else {
-                    filterGallery(cat);
-                }
-                setTimeout(layoutGallery, 50);
-            });
-        }
-
         function openFullGallery() {
             const fullGalleryPage = document.getElementById('fullGalleryPage');
             fullGalleryPage.classList.add('active');
@@ -3323,8 +3230,7 @@
             document.querySelectorAll('.category-tag').forEach(tag => {
                 tag.classList.remove('active');
             });
-            var _fcTag = document.querySelector('.category-tag[data-category="' + category + '"]');
-            if (_fcTag) _fcTag.classList.add('active');
+            event.target.classList.add('active');
             const cards = document.querySelectorAll('.article-card');
             cards.forEach(card => {
                 if (category === 'all' || card.dataset.category === category) {
@@ -3634,7 +3540,7 @@
         </div>
     </section>
 
-    <section id="featured-articles" class="section" style="min-height: auto;">
+    <section id="featured-articles" class="section" style="min-height: auto; padding: 4rem 2rem;">
         <div class="container">
             <div class="gallery-header">
                 <div class="gallery-header-left">
@@ -3953,7 +3859,7 @@
                 </button>
             </div>
             <div class="img-modal-right" id="imgModalInfo">
-                <div class="img-modal-category" id="imgModalCategory" onclick="var c=this.textContent.trim();if(c)goToGalleryCategory(c);" title="View all in this category"></div>
+                <div class="img-modal-category" id="imgModalCategory"></div>
                 <h3 class="img-modal-title" id="imgModalTitle"></h3>
                 <div class="img-modal-date" id="imgModalDate"></div>
                 <div class="img-modal-desc-wrap">
@@ -4220,8 +4126,7 @@
             document.querySelectorAll('.category-tag').forEach(tag => {
                 tag.classList.remove('active');
             });
-            var _fcTag = document.querySelector('.category-tag[data-category="' + category + '"]');
-            if (_fcTag) _fcTag.classList.add('active');
+            event.target.classList.add('active');
 
             const cards = document.querySelectorAll('.article-card');
             cards.forEach(card => {
@@ -4295,17 +4200,11 @@
                 });
                 var catColor = catKey ? colors[catKey] : 'var(--accent)';
                 cat.style.color = catColor;
-                cat.style.cursor = 'pointer';
-                cat.title = 'View all in this category';
-                cat.onclick = function() {
-                    var c = cat.textContent.trim();
-                    if (c) goToGalleryCategory(c);
-                };
                 // Apply to modal links so buttons use it via CSS variable
                 if (links) links.style.setProperty('--modal-cat-color', catColor);
             }
             if (title) title.textContent = data.title        || '';
-            if (date)  date.textContent  = data.created_time || data.updated_time || '';
+            if (date)  date.textContent  = data.updated_time || '';
             if (desc)  desc.textContent  = data.description  || '';
 
             if (links) {
@@ -4334,28 +4233,6 @@
                 var hasInfo = data.title || data.description || (data.link && data.link[1]);
                 right.style.display = hasInfo ? 'flex' : 'none';
             }
-        }
-
-        // Download image — url comes from image_url in JSON (passed directly)
-        function downloadImage(imageUrl) {
-            if (!imageUrl) return;
-            var filename = decodeURIComponent(imageUrl.split('/').pop().split('?')[0]) || 'image.jpg';
-            fetch(imageUrl)
-                .then(function(res) { return res.blob(); })
-                .then(function(blob) {
-                    var a = document.createElement('a');
-                    a.href = URL.createObjectURL(blob);
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(function() {
-                        URL.revokeObjectURL(a.href);
-                        document.body.removeChild(a);
-                    }, 200);
-                })
-                .catch(function() {
-                    window.open(imageUrl, '_blank');
-                });
         }
 
         function shareGalleryCard(imageUrl, category, cardEl) {
@@ -4536,11 +4413,29 @@
                             var oldWrap = modal.querySelector('.img-card-track-wrap');
                             if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
                             buildCardTrack();
-                            // wrap is position:fixed so scrollTop=0 is reliable immediately
                             requestAnimationFrame(function() {
                                 var wrap = modal.querySelector('.img-card-track-wrap');
                                 if (!wrap) return;
+                                wrap.style.overflowY = 'hidden';
                                 wrap.scrollTop = 0;
+                                var track = wrap.querySelector('.img-card-track');
+                                var card = track && track.children[1];
+                                var cardImg = card && card.querySelector('img');
+                                var enableScrollIfNeeded = function() {
+                                    wrap.scrollTop = 0;
+                                    // Only enable scroll if card is taller than viewport
+                                    if (card && card.scrollHeight > window.innerHeight) {
+                                        wrap.style.overflowY = 'auto';
+                                        wrap.style.webkitOverflowScrolling = 'touch';
+                                    }
+                                };
+                                if (cardImg && !cardImg.complete) {
+                                    cardImg.addEventListener('load',  enableScrollIfNeeded, { once: true });
+                                    cardImg.addEventListener('error', enableScrollIfNeeded, { once: true });
+                                    setTimeout(enableScrollIfNeeded, 1500);
+                                } else {
+                                    enableScrollIfNeeded();
+                                }
                             });
                         }
                     });
@@ -5171,16 +5066,8 @@
                 var catEl = document.createElement('div');
                 catEl.className = 'img-modal-category';
                 catEl.style.color = catColor;
-                catEl.style.cursor = 'pointer';
-                catEl.title = 'View all in this category';
                 catEl.textContent = item.category || '';
                 if (isCurrent) catEl.id = 'imgModalCategory';
-                (function(catName) {
-                    catEl.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (catName) goToGalleryCategory(catName);
-                    });
-                })(item.category || '');
 
                 var titleEl = document.createElement('h3');
                 titleEl.className = 'img-modal-title';
@@ -5189,7 +5076,7 @@
 
                 var dateEl = document.createElement('div');
                 dateEl.className = 'img-modal-date';
-                dateEl.textContent = item.created_time || item.updated_time || '';
+                dateEl.textContent = item.updated_time || '';
                 if (isCurrent) dateEl.id = 'imgModalDate';
 
                 var descWrap = document.createElement('div');
@@ -5246,20 +5133,6 @@
                     attachModalBtnFlash(a, false, true); // isLink=true: preserve navigation
                     linksEl.appendChild(a);
                 }
-                // Download button — before Article link and Share
-                // Use item.image_url directly from JSON (not from DOM img.src)
-                var dlBtnCard = document.createElement('button');
-                dlBtnCard.className = 'img-modal-share-btn';
-                dlBtnCard.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download';
-                (function(imageUrl) {
-                    dlBtnCard.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        downloadImage(imageUrl);
-                    });
-                    attachModalBtnFlash(dlBtnCard, false, false);
-                })(item.image_url);
-                linksEl.appendChild(dlBtnCard);
-
                 var shareBtn = document.createElement('button');
                 shareBtn.className = 'img-modal-share-btn';
                 shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share';
@@ -5306,13 +5179,11 @@
                 var oldWrap = modal.querySelector('.img-card-track-wrap');
                 if (oldWrap) oldWrap.parentNode.removeChild(oldWrap);
                 buildCardTrack();
-
-                // Reset vertical position on new track
+                // Scroll new card to top — use rAF to ensure DOM is updated first
                 requestAnimationFrame(function() {
                     var newWrap = modal.querySelector('.img-card-track-wrap');
-                    if (newWrap && newWrap._resetVertical) newWrap._resetVertical();
+                    if (newWrap) { newWrap.scrollTop = 0; newWrap.style.overflowY = 'auto'; }
                 });
-
                 // Keep populateModal in sync for share/fullscreen
                 var list = window._GALLERY_LIST;
                 if (list && list.length) populateModal(list[window._GALLERY_INDEX].image_url);
@@ -5324,7 +5195,7 @@
                 var modal = document.getElementById('imageModal');
                 var track = modal.querySelector('.img-card-track');
                 if (!track) return;
-                var targetX = dir > 0 ? 'translateX(-200vw) translateY(0px)' : 'translateX(0vw) translateY(0px)';
+                var targetX = dir > 0 ? 'translateX(-200vw)' : 'translateX(0vw)';
                 track.style.transition = 'transform 300ms cubic-bezier(0.4,0,0.2,1)';
                 track.style.transform  = targetX;
                 setTimeout(function() {
@@ -5339,10 +5210,12 @@
                 var track = modal.querySelector('.img-card-track');
                 if (!track) return;
                 track.style.transition = 'transform 260ms cubic-bezier(0.4,0,0.2,1)';
-                track.style.transform  = 'translateX(-100vw) translateY(0px)';
+                track.style.transform  = 'translateX(-100vw)';
                 setTimeout(function() {
                     swiping = false;
                     _navLocked = false;
+                    var wrap = getWrap();
+                    if (wrap) wrap.style.overflowY = 'auto';
                 }, 270);
             }
 
@@ -5355,156 +5228,106 @@
 
             // Attach swipe listeners directly on the wrap element (set in buildCardTrack)
             window._attachCardSwipeListeners = function(wrap) {
-                var cardScrollY  = 0;  // current vertical offset (JS-controlled)
-                var velY         = 0;  // velocity for momentum
-                var lastTouchY   = 0;
-                var lastTouchT   = 0;
-                var rafId        = null;
-
-                function getTrack() {
-                    return wrap.querySelector('.img-card-track');
-                }
-                function getCard() {
-                    var t = getTrack();
-                    return t ? t.children[1] : null; // middle card = current
-                }
-                function maxScrollY() {
-                    var card = getCard();
-                    if (!card) return 0;
-                    var vh = window.innerHeight;
-                    return Math.max(0, card.scrollHeight - vh);
-                }
-                function applyTransform(tx, ty) {
-                    var track = getTrack();
-                    if (track) {
-                        track.style.transition = 'none';
-                        track.style.transform = 'translateX(' + tx + ') translateY(' + (-ty) + 'px)';
-                    }
-                }
-                function clampY(y) {
-                    return Math.max(0, Math.min(maxScrollY(), y));
-                }
-                function resetVertical() {
-                    cardScrollY = 0;
-                    applyTransform('calc(-100vw + ' + (_pendingDX || 0) + 'px)', 0);
-                }
-
                 wrap.addEventListener('touchstart', function(e) {
                     if (e.touches.length !== 1) return;
-                    touchStartX  = e.touches[0].clientX;
-                    touchStartY  = e.touches[0].clientY;
-                    lastTouchY   = touchStartY;
-                    lastTouchT   = Date.now();
-                    velY         = 0;
-                    swiping      = false;
-                    swipeLocked  = false;
-                    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    swiping     = false;
+                    swipeLocked = false;
+                    wrap.scrollTop = 0;
                 }, { passive: true });
-
-                var _pendingDX = 0;
 
                 wrap.addEventListener('touchmove', function(e) {
                     if (!modalActive() || !isMobile()) return;
                     if (e.touches.length !== 1) return;
                     if (_navLocked && !swiping) return;
-                    e.preventDefault(); // always prevent — JS handles everything
 
-                    var cx = e.touches[0].clientX;
-                    var cy = e.touches[0].clientY;
-                    var dx = cx - touchStartX;
-                    var dy = cy - touchStartY;
-                    var now = Date.now();
-
-                    // Velocity for momentum
-                    velY = (lastTouchY - cy) / Math.max(1, now - lastTouchT);
-                    lastTouchY = cy; lastTouchT = now;
+                    var dx = e.touches[0].clientX - touchStartX;
+                    var dy = e.touches[0].clientY - touchStartY;
 
                     if (!swiping && !swipeLocked) {
                         var absDx = Math.abs(dx), absDy = Math.abs(dy);
                         if (absDx < 5 && absDy < 5) return;
-                        if (absDy > absDx) { swipeLocked = true; }
-                        else if (absDx > absDy) { swiping = true; _navLocked = true; }
+
+                        if (absDy > absDx) {
+                            swipeLocked = true;
+                            return;
+                        }
+                        if (absDx > absDy) {
+                            swiping = true;
+                            _navLocked = true;
+                        }
                     }
 
                     if (swipeLocked) {
-                        // Vertical pan: move card up/down
-                        var newY = clampY(cardScrollY + (touchStartY - cy));
-                        applyTransform('calc(-100vw)', newY);
-                    } else if (swiping) {
-                        // Horizontal swipe: move track left/right (vertical stays fixed)
-                        _pendingDX = dx;
-                        var track = getTrack();
-                        if (track) {
-                            track.style.transition = 'none';
-                            track.style.transform = 'translateX(calc(-100vw + ' + dx + 'px)) translateY(' + (-cardScrollY) + 'px)';
+                        // Clamp scroll to card content height — stop exactly at Article/Share buttons
+                        var modal2 = document.getElementById('imageModal');
+                        var track2 = modal2 && modal2.querySelector('.img-card-track');
+                        var currentCard = track2 && track2.children[1];
+                        if (currentCard) {
+                            var cardH = currentCard.scrollHeight;
+                            var vh = window.innerHeight;
+                            // Max scroll = how much card overflows the viewport
+                            var maxScroll = Math.max(0, cardH - vh);
+                            if (dy < 0 && wrap.scrollTop >= maxScroll) {
+                                e.preventDefault(); // block scrolling past card bottom
+                                wrap.scrollTop = maxScroll; // clamp position
+                            }
                         }
+                        return;
                     }
+
+                    if (!swiping) return;
+
+                    e.preventDefault();
+
+                    var modal = document.getElementById('imageModal');
+                    var track = modal && modal.querySelector('.img-card-track');
+                    if (!track) return;
+                    track.style.transition = 'none';
+                    track.style.transform  = 'translateX(calc(-100vw + ' + dx + 'px))';
+
                 }, { passive: false });
 
                 wrap.addEventListener('touchend', function(e) {
                     if (!modalActive()) return;
 
-                    if (!swiping && !swipeLocked) {
-                        // Tap detection
-                        var t = e.changedTouches[0];
+                    if (!swiping) {
+                        // Double-tap to close modal
+                        var t   = e.changedTouches[0];
                         var dx2 = t.clientX - touchStartX;
                         var dy2 = t.clientY - touchStartY;
                         if (Math.abs(dx2) < 12 && Math.abs(dy2) < 12) {
-                            var now2 = Date.now();
-                            var gap  = now2 - lastTap;
+                            var now = Date.now();
+                            var gap = now - lastTap;
                             if (gap < 400 && gap > 30) {
                                 var fsOverlay = document.getElementById('imgFullscreenOverlay');
-                                if (fsOverlay && fsOverlay.classList.contains('active')) { lastTap = 0; return; }
+                                if (fsOverlay && fsOverlay.classList.contains('active')) {
+                                    lastTap = 0; return;
+                                }
                                 e.preventDefault();
                                 closeImageModal();
                                 lastTap = 0;
                                 return;
                             }
-                            lastTap = now2;
+                            lastTap = now;
                             e.preventDefault();
                         }
                         return;
                     }
 
-                    if (swiping) {
-                        // Commit or snap horizontal swipe
-                        var dx = e.changedTouches[0].clientX - touchStartX;
-                        var threshold = window.innerWidth * 0.15;
-                        if (Math.abs(dx) > threshold) {
-                            cardScrollY = 0; _pendingDX = 0;
-                            commitSwipe(dx < 0 ? 1 : -1);
-                        } else {
-                            _pendingDX = 0;
-                            var track = getTrack();
-                            if (track) {
-                                track.style.transition = 'transform 260ms cubic-bezier(0.4,0,0.2,1)';
-                                track.style.transform  = 'translateX(-100vw) translateY(' + (-cardScrollY) + 'px)';
-                            }
-                        }
-                        swiping = false; swipeLocked = false; _navLocked = false;
-                        return;
+                    var dx = e.changedTouches[0].clientX - touchStartX;
+                    var threshold = window.innerWidth * 0.15;
+                    if (Math.abs(dx) > threshold) {
+                        commitSwipe(dx < 0 ? 1 : -1);
+                    } else {
+                        snapBack();
                     }
-
-                    if (swipeLocked) {
-                        // Momentum scroll after finger lift
-                        var target = clampY(cardScrollY + (touchStartY - e.changedTouches[0].clientY));
-                        cardScrollY = target;
-
-                        // Momentum continuation
-                        var momentum = velY * 120;
-                        var finalY   = clampY(target + momentum);
-                        var track    = getTrack();
-                        if (track) {
-                            track.style.transition = 'transform 380ms cubic-bezier(0.25,0.46,0.45,0.94)';
-                            track.style.transform  = 'translateX(-100vw) translateY(' + (-finalY) + 'px)';
-                        }
-                        setTimeout(function() { cardScrollY = finalY; }, 390);
-                        swipeLocked = false;
-                    }
+                    swiping = false;
+                    swipeLocked = false;
+                    // Always restore vertical scroll after any horizontal gesture
+                    wrap.style.overflowY = 'auto';
                 }, { passive: false });
-
-                // Reset vertical position when this wrap is rebuilt
-                wrap._resetVertical = resetVertical;
             };
 
             // Fallback: document-level touchstart for modal open detection only
@@ -5751,23 +5574,21 @@
         var _videoSearchQuery = '';
 
         function filterVideoCategory(category) {
+            // Reset all tags to default style
             document.querySelectorAll('#video-full-page .category-tag').forEach(function(tag) {
                 tag.classList.remove('active');
                 tag.style.removeProperty('background');
                 tag.style.removeProperty('border-color');
                 tag.style.removeProperty('color');
             });
-            var activeTag = document.querySelector(
-                '#video-full-page .category-tag[data-category="' + category + '"]'
-            );
-            if (activeTag) {
-                activeTag.classList.add('active');
-                if (category !== 'all') {
-                    var catColor = getVideoCategoryColor(category);
-                    activeTag.style.background = catColor;
-                    activeTag.style.borderColor = catColor;
-                    activeTag.style.color = '#fff';
-                }
+            var activeTag = event.target;
+            activeTag.classList.add('active');
+            // Apply category color only for non-All tags
+            if (category !== 'all') {
+                var catColor = getVideoCategoryColor(category);
+                activeTag.style.background = catColor;
+                activeTag.style.borderColor = catColor;
+                activeTag.style.color = '#fff';
             }
             _videoCategoryFilter = category;
             _applyVideoFilters();
@@ -5802,26 +5623,21 @@
         var _articleSearchQuery = '';
 
         function filterCategoryFull(category) {
-            // Reset all tags — use data-category to find active tag, NOT event.target
-            // (event.target on mobile can be a child text node, causing two buttons to be active)
+            // Reset all tags to default style
             document.querySelectorAll('#article-full-page .category-tag').forEach(function(tag) {
                 tag.classList.remove('active');
                 tag.style.removeProperty('background');
                 tag.style.removeProperty('border-color');
                 tag.style.removeProperty('color');
             });
-            // Find the correct button by data-category attribute
-            var activeTag = document.querySelector(
-                '#article-full-page .category-tag[data-category="' + category + '"]'
-            );
-            if (activeTag) {
-                activeTag.classList.add('active');
-                if (category !== 'all') {
-                    var catColor = getCategoryColor(category);
-                    activeTag.style.background = catColor;
-                    activeTag.style.borderColor = catColor;
-                    activeTag.style.color = '#fff';
-                }
+            var activeTag = event.target;
+            activeTag.classList.add('active');
+            // Apply category color only for non-All tags
+            if (category !== 'all') {
+                var catColor = getCategoryColor(category);
+                activeTag.style.background = catColor;
+                activeTag.style.borderColor = catColor;
+                activeTag.style.color = '#fff';
             }
             _articleCategoryFilter = category;
             _applyArticleFilters();
@@ -5928,14 +5744,14 @@
         }
 
         function filterGallery(category) {
-            const input = (document.getElementById('searchInputGallery') ? document.getElementById('searchInputGallery').value : '').toLowerCase();
-            const catLower = (category || '').toLowerCase();
-            const items = document.querySelectorAll('.full-gallery-item');
-            items.forEach(item => {
-                // Case-insensitive category match
-                const matchCat = catLower === 'all' || (item.dataset.category || '').toLowerCase() === catLower;
-                const altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
-                const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
+            var input = (document.getElementById('searchInputGallery') ? document.getElementById('searchInputGallery').value : '').toLowerCase();
+            var catLower = (category || '').toLowerCase();
+            var items = document.querySelectorAll('.full-gallery-item');
+            items.forEach(function(item) {
+                // Case-insensitive category match so original-case data-filter works
+                var matchCat = catLower === 'all' || (item.dataset.category || '').toLowerCase() === catLower;
+                var altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
+                var matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
                 item.style.display = (matchCat && matchSearch) ? '' : 'none';
             });
             layoutGallery();
@@ -5956,37 +5772,38 @@
         }
 
         // ── Gallery loader: reads Images/images_index.json ──
+        // ── Gallery loader ──
+        // Reads Images/images_index.json (same server as index.html).
+        // JSON structure:
+        //   { "category_colors": { "Name": "color", ... }, "items": [ {...}, ... ] }
+        // Each item: title, category, created_time, image_url, description, link, display
+        // display:"on"  → item IS created and shown in gallery
+        // display:"off" → item is NOT created at all (completely excluded)
         function loadGalleryImages() {
-            // Try both relative paths to handle different server configurations
-            var paths = ['Images/images_index.json', './Images/images_index.json'];
-            var tryFetch = function(pathIndex) {
-                if (pathIndex >= paths.length) {
-                    console.error('Could not load gallery images from any path.');
-                    return;
-                }
-                fetch(paths[pathIndex])
-                    .then(function(res) {
-                        if (!res.ok) throw new Error('HTTP ' + res.status);
-                        return res.json();
-                    })
-                    .then(function(json) {
-                        var items = Array.isArray(json) ? json : (json.items || []);
-                        var colors = (!Array.isArray(json) && json.category_colors) ? json.category_colors : {};
-                        window._GALLERY_COLORS = colors;
-                        // display field: show if value is "on" or field is absent; hide only if "off"
-                        var visible = items.filter(function(img) {
-                            return img.display !== 'off';
-                        });
-                        visible.forEach(function(img) { window._GALLERY_DATA[img.image_url] = img; });
-                        renderFeaturedGallery(visible);
-                        renderFullGallery(visible);
-                        tryAutoOpenImageFromUrl();
-                    })
-                    .catch(function() {
-                        tryFetch(pathIndex + 1);
+            fetch('Images/images_index.json')
+                .then(function(res) {
+                    if (!res.ok) throw new Error('HTTP ' + res.status + ' — Images/images_index.json not found');
+                    return res.json();
+                })
+                .then(function(json) {
+                    var items  = Array.isArray(json) ? json : (json.items || []);
+                    var colors = (!Array.isArray(json) && json.category_colors) ? json.category_colors : {};
+                    window._GALLERY_COLORS = colors;
+
+                    // Only include items explicitly set to display:"on"
+                    // (items with display:"off" are completely excluded — not created at all)
+                    var visible = items.filter(function(img) {
+                        return img.display === 'on';
                     });
-            };
-            tryFetch(0);
+
+                    visible.forEach(function(img) { window._GALLERY_DATA[img.image_url] = img; });
+                    renderFeaturedGallery(visible);
+                    renderFullGallery(visible);
+                    tryAutoOpenImageFromUrl();
+                })
+                .catch(function(err) {
+                    console.error('[Gallery] Could not load Images/images_index.json:', err);
+                });
         }
 
         function tryAutoOpenImageFromUrl() {
@@ -6107,12 +5924,14 @@
             if (!grid) return;
             grid.innerHTML = '';
 
-            // Build dynamic category filter tags from unique categories in JSON
+            // Build category filter buttons from category_colors in JSON
+            // Order = key order in category_colors, color = corresponding value
+            // Adding/removing/reordering categories only requires editing images_index.json
             var filterContainer = document.getElementById('galleryFilterTags');
             if (filterContainer) {
                 var colors = window._GALLERY_COLORS || {};
-                // Use category_colors key order from JSON — guaranteed consistent ordering
-                // Falls back to unique categories from images if category_colors is empty
+
+                // Use category_colors key order; fall back to unique categories from items
                 var cats = Object.keys(colors).length
                     ? Object.keys(colors)
                     : (function() {
@@ -6124,28 +5943,35 @@
                         return arr;
                     })();
 
-                // Rebuild all tags from scratch (including "All")
+                // Rebuild all tags from scratch
                 filterContainer.innerHTML = '';
 
-                // "All" tag
+                // "All" button
                 var allTag = document.createElement('div');
                 allTag.className = 'filter-tag active';
                 allTag.dataset.filter = 'all';
                 allTag.textContent = 'All';
+                allTag.onclick = function() {
+                    filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
+                        t.classList.remove('active');
+                        t.style.removeProperty('background');
+                        t.style.removeProperty('border-color');
+                        t.style.removeProperty('color');
+                    });
+                    allTag.classList.add('active');
+                    filterGallery('all');
+                };
                 filterContainer.appendChild(allTag);
 
-                // One tag per category from category_colors
+                // One button per category from category_colors
                 cats.forEach(function(cat) {
+                    var catColor = colors[cat] || '';
                     var tag = document.createElement('div');
                     tag.className = 'filter-tag';
-                    // data-filter stores original case for matching
+                    // data-filter stores ORIGINAL case for reliable matching
                     tag.dataset.filter = cat;
                     tag.textContent = cat;
-                    // Apply category color as text color when inactive
-                    var catColor = colors[cat] || colors[Object.keys(colors).find(function(k) {
-                        return k.toLowerCase() === cat.toLowerCase();
-                    })] || '';
-                    if (catColor) tag.style.setProperty('--tag-cat-color', catColor);
+
                     tag.onclick = function() {
                         filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
                             t.classList.remove('active');
@@ -6155,27 +5981,14 @@
                         });
                         tag.classList.add('active');
                         if (catColor) {
-                            tag.style.background = catColor;
-                            tag.style.borderColor = catColor;
-                            tag.style.color = '#fff';
+                            tag.style.background   = catColor;
+                            tag.style.borderColor  = catColor;
+                            tag.style.color        = '#fff';
                         }
                         filterGallery(cat);
                     };
                     filterContainer.appendChild(tag);
                 });
-
-                // Bind "All" tag click
-                allTag.onclick = function() {
-                    filterContainer.querySelectorAll('.filter-tag').forEach(function(t) {
-                        t.classList.remove('active');
-                        t.style.removeProperty('background');
-                        t.style.removeProperty('border-color');
-                        t.style.removeProperty('color');
-                    });
-                    allTag.classList.add('active');
-                        filterGallery('all');
-                    };
-                }
             }
 
             // Render images with Pinterest-style random masonry layout
@@ -6614,9 +6427,15 @@
         }
 
         function openArticleFile(article) {
-            var path = getArticlePath(article);
-            if (path) {
-                window.open(path, '_blank', 'noopener,noreferrer');
+            if (article.type === 'pdf') {
+                var pdfSrc = article.pdfUrl || getArticlePath(article);
+                openPdfModal(article.title, pdfSrc);
+            } else {
+                var modal = document.getElementById('documentModal');
+                document.getElementById('documentTitle').textContent = article.title;
+                document.getElementById('documentFrame').src = getArticlePath(article);
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
             }
         }
 
