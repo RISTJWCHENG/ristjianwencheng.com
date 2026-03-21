@@ -1023,10 +1023,10 @@
                 flex: 0 0 100vw;
                 width: 100vw;
                 max-width: 100vw;
-                /* height = auto, no min-height: card grows with content only */
-                /* translateY handles vertical scroll — no overflow scroll needed */
+                /* min-height = full viewport so card always covers black background */
                 height: auto;
-                min-height: 0;
+                min-height: 100vh;
+                min-height: calc(var(--vh, 1vh) * 100);
                 flex-direction: column;
                 border-radius: 0 !important;
                 padding-bottom: 1.2rem !important;
