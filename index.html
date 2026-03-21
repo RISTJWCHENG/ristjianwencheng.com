@@ -5218,8 +5218,10 @@
                 // isShareBtn: trigger shareCurrentImage on touchend
                 // isLink: don't preventDefault so <a> navigation still works
                 function attachModalBtnFlash(btn, isShareBtn, isLink) {
+                    var _moved = false;
                     btn.addEventListener('touchstart', function(e) {
                         e.stopPropagation();
+                        _moved = false;
                         var svg = btn.querySelector('svg');
                         var cc = catColor || '#7c6fcd';
                         btn.style.setProperty('animation', 'none', 'important');
@@ -5228,8 +5230,13 @@
                         if (svg) svg.style.setProperty('stroke', cc, 'important');
                     }, { passive: true });
 
+                    btn.addEventListener('touchmove', function() {
+                        _moved = true;
+                    }, { passive: true });
+
                     btn.addEventListener('touchend', function(e) {
-                        // Only preventDefault for non-link buttons (share)
+                        if (_moved) return; // ignore swipe gestures
+                        e.stopPropagation();
                         if (!isLink) e.preventDefault();
                         var svg = btn.querySelector('svg');
                         btn.style.setProperty('transform', 'scale(1.08)', 'important');
@@ -5253,10 +5260,21 @@
                     var dlBtn = document.createElement('button');
                     dlBtn.className = 'img-modal-share-btn img-modal-dl-btn';
                     dlBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download';
+                    // Desktop
                     dlBtn.addEventListener('click', function(e) {
                         e.stopPropagation();
                         downloadImage(imgUrl);
                     });
+                    // Mobile: touchend (click blocked by touchmove preventDefault)
+                    var _dlMoved = false;
+                    dlBtn.addEventListener('touchstart', function() { _dlMoved = false; }, { passive: true });
+                    dlBtn.addEventListener('touchmove',  function() { _dlMoved = true;  }, { passive: true });
+                    dlBtn.addEventListener('touchend', function(e) {
+                        if (_dlMoved) return;
+                        e.stopPropagation();
+                        e.preventDefault();
+                        downloadImage(imgUrl);
+                    }, { passive: false });
                     attachModalBtnFlash(dlBtn, false, false);
                     linksEl.appendChild(dlBtn);
                 })(item.image_url);
