@@ -1016,7 +1016,7 @@
                 flex-direction: row;
                 width: 300vw;
                 transform: translateX(-100vw) translateY(0px);
-                will-change: transform;
+                /* will-change removed — permanent GPU layer wastes mobile memory */
                 align-items: flex-start;
             }
             .img-card-track .img-modal-content {
@@ -2791,7 +2791,8 @@
             .video-share-btn:not(.imdb-link-btn):not(.article-share-btn) svg,
             #videoModalShareBtn span, #videoModalShareBtn svg,
             #videoModalDownloadBtn, #videoModalDownloadBtn svg,
-            #videoModalLinkBtn, #videoModalLinkBtn svg {
+            #videoModalLinkBtn, #videoModalLinkBtn svg,
+            .gallery-card-btn {
                 animation: none !important;
             }
 
@@ -2889,6 +2890,7 @@
             window._heroPageBlocked = true;
             var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
             // Reset filter tags: deactivate all, activate All
+            window._galleryContainerW = 0; // invalidate width cache on open
             requestAnimationFrame(function() {
                 document.querySelectorAll('#fullGalleryPage .filter-tag').forEach(function(tag) {
                     tag.classList.remove('active');
@@ -5866,7 +5868,7 @@
         // ── Article pagination state ──────────────────────────────────────────
         var _allArticles = [];
         var _articlePage = 1;
-        var _articlesPerPage = 12;
+        var _articlesPerPage = 12; // 9 on mobile (see renderArticlePage)
         var _articleCategoryFilter = 'all';
         var _articleSearchQuery = '';
 
@@ -5914,13 +5916,15 @@
             var grid = document.getElementById('articleGridFull');
             if (!grid) return;
 
-            var start = (page - 1) * _articlesPerPage;
-            var pageArticles = _allArticles.slice(start, start + _articlesPerPage);
+            // Fewer cards on mobile = less DOM + less image loading heat
+            var artPerPage = (window.innerWidth <= 768) ? 9 : _articlesPerPage;
+            var start = (page - 1) * artPerPage;
+            var pageArticles = _allArticles.slice(start, start + artPerPage);
 
             grid.innerHTML = pageArticles.map(function(article) {
                 var coverHTML = article.type === 'pdf'
                     ? '<div class="article-card-image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#0f3460);"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><rect x="8" y="4" width="32" height="40" rx="3" stroke="#fff" stroke-width="1.5" opacity="0.6"/><text x="24" y="38" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="7" fill="#e8b84b">PDF</text></svg></div>'
-                    : '<img src="' + article.cover + '" alt="' + article.title + '" class="article-card-image" onerror="this.style.background=\'#e5e3df\'">';
+                    : '<img src="' + article.cover + '" alt="' + article.title + '" class="article-card-image" loading="lazy" decoding="async" onerror="this.style.background=\'#e5e3df\'">';
                 var metaDate = article.type === 'pdf' ? '📄 PDF' : formatArticleDate(article.date);
                 var metaRead = article.readTime ? '⏱️ ' + article.readTime : '';
                 var articleJson = JSON.stringify(article).replace(/'/g, '&#39;');
@@ -5946,13 +5950,14 @@
 
             renderArticlePagination();
             var pageEl = document.getElementById('article-full-page');
-            if (pageEl) pageEl.scrollTop = 0;
+            if (pageEl) pageEl.scrollTo(0, 0);
         }
 
         function renderArticlePagination() {
             var pagination = document.getElementById('articlePagination');
             if (!pagination) return;
-            var totalPages = Math.ceil(_allArticles.length / _articlesPerPage);
+            var artPerPage = (window.innerWidth <= 768) ? 9 : _articlesPerPage;
+            var totalPages = Math.ceil(_allArticles.length / artPerPage);
             if (totalPages <= 1) { pagination.style.display = 'none'; return; }
             pagination.style.display = 'flex';
 
@@ -6075,13 +6080,24 @@
             } catch(e) {}
         }
 
-        // Close all open dots menus except the given one
+        // Close all open dots menus except the given one (listener bound once)
         function closeAllDotsMenus(except) {
             document.querySelectorAll('.gallery-dots-menu.open').forEach(function(m) {
                 if (m !== except) m.classList.remove('open');
             });
         }
-        document.addEventListener('click', function() { closeAllDotsMenus(null); });
+        // Bind once — not inside buildCardFooter to avoid duplicate listeners
+        (function() {
+            var _dotsBound = false;
+            window._bindDotsClose = function() {
+                if (_dotsBound) return;
+                _dotsBound = true;
+                document.addEventListener('click', function() { closeAllDotsMenus(null); }, { passive: true });
+                document.addEventListener('touchend', function() {
+                    setTimeout(function() { closeAllDotsMenus(null); }, 50);
+                }, { passive: true });
+            };
+        })();
 
         function buildCardFooter(item, catColor, cardEl) {
             var footer = document.createElement('div');
@@ -6299,11 +6315,14 @@
                         window._GALLERY_ITEM_ASPECTS[idx] = img.naturalHeight / img.naturalWidth;
                     }
                     clearTimeout(window._layoutDebounce);
-                    window._layoutDebounce = setTimeout(layoutGallery, 150);
+                    // Longer debounce on mobile — images load slower, reduces repeated layouts
+                    var debounceMs = window.innerWidth <= 768 ? 300 : 150;
+                    window._layoutDebounce = setTimeout(layoutGallery, debounceMs);
                 });
 
                 imgWrap.appendChild(img);
                 div.appendChild(imgWrap);
+                div._imgWrap = imgWrap; // cache ref to avoid querySelector in layoutGallery
                 div.appendChild(buildCardFooter(item, catColor, div));
 
                 div.onclick = (function(el) { return function(e) {
@@ -6315,16 +6334,24 @@
                 window._GALLERY_ITEMS_ELS.push(div);
             });
 
+            // Bind dots-menu close listener (once only)
+            if (window._bindDotsClose) window._bindDotsClose();
             // Initial layout
             layoutGallery();
 
-            // Re-layout on resize
+            // Re-layout on resize — skip entirely when gallery page is not visible
             var _layoutTimer;
             window.addEventListener('resize', function() {
+                var galleryPage = document.getElementById('fullGalleryPage');
+                if (!galleryPage || !galleryPage.classList.contains('active')) return;
+                window._galleryContainerW = 0; // invalidate width cache
                 clearTimeout(_layoutTimer);
-                _layoutTimer = setTimeout(layoutGallery, 100);
-            });
+                _layoutTimer = setTimeout(layoutGallery, 300);
+            }, { passive: true });
         }
+
+        // Cache last known container width — avoids getBoundingClientRect on every layout
+        window._galleryContainerW = 0;
 
         function layoutGallery() {
             var grid = document.getElementById('fullGalleryGrid');
@@ -6336,7 +6363,11 @@
             if (!visible.length) { grid.style.height = '0'; return; }
 
             var GAP = 12;
-            var containerW = grid.getBoundingClientRect().width || grid.offsetWidth;
+            // Only measure width when it may have changed (resize clears cache)
+            if (!window._galleryContainerW) {
+                window._galleryContainerW = grid.getBoundingClientRect().width || grid.offsetWidth;
+            }
+            var containerW = window._galleryContainerW;
             if (!containerW) return;
 
             // Responsive column count
@@ -6390,13 +6421,11 @@
                 var totalH = imgH + FOOTER_H;
                 var x2 = shortestCol * (colW + GAP);
                 var y2 = colHeights[shortestCol];
-                el.style.left  = x2 + 'px';
-                el.style.top   = y2 + 'px';
-                el.style.width = imgW + 'px';
-                el.style.height = 'auto'; // height determined by img-wrap + footer
-                // Set img-wrap height explicitly
-                var wrap = el.querySelector('.gallery-card-img-wrap');
-                if (wrap) wrap.style.height = imgH + 'px';
+                // Batch style writes — use cssText to trigger single reflow per element
+                el.style.cssText = 'left:' + x2 + 'px;top:' + y2 + 'px;width:' + imgW + 'px;height:auto;';
+                // Use cached _imgWrap — avoids DOM querySelector on every layout
+                var wrapEl = el._imgWrap || el.querySelector('.gallery-card-img-wrap');
+                if (wrapEl) wrapEl.style.height = imgH + 'px';
                 colHeights[shortestCol] = y2 + totalH + GAP;
             });
 
