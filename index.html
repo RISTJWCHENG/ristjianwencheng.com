@@ -708,8 +708,12 @@
             flex-direction: column;
             gap: 0.5rem;
             overflow-y: auto;
-            align-items: flex-start;
-            justify-content: flex-start;
+        }
+        /* Links row and desc-wrap must stretch full width for divider to span correctly */
+        .img-modal-links,
+        .img-modal-desc-wrap {
+            width: 100%;
+            align-self: stretch;
         }
         .img-modal-category {
             font-size: 0.72rem;
@@ -975,6 +979,7 @@
                 box-sizing: border-box;
                 line-height: normal;
                 font-size: initial;
+                align-items: stretch; /* ensure links divider spans full width */
             }
 
             /* ── Full-card swipe track (mobile only) ── */
