@@ -5957,22 +5957,36 @@
 
         // ── Gallery loader: reads Images/images_index.json ──
         function loadGalleryImages() {
-            fetch('Images/images_index.json')
-                .then(function(res) { return res.json(); })
-                .then(function(json) {
-                    // Support both formats:
-                    // New: { category_colors: {...}, items: [...] }
-                    // Old: [...] (plain array)
-                    var items = Array.isArray(json) ? json : (json.items || []);
-                    var colors = (!Array.isArray(json) && json.category_colors) ? json.category_colors : {};
-                    window._GALLERY_COLORS = colors;
-                    var visible = items.filter(function(img) { return img.display !== 'off'; });
-                    visible.forEach(function(img) { window._GALLERY_DATA[img.image_url] = img; });
-                    renderFeaturedGallery(visible);
-                    renderFullGallery(visible);
-                    tryAutoOpenImageFromUrl();
-                })
-                .catch(function(err) { console.warn('Could not load Images/images_index.json:', err); });
+            // Try both relative paths to handle different server configurations
+            var paths = ['Images/images_index.json', './Images/images_index.json'];
+            var tryFetch = function(pathIndex) {
+                if (pathIndex >= paths.length) {
+                    console.error('Could not load gallery images from any path.');
+                    return;
+                }
+                fetch(paths[pathIndex])
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    })
+                    .then(function(json) {
+                        var items = Array.isArray(json) ? json : (json.items || []);
+                        var colors = (!Array.isArray(json) && json.category_colors) ? json.category_colors : {};
+                        window._GALLERY_COLORS = colors;
+                        // display field: show if value is "on" or field is absent; hide only if "off"
+                        var visible = items.filter(function(img) {
+                            return img.display !== 'off';
+                        });
+                        visible.forEach(function(img) { window._GALLERY_DATA[img.image_url] = img; });
+                        renderFeaturedGallery(visible);
+                        renderFullGallery(visible);
+                        tryAutoOpenImageFromUrl();
+                    })
+                    .catch(function() {
+                        tryFetch(pathIndex + 1);
+                    });
+            };
+            tryFetch(0);
         }
 
         function tryAutoOpenImageFromUrl() {
