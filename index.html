@@ -4184,6 +4184,7 @@
             var modalImg = document.getElementById('modalImage');
             modalImg.src = url;
             var data  = window._GALLERY_DATA[url] || {};
+            if (!data.image_url) data = Object.assign({ image_url: url }, data);
             var cat   = document.getElementById('imgModalCategory');
             var title = document.getElementById('imgModalTitle');
             var date  = document.getElementById('imgModalDate');
@@ -4211,6 +4212,18 @@
                 // Keep share button, rebuild link buttons before it
                 var shareBtn = links.querySelector('.img-modal-share-btn');
                 links.innerHTML = '';
+
+                // Download button — always present, url from image_url in JSON
+                if (data.image_url) {
+                    var dlBtnPop = document.createElement('button');
+                    dlBtnPop.className = 'img-modal-share-btn';
+                    dlBtnPop.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download';
+                    dlBtnPop.onclick = (function(u) { return function(e) {
+                        e.stopPropagation(); downloadImage(u);
+                    }; })(data.image_url);
+                    links.appendChild(dlBtnPop);
+                }
+
                 if (data.link && data.link[0] && data.link[1]) {
                     var a = document.createElement('a');
                     a.className = 'img-modal-link-btn';
@@ -4233,6 +4246,26 @@
                 var hasInfo = data.title || data.description || (data.link && data.link[1]);
                 right.style.display = hasInfo ? 'flex' : 'none';
             }
+        }
+
+        // Download image directly from image_url in images_index.json
+        function downloadImage(imageUrl) {
+            if (!imageUrl) return;
+            var filename = decodeURIComponent(imageUrl.split('/').pop().split('?')[0]) || 'image.jpg';
+            fetch(imageUrl)
+                .then(function(res) { return res.blob(); })
+                .then(function(blob) {
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function() {
+                        URL.revokeObjectURL(a.href);
+                        document.body.removeChild(a);
+                    }, 200);
+                })
+                .catch(function() { window.open(imageUrl, '_blank'); });
         }
 
         function shareGalleryCard(imageUrl, category, cardEl) {
@@ -5124,6 +5157,19 @@
                         }
                     }, { passive: false });
                 }
+
+                // Download button — always present, uses image_url from JSON
+                (function(imgUrl) {
+                    var dlBtn = document.createElement('button');
+                    dlBtn.className = 'img-modal-share-btn';
+                    dlBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download';
+                    dlBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        downloadImage(imgUrl);
+                    });
+                    attachModalBtnFlash(dlBtn, false, false);
+                    linksEl.appendChild(dlBtn);
+                })(item.image_url);
 
                 if (item.link && item.link[0] && item.link[1]) {
                     var a = document.createElement('a');
