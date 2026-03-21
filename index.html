@@ -647,6 +647,7 @@
             overflow-y: auto;
         }
         .img-modal-category {
+            cursor: pointer;
             font-size: 0.72rem;
             font-weight: 400;
             font-family: 'Ebrima', sans-serif;
@@ -2844,6 +2845,40 @@
                 section.scrollIntoView({ behavior: 'smooth' });
             }
         }
+        function goToGalleryCategory(category) {
+            var cat = (category || '').trim();
+            // Close image modal first
+            closeImageModal();
+            // Open Complete Gallery page
+            var fullGalleryPage = document.getElementById('fullGalleryPage');
+            if (!fullGalleryPage) return;
+            fullGalleryPage.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            window._heroPageBlocked = true;
+            var hv = document.getElementById('heroLogoVideo'); if (hv) hv.pause();
+            // Activate matching filter tag and apply filter
+            requestAnimationFrame(function() {
+                var matched = false;
+                document.querySelectorAll('#fullGalleryPage .filter-tag').forEach(function(tag) {
+                    tag.classList.remove('active');
+                    // Match by category name (case-insensitive)
+                    if (tag.dataset.filter && tag.dataset.filter.toLowerCase() === cat.toLowerCase()) {
+                        tag.classList.add('active');
+                        matched = true;
+                    }
+                });
+                // Fallback to All if no match
+                if (!matched) {
+                    var allTag = document.querySelector('#fullGalleryPage .filter-tag[data-filter="all"]');
+                    if (allTag) allTag.classList.add('active');
+                    filterGallery('all');
+                } else {
+                    filterGallery(cat.toLowerCase());
+                }
+                setTimeout(layoutGallery, 50);
+            });
+        }
+
         function openFullGallery() {
             const fullGalleryPage = document.getElementById('fullGalleryPage');
             fullGalleryPage.classList.add('active');
@@ -3907,7 +3942,7 @@
                 </button>
             </div>
             <div class="img-modal-right" id="imgModalInfo">
-                <div class="img-modal-category" id="imgModalCategory"></div>
+                <div class="img-modal-category" id="imgModalCategory" onclick="var c=this.textContent.trim();if(c)goToGalleryCategory(c);" title="View all in this category"></div>
                 <h3 class="img-modal-title" id="imgModalTitle"></h3>
                 <div class="img-modal-date" id="imgModalDate"></div>
                 <div class="img-modal-desc-wrap">
@@ -4249,6 +4284,12 @@
                 });
                 var catColor = catKey ? colors[catKey] : 'var(--accent)';
                 cat.style.color = catColor;
+                cat.style.cursor = 'pointer';
+                cat.title = 'View all in this category';
+                cat.onclick = function() {
+                    var c = cat.textContent.trim();
+                    if (c) goToGalleryCategory(c);
+                };
                 // Apply to modal links so buttons use it via CSS variable
                 if (links) links.style.setProperty('--modal-cat-color', catColor);
             }
@@ -5146,8 +5187,16 @@
                 var catEl = document.createElement('div');
                 catEl.className = 'img-modal-category';
                 catEl.style.color = catColor;
+                catEl.style.cursor = 'pointer';
+                catEl.title = 'View all in this category';
                 catEl.textContent = item.category || '';
                 if (isCurrent) catEl.id = 'imgModalCategory';
+                (function(catName) {
+                    catEl.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (catName) goToGalleryCategory(catName);
+                    });
+                })(item.category || '');
 
                 var titleEl = document.createElement('h3');
                 titleEl.className = 'img-modal-title';
