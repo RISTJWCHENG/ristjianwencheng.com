@@ -16,12 +16,32 @@
       "image_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/RIST%20JIANWEN%20CHENG_Profile_01.jpg"
     },
     {
-      "title": "footer imdb",
+      "title": "footer Email",
+      "type": "email",
+      "website_url": ""
+    },
+    {
+      "title": "footer Message",
+      "type": "url",
+      "website_url": "https://t.me/dxdydzC"
+    },
+    {
+      "title": "footer LinkedIn",
+      "type": "html",
+      "website_url": "http://www.linkedin.com/in/rist-jw-cheng"
+    },
+    {
+      "title": "footer X",
+      "type": "html",
+      "website_url": ""
+    },
+    {
+      "title": "footer IMDb",
       "type": "html",
       "website_url": "https://www.imdb.com/name/nm15024113/"
     },
     {
-      "title": "download cv",
+      "title": "download CV",
       "type": "pdf",
       "pdf_url": "https://pub-8231e5ac90c04ce199d0a2879d3ea6ec.r2.dev/Rist_Jianwen_Cheng_CV_2026.pdf"
     }
