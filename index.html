@@ -5171,10 +5171,25 @@
                 catEl.textContent = item.category || '';
                 if (isCurrent) catEl.id = 'imgModalCategory';
                 (function(cat) {
+                    // Desktop: click
                     catEl.addEventListener('click', function(e) {
                         e.stopPropagation();
                         goToGalleryCategory(cat);
                     });
+                    // Mobile: touchend (touchmove preventDefault blocks click from firing)
+                    var _catTouchMoved = false;
+                    catEl.addEventListener('touchstart', function() {
+                        _catTouchMoved = false;
+                    }, { passive: true });
+                    catEl.addEventListener('touchmove', function() {
+                        _catTouchMoved = true;
+                    }, { passive: true });
+                    catEl.addEventListener('touchend', function(e) {
+                        if (_catTouchMoved) return;
+                        e.stopPropagation();
+                        e.preventDefault();
+                        goToGalleryCategory(cat);
+                    }, { passive: false });
                 })(item.category || '');
 
                 var titleEl = document.createElement('h3');
