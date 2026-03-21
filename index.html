@@ -943,6 +943,7 @@
                 /* Black background fills entire wrap — no page bleed-through */
                 background: rgba(0, 0, 0, 0.92);
                 z-index: 2000;
+                overscroll-behavior: none; /* block rubber-band scroll exposing background */
             }
             .img-card-track {
                 display: flex;
@@ -956,11 +957,14 @@
                 flex: 0 0 100vw;
                 width: 100vw;
                 max-width: 100vw;
-                /* NO min-height: card grows with content only */
+                /* min-height = wrap height so card always fills viewport — no scroll gap */
+                min-height: 100vh;
+                min-height: calc(var(--vh, 1vh) * 100);
                 height: auto;
                 flex-direction: column;
                 border-radius: 0 !important;
                 padding-bottom: 1.5rem !important;
+                box-sizing: border-box;
             }
 
             /* Fix Complete Gallery grid overflowing on mobile */
