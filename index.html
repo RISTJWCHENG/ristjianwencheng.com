@@ -6419,7 +6419,9 @@
                 imgWrap.appendChild(img);
                 div.appendChild(imgWrap);
                 div._imgWrap = imgWrap; // cache ref to avoid querySelector in layoutGallery
-                div.appendChild(buildCardFooter(item, catColor, div));
+                var footerNode = buildCardFooter(item, catColor, div);
+                div._footer = footerNode;
+                div.appendChild(footerNode);
 
                 div.onclick = (function(el) { return function(e) {
                     if (e.target.closest('.gallery-card-footer')) return;
@@ -6490,39 +6492,51 @@
             var ASP_MIN = 0.45;
             var ASP_MAX = 1.6;
 
+            // ── Pass 1: set width on all cards so browser can reflow footer text ──
+            var aspects = [];
             visible.forEach(function(el) {
                 var idxVal = parseInt(el.dataset.idx);
                 var rawAsp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]);
-
-                // If real aspect not loaded yet, use seeded random (portrait-biased)
                 if (!rawAsp || rawAsp <= 0) rawAsp = 0.7 + sr() * 0.6;
-
-                // ── Proportional scale-down for extreme aspect ratios ──
-                // If image is too tall (asp > ASP_MAX): keep width = colW, height = colW * ASP_MAX
-                // If image is too wide (asp < ASP_MIN): keep height = colW * ASP_MIN, width stays colW
-                // In both cases the image is displayed proportionally inside the card via object-fit:cover
                 var asp = rawAsp;
                 if (asp > ASP_MAX) asp = ASP_MAX;
                 if (asp < ASP_MIN) asp = ASP_MIN;
+                aspects.push(asp);
+                // Set width only — let footer reflow naturally at correct width
+                el.style.width = colW + 'px';
+                el.style.position = 'absolute';
+            });
 
-                // Find shortest column — place every item in single-column width
+            // ── Force reflow so footer offsetHeight is accurate ──
+            void grid.offsetHeight;
+
+            // ── Pass 2: read real footer heights, then position everything ──
+            visible.forEach(function(el, i) {
+                var asp = aspects[i];
+                var imgW = colW;
+                var imgH = imgW * asp;
+
+                // Read real footer height now that width is set
+                var footerEl = el._footer || el.querySelector('.gallery-card-footer');
+                if (!el._footer && footerEl) el._footer = footerEl;
+                var FOOTER_H = footerEl ? footerEl.offsetHeight : 32;
+
+                // Find shortest column
                 var shortestCol = 0;
                 for (var c2 = 1; c2 < COLS; c2++) {
                     if (colHeights[c2] < colHeights[shortestCol]) shortestCol = c2;
                 }
 
-                var FOOTER_H = 44; // approx footer height: 2-line title + padding
-                var imgW = colW;
-                var imgH = imgW * asp;
-                var totalH = imgH + FOOTER_H;
                 var x2 = shortestCol * (colW + GAP);
                 var y2 = colHeights[shortestCol];
-                // Batch style writes — use cssText to trigger single reflow per element
-                el.style.cssText = 'left:' + x2 + 'px;top:' + y2 + 'px;width:' + imgW + 'px;height:auto;';
-                // Use cached _imgWrap — avoids DOM querySelector on every layout
+
+                el.style.left = x2 + 'px';
+                el.style.top  = y2 + 'px';
+
                 var wrapEl = el._imgWrap || el.querySelector('.gallery-card-img-wrap');
                 if (wrapEl) wrapEl.style.height = imgH + 'px';
-                colHeights[shortestCol] = y2 + totalH + GAP;
+
+                colHeights[shortestCol] = y2 + imgH + FOOTER_H + GAP;
             });
 
             grid.style.height = (Math.max.apply(null, colHeights) - GAP) + 'px';
