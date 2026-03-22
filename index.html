@@ -403,13 +403,17 @@
             font-weight: 500;
             color: var(--text-primary);
             line-height: 1.35;
+            overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
-            overflow: hidden;
             margin: 0;
             word-break: break-word;
-            min-height: calc(0.78rem * 1.35);
+        }
+        /* Ensure empty title still takes 1 line height */
+        .gallery-card-title:empty::before {
+            content: '\00a0';
+            display: block;
         }
 
         /* Dots button — right side, vertically aligned with title first line */
