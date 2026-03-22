@@ -478,52 +478,7 @@
         .gallery-dots-menu-item:hover { background: rgba(0,0,0,0.05); }
         .gallery-dots-menu-item svg { flex-shrink: 0; color: var(--text-secondary); }
 
-        @keyframes cardBtnColorCycle {
-            0%   { color: #e8a87c; border-color: #e8a87c; }
-            25%  { color: #85c1e9; border-color: #85c1e9; }
-            50%  { color: #a29bfe; border-color: #a29bfe; }
-            75%  { color: #81ecec; border-color: #81ecec; }
-            100% { color: #e8a87c; border-color: #e8a87c; }
-        }
-        .gallery-card-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            width: 72px;
-            height: 24px;
-            border-radius: 12px;
-            font-size: 0.65rem;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            cursor: pointer;
-            border: 1.5px solid;
-            background: rgba(255,255,255,0.88);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            box-shadow: 0 1px 6px rgba(0,0,0,0.15);
-            text-decoration: none;
-            white-space: nowrap;
-            box-sizing: border-box;
-            animation: cardBtnColorCycle 4s ease-in-out infinite;
-            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-        }
-        .gallery-card-btn:nth-child(2) {
-            animation-delay: 0s;
-        }
-        .gallery-card-btn:hover {
-            animation: none;
-            color: var(--card-cat-color, #7c6fcd);
-            border-color: var(--card-cat-color, #7c6fcd);
-            background: rgba(255,255,255,0.97);
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-        .gallery-card-btn svg {
-            flex-shrink: 0;
-            width: 10px;
-            height: 10px;
-        }
+
 
         .close-gallery-btn {
             position: fixed;
@@ -2821,8 +2776,7 @@
             .video-share-btn:not(.imdb-link-btn):not(.article-share-btn) svg,
             #videoModalShareBtn span, #videoModalShareBtn svg,
             #videoModalDownloadBtn, #videoModalDownloadBtn svg,
-            #videoModalLinkBtn, #videoModalLinkBtn svg,
-            .gallery-card-btn {
+            #videoModalLinkBtn, #videoModalLinkBtn svg {
                 animation: none !important;
             }
 
@@ -2847,12 +2801,7 @@
                 animation: gradient-flow 3s linear infinite !important;
             }
 
-            /* gallery-card-btn keeps color cycle animation on mobile */
-            .gallery-card-btn,
-            .gallery-card-btn:nth-child(2) {
-                animation: cardBtnColorCycle 4s ease-in-out infinite !important;
-                animation-delay: 0s !important;
-            }
+
 
             /* img card Article + Share buttons — keep color cycle animation on mobile */
             .img-modal-share-btn,
@@ -2889,7 +2838,6 @@
                 transition: none !important;
             }
             /* Exception: keep transform transition for press feedback on buttons */
-            .gallery-card-btn,
             .img-modal-share-btn,
             .img-modal-link-btn {
                 transition: transform 0.12s ease !important;
@@ -6048,11 +5996,12 @@
         function filterGallery(category) {
             var input = (document.getElementById('searchInputGallery') ? document.getElementById('searchInputGallery').value : '').toLowerCase();
             var catLower = (category || '').toLowerCase();
-            var items = document.querySelectorAll('.full-gallery-item');
+            // Use cached elements — avoids live DOM querySelectorAll on every filter
+            var items = window._GALLERY_ITEMS_ELS || document.querySelectorAll('.full-gallery-item');
             items.forEach(function(item) {
-                // Case-insensitive category match so original-case data-filter works
                 var matchCat = catLower === 'all' || (item.dataset.category || '').toLowerCase() === catLower;
-                var altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
+                // Use cached alt from dataset to avoid querySelector('img') per item
+                var altText = (item.dataset.alt || item.dataset.imageUrl || '').toLowerCase();
                 var matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
                 item.style.display = (matchCat && matchSearch) ? '' : 'none';
             });
@@ -6060,14 +6009,14 @@
         }
 
         function searchGallery() {
-            const input = document.getElementById('searchInputGallery').value.toLowerCase();
-            const activeFilter = document.querySelector('#fullGalleryPage .filter-tag.active');
-            const category = activeFilter ? activeFilter.dataset.filter : 'all';
-            const items = document.querySelectorAll('.full-gallery-item');
-            items.forEach(item => {
-                const matchCat = category === 'all' || item.dataset.category === category;
-                const altText = (item.querySelector('img') ? item.querySelector('img').alt : '').toLowerCase();
-                const matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
+            var input = document.getElementById('searchInputGallery').value.toLowerCase();
+            var activeFilter = document.querySelector('#fullGalleryPage .filter-tag.active');
+            var catLower = activeFilter ? (activeFilter.dataset.filter || 'all').toLowerCase() : 'all';
+            var items = window._GALLERY_ITEMS_ELS || document.querySelectorAll('.full-gallery-item');
+            items.forEach(function(item) {
+                var matchCat = catLower === 'all' || (item.dataset.category || '').toLowerCase() === catLower;
+                var altText = (item.dataset.alt || item.dataset.imageUrl || '').toLowerCase();
+                var matchSearch = !input || altText.includes(input) || (item.dataset.category || '').toLowerCase().includes(input);
                 item.style.display = (matchCat && matchSearch) ? '' : 'none';
             });
             layoutGallery();
@@ -6405,6 +6354,8 @@
                 img.loading = 'lazy';
                 img.decoding = 'async';
                 img.src = item.image_url;
+                // Cache searchable text in dataset to avoid querySelector in filter/search
+                div.dataset.alt = (item.title || '').toLowerCase();
 
                 img.addEventListener('load', function() {
                     if (img.naturalWidth && img.naturalHeight) {
@@ -6437,15 +6388,18 @@
             // Initial layout
             layoutGallery();
 
-            // Re-layout on resize — skip entirely when gallery page is not visible
-            var _layoutTimer;
-            window.addEventListener('resize', function() {
-                var galleryPage = document.getElementById('fullGalleryPage');
-                if (!galleryPage || !galleryPage.classList.contains('active')) return;
-                window._galleryContainerW = 0; // invalidate width cache
-                clearTimeout(_layoutTimer);
-                _layoutTimer = setTimeout(layoutGallery, 300);
-            }, { passive: true });
+            // Re-layout on resize — register only once globally
+            if (!window._galleryResizeBound) {
+                window._galleryResizeBound = true;
+                var _layoutTimer;
+                window.addEventListener('resize', function() {
+                    var galleryPage = document.getElementById('fullGalleryPage');
+                    if (!galleryPage || !galleryPage.classList.contains('active')) return;
+                    window._galleryContainerW = 0;
+                    clearTimeout(_layoutTimer);
+                    _layoutTimer = setTimeout(layoutGallery, 300);
+                }, { passive: true });
+            }
         }
 
         // Cache last known container width — avoids getBoundingClientRect on every layout
@@ -6492,8 +6446,13 @@
             var ASP_MIN = 0.45;
             var ASP_MAX = 1.6;
 
-            // ── Pass 1: set width on all cards so browser can reflow footer text ──
-            var aspects = [];
+            // Estimate footer height from title text length at current column width
+            // Title: font-size 0.78rem (~12.5px), line-height 1.35 → line height ~17px
+            // chars per line ≈ colW / (12.5 * 0.55) where 0.55 = avg char width ratio
+            var LINE_H    = 17;  // px per title line
+            var PAD_V     = 13;  // footer vertical padding (7+6)
+            var charsPerLine = Math.max(10, Math.floor(colW / (12.5 * 0.55)));
+
             visible.forEach(function(el) {
                 var idxVal = parseInt(el.dataset.idx);
                 var rawAsp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]);
@@ -6501,25 +6460,14 @@
                 var asp = rawAsp;
                 if (asp > ASP_MAX) asp = ASP_MAX;
                 if (asp < ASP_MIN) asp = ASP_MIN;
-                aspects.push(asp);
-                // Set width only — let footer reflow naturally at correct width
-                el.style.width = colW + 'px';
-                el.style.position = 'absolute';
-            });
 
-            // ── Force reflow so footer offsetHeight is accurate ──
-            void grid.offsetHeight;
-
-            // ── Pass 2: read real footer heights, then position everything ──
-            visible.forEach(function(el, i) {
-                var asp = aspects[i];
-                var imgW = colW;
-                var imgH = imgW * asp;
-
-                // Read real footer height now that width is set
-                var footerEl = el._footer || el.querySelector('.gallery-card-footer');
-                if (!el._footer && footerEl) el._footer = footerEl;
-                var FOOTER_H = footerEl ? footerEl.offsetHeight : 32;
+                // Estimate title lines from text length
+                var titleEl = el._footer ? el._footer.querySelector('.gallery-card-title') : el.querySelector('.gallery-card-title');
+                var titleText = titleEl ? (titleEl.textContent || '') : '';
+                var estimatedLines = titleText.length > 0
+                    ? Math.min(3, Math.max(1, Math.ceil(titleText.length / charsPerLine)))
+                    : 1;
+                var FOOTER_H = PAD_V + estimatedLines * LINE_H;
 
                 // Find shortest column
                 var shortestCol = 0;
@@ -6527,11 +6475,12 @@
                     if (colHeights[c2] < colHeights[shortestCol]) shortestCol = c2;
                 }
 
+                var imgW = colW;
+                var imgH = imgW * asp;
                 var x2 = shortestCol * (colW + GAP);
                 var y2 = colHeights[shortestCol];
 
-                el.style.left = x2 + 'px';
-                el.style.top  = y2 + 'px';
+                el.style.cssText = 'position:absolute;left:' + x2 + 'px;top:' + y2 + 'px;width:' + imgW + 'px;height:auto;';
 
                 var wrapEl = el._imgWrap || el.querySelector('.gallery-card-img-wrap');
                 if (wrapEl) wrapEl.style.height = imgH + 'px';
