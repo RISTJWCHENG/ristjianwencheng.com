@@ -404,11 +404,13 @@
             color: var(--text-primary);
             line-height: 1.35;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin: 0;
             word-break: break-word;
+            /* min 2 lines height even when content is shorter */
+            min-height: calc(0.78rem * 1.35 * 2);
         }
 
         /* Dots button — right side, vertically aligned with title first line */
