@@ -6135,8 +6135,19 @@
                 if (_dotsBound) return;
                 _dotsBound = true;
                 document.addEventListener('click', function() { closeAllDotsMenus(null); }, { passive: true });
-                document.addEventListener('touchend', function() {
-                    setTimeout(function() { closeAllDotsMenus(null); }, 50);
+                document.addEventListener('touchend', function(e) {
+                    // Only close menus if touch was outside any open menu
+                    setTimeout(function() {
+                        var open = document.querySelector('.gallery-dots-menu.open');
+                        if (!open) return;
+                        // Check if the touch target is inside an open menu or dots button
+                        var t = e.target;
+                        while (t) {
+                            if (t.classList && (t.classList.contains('gallery-dots-menu') || t.classList.contains('gallery-dots-btn'))) return;
+                            t = t.parentElement;
+                        }
+                        closeAllDotsMenus(null);
+                    }, 100);
                 }, { passive: true });
             };
         })();
@@ -6171,6 +6182,16 @@
             dlItem.onclick = (function(u) { return function(e) {
                 e.stopPropagation(); menu.classList.remove('open'); downloadImage(u);
             }; })(item.image_url);
+            (function(u) {
+                var _mv = false;
+                dlItem.addEventListener('touchstart', function() { _mv = false; }, { passive: true });
+                dlItem.addEventListener('touchmove',  function() { _mv = true;  }, { passive: true });
+                dlItem.addEventListener('touchend', function(e) {
+                    if (_mv) return;
+                    e.stopPropagation(); e.preventDefault();
+                    menu.classList.remove('open'); downloadImage(u);
+                }, { passive: false });
+            })(item.image_url);
             menu.appendChild(dlItem);
 
             // Article link item (only if link exists)
@@ -6192,14 +6213,40 @@
             shareItem.onclick = (function(iu, cat, el) { return function(e) {
                 e.stopPropagation(); menu.classList.remove('open'); shareGalleryCard(iu, cat, el);
             }; })(item.image_url, item.category || '', cardEl);
+            (function(iu, cat, el) {
+                var _mv = false;
+                shareItem.addEventListener('touchstart', function() { _mv = false; }, { passive: true });
+                shareItem.addEventListener('touchmove',  function() { _mv = true;  }, { passive: true });
+                shareItem.addEventListener('touchend', function(e) {
+                    if (_mv) return;
+                    e.stopPropagation(); e.preventDefault();
+                    menu.classList.remove('open'); shareGalleryCard(iu, cat, el);
+                }, { passive: false });
+            })(item.image_url, item.category || '', cardEl);
             menu.appendChild(shareItem);
 
             dotsBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 var isOpen = menu.classList.contains('open');
-                closeAllDotsMenus(null);
+                closeAllDotsMenus(isOpen ? null : menu); // close others, keep this one
                 if (!isOpen) menu.classList.add('open');
             });
+            // Mobile: touchend on dotsBtn — open menu and stop propagation
+            var _dotsTouchMoved = false;
+            dotsBtn.addEventListener('touchstart', function() {
+                _dotsTouchMoved = false;
+            }, { passive: true });
+            dotsBtn.addEventListener('touchmove', function() {
+                _dotsTouchMoved = true;
+            }, { passive: true });
+            dotsBtn.addEventListener('touchend', function(e) {
+                if (_dotsTouchMoved) return;
+                e.stopPropagation();
+                e.preventDefault();
+                var isOpen = menu.classList.contains('open');
+                closeAllDotsMenus(isOpen ? null : menu);
+                if (!isOpen) menu.classList.add('open');
+            }, { passive: false });
 
             dotsWrap.appendChild(dotsBtn);
             dotsWrap.appendChild(menu);
