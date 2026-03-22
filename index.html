@@ -6446,13 +6446,8 @@
             var ASP_MIN = 0.45;
             var ASP_MAX = 1.6;
 
-            // Estimate footer height from title text length at current column width
-            // Title: font-size 0.78rem (~12.5px), line-height 1.35 → line height ~17px
-            // chars per line ≈ colW / (12.5 * 0.55) where 0.55 = avg char width ratio
-            var LINE_H    = 17;  // px per title line
-            var PAD_V     = 13;  // footer vertical padding (7+6)
-            var charsPerLine = Math.max(10, Math.floor(colW / (12.5 * 0.55)));
-
+            // ── Pass 1: set width + img height on all items so footer text can reflow ──
+            var aspList = [];
             visible.forEach(function(el) {
                 var idxVal = parseInt(el.dataset.idx);
                 var rawAsp = (window._GALLERY_ITEM_ASPECTS && window._GALLERY_ITEM_ASPECTS[idxVal]);
@@ -6460,14 +6455,25 @@
                 var asp = rawAsp;
                 if (asp > ASP_MAX) asp = ASP_MAX;
                 if (asp < ASP_MIN) asp = ASP_MIN;
+                aspList.push(asp);
 
-                // Estimate title lines from text length
-                var titleEl = el._footer ? el._footer.querySelector('.gallery-card-title') : el.querySelector('.gallery-card-title');
-                var titleText = titleEl ? (titleEl.textContent || '') : '';
-                var estimatedLines = titleText.length > 0
-                    ? Math.min(3, Math.max(1, Math.ceil(titleText.length / charsPerLine)))
-                    : 1;
-                var FOOTER_H = PAD_V + estimatedLines * LINE_H;
+                var imgH = colW * asp;
+                el.style.cssText = 'position:absolute;width:' + colW + 'px;height:auto;left:-9999px;top:0;';
+                var wrapEl = el._imgWrap || el.querySelector('.gallery-card-img-wrap');
+                if (wrapEl) wrapEl.style.height = imgH + 'px';
+            });
+
+            // ── Force synchronous reflow so footer.offsetHeight is accurate ──
+            void grid.offsetHeight;
+
+            // ── Pass 2: read real footer heights, then position ──
+            visible.forEach(function(el, i) {
+                var asp = aspList[i];
+                var imgH = colW * asp;
+
+                var footerEl = el._footer || el.querySelector('.gallery-card-footer');
+                if (!el._footer && footerEl) el._footer = footerEl;
+                var FOOTER_H = footerEl ? footerEl.offsetHeight : 32;
 
                 // Find shortest column
                 var shortestCol = 0;
@@ -6475,13 +6481,9 @@
                     if (colHeights[c2] < colHeights[shortestCol]) shortestCol = c2;
                 }
 
-                var imgW = colW;
-                var imgH = imgW * asp;
                 var x2 = shortestCol * (colW + GAP);
                 var y2 = colHeights[shortestCol];
-
-                el.style.cssText = 'position:absolute;left:' + x2 + 'px;top:' + y2 + 'px;width:' + imgW + 'px;height:auto;';
-
+                el.style.cssText = 'position:absolute;left:' + x2 + 'px;top:' + y2 + 'px;width:' + colW + 'px;height:auto;';
                 var wrapEl = el._imgWrap || el.querySelector('.gallery-card-img-wrap');
                 if (wrapEl) wrapEl.style.height = imgH + 'px';
 
